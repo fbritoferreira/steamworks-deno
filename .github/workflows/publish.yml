@@ -75,8 +75,14 @@ jobs:
           version=$(deno eval 'console.log(JSON.parse(Deno.readTextFileSync("packages/steamworks/deno.json")).version)')
           failed=0
           for pkg in deno codegen; do
-            code=$(curl -s -o /dev/null -w "%{http_code}" \
-              "https://jsr.io/api/scopes/steamworks/packages/$pkg/versions/$version")
+            # The registry indexes a new version a moment after the upload returns.
+            code=000
+            for attempt in 1 2 3 4 5 6; do
+              code=$(curl -s -o /dev/null -w "%{http_code}" \
+                "https://jsr.io/api/scopes/steamworks/packages/$pkg/versions/$version")
+              [ "$code" = "200" ] && break
+              sleep 10
+            done
             if [ "$code" = "200" ]; then
               echo "ok    @steamworks/$pkg@$version is published"
             else
