@@ -5,6 +5,7 @@
  */
 import type { SteamApiJson, Struct } from "./schema.ts";
 import { type MappedType, mapType, type TypeContext } from "./types.ts";
+import { effectivePack, type PackMode } from "./packscan.ts";
 
 export type Pack = 4 | 8;
 
@@ -28,11 +29,18 @@ export class LayoutResolver {
   readonly #callbackIds = new Map<string, number>();
   readonly #cache = new Map<string, StructLayout>();
   readonly #ctx: TypeContext;
+  readonly #packing: Map<string, PackMode>;
 
-  constructor(schema: SteamApiJson, ctx: TypeContext) {
+  constructor(schema: SteamApiJson, ctx: TypeContext, packing = new Map<string, PackMode>()) {
     for (const s of [...schema.structs, ...schema.callback_structs]) this.#structs.set(s.struct, s);
     for (const c of schema.callback_structs) this.#callbackIds.set(c.struct, c.callback_id);
     this.#ctx = ctx;
+    this.#packing = packing;
+  }
+
+  /** The alignment cap for one struct under a platform packing, from its header. */
+  packFor(structName: string, platform: Pack): number {
+    return effectivePack(this.#packing.get(structName), platform);
   }
 
   /** Callback id for a callback struct. Throws if the struct is not one. */
@@ -70,13 +78,15 @@ export class LayoutResolver {
     const def = this.#structs.get(structName);
     if (!def) throw new Error(`Unknown struct "${structName}"`);
 
+    // The header decides this struct's packing; `pack` only says which platform we are on.
+    const cap = this.packFor(structName, pack);
     let offset = 0;
     let structAlign = 1;
     const fields: FieldLayout[] = [];
     for (const f of def.fields) {
       const type = mapType(f.fieldtype, this.#ctx);
       const { size, align } = this.sizeAlign(type, pack);
-      const a = Math.min(align, pack); // #pragma pack caps each field's alignment
+      const a = Math.min(align, cap); // #pragma pack caps each field's alignment
       offset = alignUp(offset, a);
       fields.push({ name: f.fieldname, type, offset });
       offset += size;

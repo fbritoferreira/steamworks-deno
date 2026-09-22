@@ -11,6 +11,7 @@ import { emitCallbackIds } from "./emit/callback_ids.ts";
 import { emitLayoutJson } from "./emit/layout_json.ts";
 import { emitInterface } from "./emit/interface.ts";
 import { emitHarnessC } from "./emit/harness_c.ts";
+import { scanPacking } from "./packscan.ts";
 
 export interface GenerateOptions {
   /** Root of an unzipped Steamworks SDK: the folder holding `public/` and `redistributable_bin/`. */
@@ -19,6 +20,17 @@ export interface GenerateOptions {
   outDir: string;
   /** Used when the SDK's Readme.txt does not state a version. */
   sdkVersion?: string;
+}
+
+/** Read every SDK header, so the packing scanner can see each struct's pragma context. */
+async function readHeaders(dir: string): Promise<{ name: string; text: string }[]> {
+  const out: { name: string; text: string }[] = [];
+  for await (const entry of Deno.readDir(dir)) {
+    if (!entry.isFile || !entry.name.endsWith(".h")) continue;
+    out.push({ name: entry.name, text: await Deno.readTextFile(join(dir, entry.name)) });
+  }
+  out.sort((a, b) => a.name.localeCompare(b.name));
+  return out;
 }
 
 async function detectVersion(sdkPath: string, fallback: string): Promise<string> {
@@ -35,7 +47,8 @@ export async function generate(opts: GenerateOptions): Promise<string[]> {
   const schema = await loadSchema(join(opts.sdkPath, "public", "steam", "steam_api.json"));
   const version = await detectVersion(opts.sdkPath, opts.sdkVersion ?? "unknown");
   const ctx = buildContext(schema);
-  const resolver = new LayoutResolver(schema, ctx);
+  const packing = scanPacking(await readHeaders(join(opts.sdkPath, "public", "steam")));
+  const resolver = new LayoutResolver(schema, ctx, packing);
   const h = header(version);
 
   const files = new Map<string, string>();

@@ -446,8 +446,8 @@ export interface InputAnalogActionData_t {
 }
 
 export const InputAnalogActionData_t_layout = {
-  4: { size: 16, eMode: 0, x: 4, y: 8, bActive: 12 },
-  8: { size: 16, eMode: 0, x: 4, y: 8, bActive: 12 },
+  4: { size: 13, eMode: 0, x: 4, y: 8, bActive: 12 },
+  8: { size: 13, eMode: 0, x: 4, y: 8, bActive: 12 },
 } as const;
 
 export function decodeInputAnalogActionData_t(bytes: Uint8Array): InputAnalogActionData_t {
@@ -577,8 +577,8 @@ export interface SteamInputActionEvent_t {
 }
 
 export const SteamInputActionEvent_t_layout = {
-  4: { size: 36, controllerHandle: 0, eEventType: 8, analogAction: 12 },
-  8: { size: 40, controllerHandle: 0, eEventType: 8, analogAction: 16 },
+  4: { size: 33, controllerHandle: 0, eEventType: 8, analogAction: 12 },
+  8: { size: 33, controllerHandle: 0, eEventType: 8, analogAction: 12 },
 } as const;
 
 export function decodeSteamInputActionEvent_t(bytes: Uint8Array): SteamInputActionEvent_t {
@@ -1260,7 +1260,7 @@ export interface SteamNetworkingMessage_t {
 
 export const SteamNetworkingMessage_t_layout = {
   4: {
-    size: 212,
+    size: 216,
     m_pData: 0,
     m_cbSize: 8,
     m_conn: 12,
@@ -1554,8 +1554,8 @@ export interface AnalogAction_t {
 }
 
 export const AnalogAction_t_layout = {
-  4: { size: 24, actionHandle: 0, analogActionData: 8 },
-  8: { size: 24, actionHandle: 0, analogActionData: 8 },
+  4: { size: 21, actionHandle: 0, analogActionData: 8 },
+  8: { size: 21, actionHandle: 0, analogActionData: 8 },
 } as const;
 
 export function decodeAnalogAction_t(bytes: Uint8Array): AnalogAction_t {
@@ -1585,8 +1585,8 @@ export interface DigitalAction_t {
 }
 
 export const DigitalAction_t_layout = {
-  4: { size: 12, actionHandle: 0, digitalActionData: 8 },
-  8: { size: 16, actionHandle: 0, digitalActionData: 8 },
+  4: { size: 10, actionHandle: 0, digitalActionData: 8 },
+  8: { size: 10, actionHandle: 0, digitalActionData: 8 },
 } as const;
 
 export function decodeDigitalAction_t(bytes: Uint8Array): DigitalAction_t {

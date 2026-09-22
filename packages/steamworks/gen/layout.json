@@ -96,7 +96,7 @@
         }
       },
       "InputAnalogActionData_t": {
-        "size": 16,
+        "size": 13,
         "fields": {
           "eMode": 0,
           "x": 4,
@@ -127,7 +127,7 @@
         }
       },
       "SteamInputActionEvent_t": {
-        "size": 36,
+        "size": 33,
         "fields": {
           "controllerHandle": 0,
           "eEventType": 8,
@@ -273,7 +273,7 @@
         }
       },
       "SteamNetworkingMessage_t": {
-        "size": 212,
+        "size": 216,
         "fields": {
           "m_pData": 0,
           "m_cbSize": 8,
@@ -342,14 +342,14 @@
         }
       },
       "AnalogAction_t": {
-        "size": 24,
+        "size": 21,
         "fields": {
           "actionHandle": 0,
           "analogActionData": 8
         }
       },
       "DigitalAction_t": {
-        "size": 12,
+        "size": 10,
         "fields": {
           "actionHandle": 0,
           "digitalActionData": 8
@@ -1970,7 +1970,7 @@
         }
       },
       "InputAnalogActionData_t": {
-        "size": 16,
+        "size": 13,
         "fields": {
           "eMode": 0,
           "x": 4,
@@ -2001,11 +2001,11 @@
         }
       },
       "SteamInputActionEvent_t": {
-        "size": 40,
+        "size": 33,
         "fields": {
           "controllerHandle": 0,
           "eEventType": 8,
-          "analogAction": 16
+          "analogAction": 12
         }
       },
       "SteamUGCDetails_t": {
@@ -2216,14 +2216,14 @@
         }
       },
       "AnalogAction_t": {
-        "size": 24,
+        "size": 21,
         "fields": {
           "actionHandle": 0,
           "analogActionData": 8
         }
       },
       "DigitalAction_t": {
-        "size": 16,
+        "size": 10,
         "fields": {
           "actionHandle": 0,
           "digitalActionData": 8

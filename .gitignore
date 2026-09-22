@@ -3,3 +3,4 @@
 /sdk/
 steam_appid.txt
 .DS_Store
+packages/steamworks/harness/.build/
