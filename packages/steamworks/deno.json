@@ -20,5 +20,6 @@
   "imports": {
     "@std/assert": "jsr:@std/assert@1",
     "@std/path": "jsr:@std/path@1"
-  }
+  },
+  "description": "Deno FFI bindings for the Steamworks SDK, generated from steam_api.json. Achievements, stats, friends, cloud, input and the rest of the flat C API. Not affiliated with Valve."
 }

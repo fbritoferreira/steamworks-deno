@@ -23,16 +23,19 @@ export class ISteamVideo {
     private readonly host: CallResultHost,
   ) {}
 
+  /** Get a URL suitable for streaming the given Video app ID's video */
   getVideoURL(unVideoAppID: number): void {
     this.s.SteamAPI_ISteamVideo_GetVideoURL(this.self, unVideoAppID);
   }
 
+  /** returns true if user is uploading a live broadcast */
   isBroadcasting(): { ok: boolean; pnNumViewers: number } {
     const pnNumViewers_buf = scalarOut("i32");
     const ok = this.s.SteamAPI_ISteamVideo_IsBroadcasting(this.self, pnNumViewers_buf);
     return { ok, pnNumViewers: readScalar(pnNumViewers_buf, "i32") as number };
   }
 
+  /** Get the OPF Details for 360 Video Playback */
   getOPFSettings(unVideoAppID: number): void {
     this.s.SteamAPI_ISteamVideo_GetOPFSettings(this.self, unVideoAppID);
   }

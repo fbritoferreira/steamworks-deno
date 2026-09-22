@@ -27,6 +27,7 @@ export class ISteamMatchmakingServerListResponse {
     private readonly host: CallResultHost,
   ) {}
 
+  /** Server has responded ok with updated data */
   serverResponded(hRequest: Deno.PointerValue, iServer: number): void {
     this.s.SteamAPI_ISteamMatchmakingServerListResponse_ServerResponded(
       this.self,
@@ -35,6 +36,7 @@ export class ISteamMatchmakingServerListResponse {
     );
   }
 
+  /** Server has failed to respond */
   serverFailedToRespond(hRequest: Deno.PointerValue, iServer: number): void {
     this.s.SteamAPI_ISteamMatchmakingServerListResponse_ServerFailedToRespond(
       this.self,
@@ -43,6 +45,7 @@ export class ISteamMatchmakingServerListResponse {
     );
   }
 
+  /** A list refresh you had initiated is now 100% completed */
   refreshComplete(hRequest: Deno.PointerValue, response: EMatchMakingServerResponse): void {
     this.s.SteamAPI_ISteamMatchmakingServerListResponse_RefreshComplete(
       this.self,

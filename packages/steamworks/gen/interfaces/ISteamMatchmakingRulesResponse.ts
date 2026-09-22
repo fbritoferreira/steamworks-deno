@@ -27,6 +27,10 @@ export class ISteamMatchmakingRulesResponse {
     private readonly host: CallResultHost,
   ) {}
 
+  /**
+   * Got data on a rule on the server -- you'll get one of these per rule defined on
+   * the server you are querying
+   */
   rulesResponded(pchRule: string, pchValue: string): void {
     this.s.SteamAPI_ISteamMatchmakingRulesResponse_RulesResponded(
       this.self,
@@ -35,10 +39,15 @@ export class ISteamMatchmakingRulesResponse {
     );
   }
 
+  /** The server failed to respond to the request for rule details */
   rulesFailedToRespond(): void {
     this.s.SteamAPI_ISteamMatchmakingRulesResponse_RulesFailedToRespond(this.self);
   }
 
+  /**
+   * The server has finished responding to the rule details request
+   * (ie, you won't get anymore RulesResponded callbacks)
+   */
   rulesRefreshComplete(): void {
     this.s.SteamAPI_ISteamMatchmakingRulesResponse_RulesRefreshComplete(this.self);
   }

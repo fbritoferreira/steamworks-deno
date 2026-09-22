@@ -31,10 +31,37 @@ export class ISteamNetworkingFakeUDPPort {
     private readonly host: CallResultHost,
   ) {}
 
+  /**
+   * Destroy the object and cleanup any internal connections.
+   * Note that this function call is not threadsafe with respect
+   * to any other method of this interface.  (However, in general
+   * all other operations are threadsafe with respect to each other.)
+   */
   destroyFakeUDPPort(): void {
     this.s.SteamAPI_ISteamNetworkingFakeUDPPort_DestroyFakeUDPPort(this.self);
   }
 
+  /**
+   * Send a datagram to the specified FakeIP.
+   * See ISteamNetworkingSockets::SendMessageToConnection for the meaning of
+   * nSendFlags and possible return codes.
+   * Notes:
+   * - datagrams larger than the underlying MTU are supported, but
+   * reliable messages (k_nSteamNetworkingSend_Reliable) are not supported.
+   * - You will usually want to use k_nSteamNetworkingSend_NoNagle
+   * - k_EResultBusy is returned if this is a "server" port and the global
+   * allocation has not yet completed.
+   * - k_EResultIPNotFound will be returned if the address is a local/ephemeral
+   * address and no existing connection can be found.  This can happen if
+   * the remote host contacted us without having a global address, and we
+   * assigned them a random local address, and then the session with
+   * that host timed out.
+   * - When initiating communications, the first messages may be sent
+   * via backend signaling, or otherwise delayed, while a route is found.
+   * Expect the ping time to fluctuate during this period, and it's possible
+   * that messages will be delivered out of order (which is also possible with
+   * ordinary UDP).
+   */
   sendMessageToFakeIP(
     remoteAddress: SteamNetworkingIPAddr,
     pData: Uint8Array,
@@ -50,6 +77,12 @@ export class ISteamNetworkingFakeUDPPort {
     ) as EResult;
   }
 
+  /**
+   * Receive messages on the port.
+   * Returns the number of messages returned into your array, up to nMaxMessages.
+   * SteamNetworkingMessage_t::m_identity in the returned message(s) will always contain
+   * a FakeIP.  See ISteamNetworkingUtils::GetRealIdentityForFakeIP.
+   */
   receiveMessages(nMaxMessages: number): Deno.PointerValue[] {
     const ppOutMessages_buf = arrayOut("pointer", nMaxMessages);
     const n = this.s.SteamAPI_ISteamNetworkingFakeUDPPort_ReceiveMessages(
@@ -60,6 +93,15 @@ export class ISteamNetworkingFakeUDPPort {
     return readScalarArray(ppOutMessages_buf, "pointer", n) as Deno.PointerValue[];
   }
 
+  /**
+   * Schedule the internal connection for a given peer to be cleaned up in a few seconds.
+   * Idle connections automatically time out, and so this is not strictly *necessary*,
+   * but if you have reason to believe that you are done talking to a given peer for
+   * a while, you can call this to speed up the timeout.  If any remaining packets are
+   * sent or received from the peer, the cleanup is canceled and the usual timeout
+   * value is restored.  Thus you will usually call this immediately after sending
+   * or receiving application-layer "close connection" packets.
+   */
   scheduleCleanup(remoteAddress: SteamNetworkingIPAddr): void {
     this.s.SteamAPI_ISteamNetworkingFakeUDPPort_ScheduleCleanup(
       this.self,

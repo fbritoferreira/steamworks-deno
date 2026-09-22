@@ -1,6 +1,8 @@
 import type { SteamApiJson, Struct } from "../schema.ts";
 import type { MappedType, TypeContext } from "../types.ts";
 import type { LayoutResolver, StructLayout } from "../layout.ts";
+import type { DocIndex } from "../docscan.ts";
+import { jsdoc } from "./jsdoc.ts";
 
 /**
  * Emits, for each struct: a TypeScript interface, a layout table holding both packings,
@@ -65,15 +67,27 @@ function layoutLiteral(l: StructLayout): string {
   return fields ? `{ size: ${l.size}, ${fields} }` : `{ size: ${l.size} }`;
 }
 
-function emitOne(s: Struct, resolver: LayoutResolver, encodable: boolean): string {
+function emitOne(
+  s: Struct,
+  resolver: LayoutResolver,
+  encodable: boolean,
+  docs?: DocIndex,
+): string {
   const l4 = resolver.layout(s.struct, 4);
   const l8 = resolver.layout(s.struct, 8);
-  const iface = l4.fields.map((f) => `  ${f.name}: ${tsFieldType(f.type)};`).join("\n");
+  const iface = l4.fields
+    .map((f) =>
+      `${jsdoc(docs?.fields.get(`${s.struct}.${f.name}`), "  ")}  ${f.name}: ${
+        tsFieldType(f.type)
+      };`
+    )
+    .join("\n");
+  const structDoc = jsdoc(docs?.structs.get(s.struct));
 
   // A callback that carries no payload; an empty interface is not a useful type.
   let out = l4.fields.length === 0
-    ? `export type ${s.struct} = Record<string, never>;\n\n`
-    : `export interface ${s.struct} {\n${iface}\n}\n\n`;
+    ? `${structDoc}export type ${s.struct} = Record<string, never>;\n\n`
+    : `${structDoc}export interface ${s.struct} {\n${iface}\n}\n\n`;
   out += `export const ${s.struct}_layout = {\n  4: ${layoutLiteral(l4)},\n  8: ${
     layoutLiteral(l8)
   },\n} as const;\n\n`;
@@ -129,6 +143,7 @@ export function emitStructs(
   schema: SteamApiJson,
   ctx: TypeContext,
   resolver: LayoutResolver,
+  docs?: DocIndex,
 ): string {
   const plain = new Set(schema.structs.map((s) => s.struct));
   const ordered = topoSort([...schema.structs, ...schema.callback_structs], ctx);
@@ -148,6 +163,6 @@ export function emitStructs(
     out += `import type { ${[...usedEnums].sort().join(", ")} } from "./enums.ts";\n`;
   }
   out += "\n";
-  for (const s of ordered) out += emitOne(s, resolver, plain.has(s.struct));
+  for (const s of ordered) out += emitOne(s, resolver, plain.has(s.struct), docs);
   return out;
 }

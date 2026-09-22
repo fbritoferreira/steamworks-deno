@@ -150,10 +150,18 @@ export class ISteamMatchmaking {
     private readonly host: CallResultHost,
   ) {}
 
+  /** returns the number of favorites servers the user has stored */
   getFavoriteGameCount(): number {
     return this.s.SteamAPI_ISteamMatchmaking_GetFavoriteGameCount(this.self);
   }
 
+  /**
+   * returns the details of the game server
+   * iGame is of range [0,GetFavoriteGameCount())
+   * *pnIP, *pnConnPort are filled in the with IP:port of the game server
+   * *punFlags specify whether the game server was stored as an explicit favorite or in the history of connections
+   * *pRTime32LastPlayedOnServer is filled in the with the Unix time the favorite was added
+   */
   getFavoriteGame(
     iGame: number,
   ): {
@@ -192,6 +200,7 @@ export class ISteamMatchmaking {
     };
   }
 
+  /** adds the game server to the local list; updates the time played of the server if it already exists in the list */
   addFavoriteGame(
     nAppID: number,
     nIP: number,
@@ -211,6 +220,7 @@ export class ISteamMatchmaking {
     );
   }
 
+  /** removes the game server from the local storage; returns true if one was removed */
   removeFavoriteGame(
     nAppID: number,
     nIP: number,
@@ -233,6 +243,11 @@ export class ISteamMatchmaking {
     return this.host.callResult(call, 510, decodeLobbyMatchList_t);
   }
 
+  /**
+   * filters for lobbies
+   * this needs to be called before RequestLobbyList() to take effect
+   * these are cleared on each call to RequestLobbyList()
+   */
   addRequestLobbyListStringFilter(
     pchKeyToMatch: string,
     pchValueToMatch: string,
@@ -246,6 +261,7 @@ export class ISteamMatchmaking {
     );
   }
 
+  /** numerical comparison */
   addRequestLobbyListNumericalFilter(
     pchKeyToMatch: string,
     nValueToMatch: number,
@@ -259,6 +275,7 @@ export class ISteamMatchmaking {
     );
   }
 
+  /** returns results closest to the specified value. Multiple near filters can be added, with early filters taking precedence */
   addRequestLobbyListNearValueFilter(pchKeyToMatch: string, nValueToBeCloseTo: number): void {
     this.s.SteamAPI_ISteamMatchmaking_AddRequestLobbyListNearValueFilter(
       this.self,
@@ -267,6 +284,7 @@ export class ISteamMatchmaking {
     );
   }
 
+  /** returns only lobbies with the specified number of slots available */
   addRequestLobbyListFilterSlotsAvailable(nSlotsAvailable: number): void {
     this.s.SteamAPI_ISteamMatchmaking_AddRequestLobbyListFilterSlotsAvailable(
       this.self,
@@ -274,6 +292,7 @@ export class ISteamMatchmaking {
     );
   }
 
+  /** sets the distance for which we should search for lobbies (based on users IP address to location map on the Steam backed) */
   addRequestLobbyListDistanceFilter(eLobbyDistanceFilter: ELobbyDistanceFilter): void {
     this.s.SteamAPI_ISteamMatchmaking_AddRequestLobbyListDistanceFilter(
       this.self,
@@ -281,6 +300,7 @@ export class ISteamMatchmaking {
     );
   }
 
+  /** sets how many results to return, the lower the count the faster it is to download the lobby results & details to the client */
   addRequestLobbyListResultCountFilter(cMaxResults: number): void {
     this.s.SteamAPI_ISteamMatchmaking_AddRequestLobbyListResultCountFilter(this.self, cMaxResults);
   }
@@ -292,24 +312,56 @@ export class ISteamMatchmaking {
     );
   }
 
+  /**
+   * returns the CSteamID of a lobby, as retrieved by a RequestLobbyList call
+   * should only be called after a LobbyMatchList_t callback is received
+   * iLobby is of the range [0, LobbyMatchList_t::m_nLobbiesMatching)
+   * the returned CSteamID::IsValid() will be false if iLobby is out of range
+   */
   getLobbyByIndex(iLobby: number): bigint {
     return this.s.SteamAPI_ISteamMatchmaking_GetLobbyByIndex(this.self, iLobby);
   }
 
+  /**
+   * Create a lobby on the Steam servers.
+   * If private, then the lobby will not be returned by any RequestLobbyList() call; the CSteamID
+   * of the lobby will need to be communicated via game channels or via InviteUserToLobby()
+   * this is an asynchronous request
+   * results will be returned by LobbyCreated_t callback and call result; lobby is joined & ready to use at this point
+   * a LobbyEnter_t callback will also be received (since the local user is joining their own lobby)
+   */
   createLobby(eLobbyType: ELobbyType, cMaxMembers: number): Promise<LobbyCreated_t> {
     const call = this.s.SteamAPI_ISteamMatchmaking_CreateLobby(this.self, eLobbyType, cMaxMembers);
     return this.host.callResult(call, 513, decodeLobbyCreated_t);
   }
 
+  /**
+   * Joins an existing lobby
+   * this is an asynchronous request
+   * results will be returned by LobbyEnter_t callback & call result, check m_EChatRoomEnterResponse to see if was successful
+   * lobby metadata is available to use immediately on this call completing
+   */
   joinLobby(steamIDLobby: bigint): Promise<LobbyEnter_t> {
     const call = this.s.SteamAPI_ISteamMatchmaking_JoinLobby(this.self, steamIDLobby);
     return this.host.callResult(call, 504, decodeLobbyEnter_t);
   }
 
+  /**
+   * Leave a lobby; this will take effect immediately on the client side
+   * other users in the lobby will be notified by a LobbyChatUpdate_t callback
+   */
   leaveLobby(steamIDLobby: bigint): void {
     this.s.SteamAPI_ISteamMatchmaking_LeaveLobby(this.self, steamIDLobby);
   }
 
+  /**
+   * Invite another user to the lobby
+   * the target user will receive a LobbyInvite_t callback
+   * will return true if the invite is successfully sent, whether or not the target responds
+   * returns false if the local user is not connected to the Steam servers
+   * if the other user clicks the join link, a GameLobbyJoinRequested_t will be posted if the user is in-game,
+   * or if the game isn't running yet the game will be launched with the parameter +connect_lobby <64-bit lobby id>
+   */
   inviteUserToLobby(steamIDLobby: bigint, steamIDInvitee: bigint): boolean {
     return this.s.SteamAPI_ISteamMatchmaking_InviteUserToLobby(
       this.self,
@@ -318,10 +370,16 @@ export class ISteamMatchmaking {
     );
   }
 
+  /** returns the number of users in the specified lobby */
   getNumLobbyMembers(steamIDLobby: bigint): number {
     return this.s.SteamAPI_ISteamMatchmaking_GetNumLobbyMembers(this.self, steamIDLobby);
   }
 
+  /**
+   * returns the CSteamID of a user in the lobby
+   * iMember is of range [0,GetNumLobbyMembers())
+   * note that the current user must be in a lobby to retrieve CSteamIDs of other users in that lobby
+   */
   getLobbyMemberByIndex(steamIDLobby: bigint, iMember: number): bigint {
     return this.s.SteamAPI_ISteamMatchmaking_GetLobbyMemberByIndex(
       this.self,
@@ -330,12 +388,24 @@ export class ISteamMatchmaking {
     );
   }
 
+  /**
+   * Get data associated with this lobby
+   * takes a simple key, and returns the string associated with it
+   * "" will be returned if no value is set, or if steamIDLobby is invalid
+   */
   getLobbyData(steamIDLobby: bigint, pchKey: string): string {
     return readCString(
       this.s.SteamAPI_ISteamMatchmaking_GetLobbyData(this.self, steamIDLobby, cstrArg(pchKey)),
     );
   }
 
+  /**
+   * Sets a key/value pair in the lobby metadata
+   * each user in the lobby will be broadcast this new value, and any new users joining will receive any existing data
+   * this can be used to set lobby names, map, etc.
+   * to reset a key, just set it to ""
+   * other users in the lobby will receive notification of the lobby data change via a LobbyDataUpdate_t callback
+   */
   setLobbyData(steamIDLobby: bigint, pchKey: string, pchValue: string): boolean {
     return this.s.SteamAPI_ISteamMatchmaking_SetLobbyData(
       this.self,
@@ -345,10 +415,12 @@ export class ISteamMatchmaking {
     );
   }
 
+  /** returns the number of metadata keys set on the specified lobby */
   getLobbyDataCount(steamIDLobby: bigint): number {
     return this.s.SteamAPI_ISteamMatchmaking_GetLobbyDataCount(this.self, steamIDLobby);
   }
 
+  /** returns a lobby metadata key/values pair by index, of range [0, GetLobbyDataCount()) */
   getLobbyDataByIndex(
     steamIDLobby: bigint,
     iLobbyData: number,
@@ -369,6 +441,7 @@ export class ISteamMatchmaking {
     return { ok, pchKey: readOutString(pchKey_buf), pchValue: readOutString(pchValue_buf) };
   }
 
+  /** removes a metadata key from the lobby */
   deleteLobbyData(steamIDLobby: bigint, pchKey: string): boolean {
     return this.s.SteamAPI_ISteamMatchmaking_DeleteLobbyData(
       this.self,
@@ -377,6 +450,7 @@ export class ISteamMatchmaking {
     );
   }
 
+  /** Gets per-user metadata for someone in this lobby */
   getLobbyMemberData(steamIDLobby: bigint, steamIDUser: bigint, pchKey: string): string {
     return readCString(
       this.s.SteamAPI_ISteamMatchmaking_GetLobbyMemberData(
@@ -388,6 +462,7 @@ export class ISteamMatchmaking {
     );
   }
 
+  /** Sets per-user metadata (for the local user implicitly) */
   setLobbyMemberData(steamIDLobby: bigint, pchKey: string, pchValue: string): void {
     this.s.SteamAPI_ISteamMatchmaking_SetLobbyMemberData(
       this.self,
@@ -397,6 +472,13 @@ export class ISteamMatchmaking {
     );
   }
 
+  /**
+   * Broadcasts a chat message to the all the users in the lobby
+   * users in the lobby (including the local user) will receive a LobbyChatMsg_t callback
+   * returns true if the message is successfully sent
+   * pvMsgBody can be binary or text data, up to 4k
+   * if pvMsgBody is text, cubMsgBody should be strlen( text ) + 1, to include the null terminator
+   */
   sendLobbyChatMsg(steamIDLobby: bigint, pvMsgBody: Uint8Array, cubMsgBody: number): boolean {
     return this.s.SteamAPI_ISteamMatchmaking_SendLobbyChatMsg(
       this.self,
@@ -406,6 +488,13 @@ export class ISteamMatchmaking {
     );
   }
 
+  /**
+   * Get a chat message as specified in a LobbyChatMsg_t callback
+   * iChatID is the LobbyChatMsg_t::m_iChatID value in the callback
+   * *pSteamIDUser is filled in with the CSteamID of the member
+   * *pvData is filled in with the message itself
+   * return value is the number of bytes written into the buffer
+   */
   getLobbyChatEntry(
     steamIDLobby: bigint,
     iChatID: number,
@@ -430,10 +519,24 @@ export class ISteamMatchmaking {
     };
   }
 
+  /**
+   * Refreshes metadata for a lobby you're not necessarily in right now
+   * you never do this for lobbies you're a member of, only if your
+   * this will send down all the metadata associated with a lobby
+   * this is an asynchronous call
+   * returns false if the local user is not connected to the Steam servers
+   * results will be returned by a LobbyDataUpdate_t callback
+   * if the specified lobby doesn't exist, LobbyDataUpdate_t::m_bSuccess will be set to false
+   */
   requestLobbyData(steamIDLobby: bigint): boolean {
     return this.s.SteamAPI_ISteamMatchmaking_RequestLobbyData(this.self, steamIDLobby);
   }
 
+  /**
+   * sets the game server associated with the lobby
+   * usually at this point, the users will join the specified game server
+   * either the IP/Port or the steamID of the game server has to be valid, depending on how you want the clients to be able to connect
+   */
   setLobbyGameServer(
     steamIDLobby: bigint,
     unGameServerIP: number,
@@ -449,6 +552,7 @@ export class ISteamMatchmaking {
     );
   }
 
+  /** returns the details of a game server set in a lobby - returns false if there is no game server set, or that lobby doesn't exist */
   getLobbyGameServer(
     steamIDLobby: bigint,
   ): {
@@ -475,6 +579,7 @@ export class ISteamMatchmaking {
     };
   }
 
+  /** set the limit on the # of users who can join the lobby */
   setLobbyMemberLimit(steamIDLobby: bigint, cMaxMembers: number): boolean {
     return this.s.SteamAPI_ISteamMatchmaking_SetLobbyMemberLimit(
       this.self,
@@ -483,14 +588,23 @@ export class ISteamMatchmaking {
     );
   }
 
+  /** returns the current limit on the # of users who can join the lobby; returns 0 if no limit is defined */
   getLobbyMemberLimit(steamIDLobby: bigint): number {
     return this.s.SteamAPI_ISteamMatchmaking_GetLobbyMemberLimit(this.self, steamIDLobby);
   }
 
+  /**
+   * updates which type of lobby it is
+   * only lobbies that are k_ELobbyTypePublic or k_ELobbyTypeInvisible, and are set to joinable, will be returned by RequestLobbyList() calls
+   */
   setLobbyType(steamIDLobby: bigint, eLobbyType: ELobbyType): boolean {
     return this.s.SteamAPI_ISteamMatchmaking_SetLobbyType(this.self, steamIDLobby, eLobbyType);
   }
 
+  /**
+   * sets whether or not a lobby is joinable - defaults to true for a new lobby
+   * if set to false, no user can join, even if they are a friend or have been invited
+   */
   setLobbyJoinable(steamIDLobby: bigint, bLobbyJoinable: boolean): boolean {
     return this.s.SteamAPI_ISteamMatchmaking_SetLobbyJoinable(
       this.self,
@@ -499,10 +613,21 @@ export class ISteamMatchmaking {
     );
   }
 
+  /**
+   * returns the current lobby owner
+   * you must be a member of the lobby to access this
+   * there always one lobby owner - if the current owner leaves, another user will become the owner
+   * it is possible (bur rare) to join a lobby just as the owner is leaving, thus entering a lobby with self as the owner
+   */
   getLobbyOwner(steamIDLobby: bigint): bigint {
     return this.s.SteamAPI_ISteamMatchmaking_GetLobbyOwner(this.self, steamIDLobby);
   }
 
+  /**
+   * changes who the lobby owner is
+   * you must be the lobby owner for this to succeed, and steamIDNewOwner must be in the lobby
+   * after completion, the local user will no longer be the owner
+   */
   setLobbyOwner(steamIDLobby: bigint, steamIDNewOwner: bigint): boolean {
     return this.s.SteamAPI_ISteamMatchmaking_SetLobbyOwner(
       this.self,
@@ -511,6 +636,10 @@ export class ISteamMatchmaking {
     );
   }
 
+  /**
+   * link two lobbies for the purposes of checking player compatibility
+   * you must be the lobby owner of both lobbies
+   */
   setLinkedLobby(steamIDLobby: bigint, steamIDLobbyDependent: bigint): boolean {
     return this.s.SteamAPI_ISteamMatchmaking_SetLinkedLobby(
       this.self,

@@ -41,6 +41,10 @@ export class ISteamScreenshots {
     private readonly host: CallResultHost,
   ) {}
 
+  /**
+   * Writes a screenshot to the user's screenshot library given the raw image data, which must be in RGB format.
+   * The return value is a handle that is valid for the duration of the game process and can be used to apply tags.
+   */
   writeScreenshot(pubRGB: Uint8Array, cubRGB: number, nWidth: number, nHeight: number): number {
     return this.s.SteamAPI_ISteamScreenshots_WriteScreenshot(
       this.self,
@@ -51,6 +55,12 @@ export class ISteamScreenshots {
     );
   }
 
+  /**
+   * Adds a screenshot to the user's screenshot library from disk.  If a thumbnail is provided, it must be 200 pixels wide and the same aspect ratio
+   * as the screenshot, otherwise a thumbnail will be generated if the user uploads the screenshot.  The screenshots must be in either JPEG or TGA format.
+   * The return value is a handle that is valid for the duration of the game process and can be used to apply tags.
+   * JPEG, TGA, and PNG formats are supported.
+   */
   addScreenshotToLibrary(
     pchFilename: string,
     pchThumbnailFilename: string,
@@ -66,14 +76,21 @@ export class ISteamScreenshots {
     );
   }
 
+  /** Causes the Steam overlay to take a screenshot.  If screenshots are being hooked by the game then a ScreenshotRequested_t callback is sent back to the game instead. */
   triggerScreenshot(): void {
     this.s.SteamAPI_ISteamScreenshots_TriggerScreenshot(this.self);
   }
 
+  /**
+   * Toggles whether the overlay handles screenshots when the user presses the screenshot hotkey, or the game handles them.  If the game is hooking screenshots,
+   * then the ScreenshotRequested_t callback will be sent if the user presses the hotkey, and the game is expected to call WriteScreenshot or AddScreenshotToLibrary
+   * in response.
+   */
   hookScreenshots(bHook: boolean): void {
     this.s.SteamAPI_ISteamScreenshots_HookScreenshots(this.self, bHook);
   }
 
+  /** Sets metadata about a screenshot's location (for example, the name of the map) */
   setLocation(hScreenshot: number, pchLocation: string): boolean {
     return this.s.SteamAPI_ISteamScreenshots_SetLocation(
       this.self,
@@ -82,10 +99,12 @@ export class ISteamScreenshots {
     );
   }
 
+  /** Tags a user as being visible in the screenshot */
   tagUser(hScreenshot: number, steamID: bigint): boolean {
     return this.s.SteamAPI_ISteamScreenshots_TagUser(this.self, hScreenshot, steamID);
   }
 
+  /** Tags a published file as being visible in the screenshot */
   tagPublishedFile(hScreenshot: number, unPublishedFileID: bigint): boolean {
     return this.s.SteamAPI_ISteamScreenshots_TagPublishedFile(
       this.self,
@@ -94,10 +113,18 @@ export class ISteamScreenshots {
     );
   }
 
+  /** Returns true if the app has hooked the screenshot */
   isScreenshotsHooked(): boolean {
     return this.s.SteamAPI_ISteamScreenshots_IsScreenshotsHooked(this.self);
   }
 
+  /**
+   * Adds a VR screenshot to the user's screenshot library from disk in the supported type.
+   * pchFilename should be the normal 2D image used in the library view
+   * pchVRFilename should contain the image that matches the correct type
+   * The return value is a handle that is valid for the duration of the game process and can be used to apply tags.
+   * JPEG, TGA, and PNG formats are supported.
+   */
   addVRScreenshotToLibrary(
     eType: EVRScreenshotType,
     pchFilename: string,

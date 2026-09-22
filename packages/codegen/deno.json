@@ -12,5 +12,6 @@
       "fixtures",
       "src/**/*_test.ts"
     ]
-  }
+  },
+  "description": "Generates Deno FFI bindings for the Steamworks SDK from Valve's steam_api.json, including per-platform struct layouts. Not affiliated with Valve."
 }

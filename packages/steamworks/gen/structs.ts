@@ -32,6 +32,7 @@ import type {
 } from "./enums.ts";
 
 export interface SteamIPAddress_t {
+  /** Network order! Same as inaddr_in6.  (0011:2233:4455:6677:8899:aabb:ccdd:eeff) */
   m_rgubIPv6: string;
   m_eType: ESteamIPType;
 }
@@ -106,6 +107,12 @@ export function encodeFriendGameInfo_t(value: FriendGameInfo_t): Uint8Array {
   return out;
 }
 
+/**
+ * Store key/value pair used in matchmaking queries.
+ * Actually, the name Key/Value is a bit misleading.  The "key" is better
+ * understood as "filter operation code" and the "value" is the operand to this
+ * filter operation.  The meaning of the operand depends upon the filter.
+ */
 export interface MatchMakingKeyValuePair_t {
   m_szKey: string;
   m_szValue: string;
@@ -340,10 +347,15 @@ export function encodeSteamParamStringArray_t(value: SteamParamStringArray_t): U
 }
 
 export interface LeaderboardEntry_t {
+  /** user with the entry - use SteamFriends()->GetFriendPersonaName() & SteamFriends()->GetFriendAvatar() to get more info */
   m_steamIDUser: bigint;
+  /** [1..N], where N is the number of users with an entry in the leaderboard */
   m_nGlobalRank: number;
+  /** score as set in the leaderboard */
   m_nScore: number;
+  /** number of int32 details available for this entry */
   m_cDetails: number;
+  /** handle for UGC attached to the entry */
   m_hUGC: bigint;
 }
 
@@ -375,13 +387,19 @@ export function encodeLeaderboardEntry_t(value: LeaderboardEntry_t): Uint8Array 
 }
 
 export interface P2PSessionState_t {
+  /** true if we've got an active open connection */
   m_bConnectionActive: number;
+  /** true if we're currently trying to establish a connection */
   m_bConnecting: number;
+  /** last error recorded (see enum above) */
   m_eP2PSessionError: number;
+  /** true if it's going through a relay server (TURN) */
   m_bUsingRelay: number;
   m_nBytesQueuedForSend: number;
   m_nPacketsQueuedForSend: number;
+  /** potential IP:Port of remote host. Could be TURN server. */
   m_nRemoteIP: number;
+  /** Only exists for compatibility with older authentication api's */
   m_nRemotePort: number;
 }
 
@@ -501,11 +519,17 @@ export interface InputMotionData_t {
   rotQuatY: number;
   rotQuatZ: number;
   rotQuatW: number;
+  /** +tive when controller's Right hand side is pointed toward the sky. */
   posAccelX: number;
+  /** +tive when controller's charging port (forward side of controller) is pointed toward the sky. */
   posAccelY: number;
+  /** +tive when controller's sticks point toward the sky. */
   posAccelZ: number;
+  /** Local Pitch */
   rotVelX: number;
+  /** Local Roll */
   rotVelY: number;
+  /** Local Yaw */
   rotVelZ: number;
 }
 
@@ -570,6 +594,10 @@ export function encodeInputMotionData_t(value: InputMotionData_t): Uint8Array {
   return out;
 }
 
+/**
+ * Purpose: when callbacks are enabled this fires each time a controller action
+ * state changes
+ */
 export interface SteamInputActionEvent_t {
   controllerHandle: bigint;
   eEventType: ESteamInputActionEventType;
@@ -601,33 +629,59 @@ export function encodeSteamInputActionEvent_t(value: SteamInputActionEvent_t): U
   return out;
 }
 
+/** Details for a single published file/UGC */
 export interface SteamUGCDetails_t {
   m_nPublishedFileId: bigint;
+  /** The result of the operation. */
   m_eResult: EResult;
+  /** Type of the file */
   m_eFileType: EWorkshopFileType;
+  /** ID of the app that created this file. */
   m_nCreatorAppID: number;
+  /** ID of the app that will consume this file. */
   m_nConsumerAppID: number;
+  /** title of document */
   m_rgchTitle: string;
+  /** description of document */
   m_rgchDescription: string;
+  /** Steam ID of the user who created this content. */
   m_ulSteamIDOwner: bigint;
+  /** time when the published file was created */
   m_rtimeCreated: number;
+  /** time when the published file was last updated */
   m_rtimeUpdated: number;
+  /** time when the user added the published file to their list (not always applicable) */
   m_rtimeAddedToUserList: number;
+  /** visibility */
   m_eVisibility: ERemoteStoragePublishedFileVisibility;
+  /** whether the file was banned */
   m_bBanned: boolean;
+  /** developer has specifically flagged this item as accepted in the Workshop */
   m_bAcceptedForUse: boolean;
+  /** whether the list of tags was too long to be returned in the provided buffer */
   m_bTagsTruncated: boolean;
+  /** comma separated list of all tags associated with this file */
   m_rgchTags: string;
+  /** The handle of the primary file */
   m_hFile: bigint;
+  /** The handle of the preview file */
   m_hPreviewFile: bigint;
+  /** The cloud filename of the primary file */
   m_pchFileName: string;
+  /** Size of the primary file (for legacy items which only support one file). This may not be accurate for non-legacy items which can be greater than 4gb in size. */
   m_nFileSize: number;
+  /** Size of the preview file */
   m_nPreviewFileSize: number;
+  /** URL (for a video or a website) */
   m_rgchURL: string;
+  /** number of votes up */
   m_unVotesUp: number;
+  /** number of votes down */
   m_unVotesDown: number;
+  /** calculated score */
   m_flScore: number;
   m_unNumChildren: number;
+  /** Total size of all files (non-legacy), excluding the preview file */
   m_ulTotalFilesSize: bigint;
 }
 
@@ -764,6 +818,7 @@ export interface SteamItemDetails_t {
   m_itemId: bigint;
   m_iDefinition: number;
   m_unQuantity: number;
+  /** see ESteamItemFlags */
   m_unFlags: number;
 }
 
@@ -792,11 +847,17 @@ export function encodeSteamItemDetails_t(value: SteamItemDetails_t): Uint8Array 
   return out;
 }
 
+/** Mouse motion event data, valid when m_eType is k_ERemotePlayInputMouseMotion */
 export interface RemotePlayInputMouseMotion_t {
+  /** True if this is absolute mouse motion and m_flNormalizedX and m_flNormalizedY are valid */
   m_bAbsolute: boolean;
+  /** The absolute X position of the mouse, normalized to the display, if m_bAbsolute is true */
   m_flNormalizedX: number;
+  /** The absolute Y position of the mouse, normalized to the display, if m_bAbsolute is true */
   m_flNormalizedY: number;
+  /** Relative mouse motion in the X direction */
   m_nDeltaX: number;
+  /** Relative mouse motion in the Y direction */
   m_nDeltaY: number;
 }
 
@@ -845,8 +906,10 @@ export function encodeRemotePlayInputMouseMotion_t(
   return out;
 }
 
+/** Mouse wheel event data, valid when m_eType is k_ERemotePlayInputMouseWheel */
 export interface RemotePlayInputMouseWheel_t {
   m_eDirection: ERemotePlayMouseWheelDirection;
+  /** 1.0f is a single click of the wheel, 120 units on Windows */
   m_flAmount: number;
 }
 
@@ -871,9 +934,13 @@ export function encodeRemotePlayInputMouseWheel_t(value: RemotePlayInputMouseWhe
   return out;
 }
 
+/** Key event data, valid when m_eType is k_ERemotePlayInputKeyDown or k_ERemotePlayInputKeyUp */
 export interface RemotePlayInputKey_t {
+  /** Keyboard scancode, common values are defined in ERemotePlayScancode */
   m_eScancode: number;
+  /** Mask of ERemotePlayKeyModifier active for this key event */
   m_unModifiers: number;
+  /** UCS-4 character generated by the keypress, or 0 if it wasn't a character key, e.g. Delete or Left Arrow */
   m_unKeycode: number;
 }
 
@@ -929,6 +996,11 @@ export function encodeRemotePlayInput_t(value: RemotePlayInput_t): Uint8Array {
   return out;
 }
 
+/**
+ * Store an IP and port.  IPv6 is always used; IPv4 is represented using
+ * "IPv4-mapped" addresses: IPv4 aa.bb.cc.dd => IPv6 ::ffff:aabb:ccdd
+ * (RFC 4291 section 2.5.5.2.)
+ */
 export interface SteamNetworkingIPAddr {
   m_ipv6: string;
   m_port: number;
@@ -955,6 +1027,13 @@ export function encodeSteamNetworkingIPAddr(value: SteamNetworkingIPAddr): Uint8
   return out;
 }
 
+/**
+ * An abstract way to represent the identity of a network host.  All identities can
+ * be represented as simple string.  Furthermore, this string representation is actually
+ * used on the wire in several places, even though it is less efficient, in order to
+ * facilitate forward compatibility.  (Old client code can handle an identity type that
+ * it doesn't understand.)
+ */
 export interface SteamNetworkingIdentity {
   m_eType: ESteamNetworkingIdentityType;
   m_cbSize: number;
@@ -984,6 +1063,7 @@ export function encodeSteamNetworkingIdentity(value: SteamNetworkingIdentity): U
   return out;
 }
 
+/** Describe the state of a connection. */
 export interface SteamNetConnectionInfo_t {
   m_identityRemote: SteamNetworkingIdentity;
   m_nUserData: bigint;
@@ -1080,6 +1160,10 @@ export function encodeSteamNetConnectionInfo_t(value: SteamNetConnectionInfo_t):
   return out;
 }
 
+/**
+ * Quick connection state, pared down to something you could call
+ * more frequently without it being too big of a perf hit.
+ */
 export interface SteamNetConnectionRealTimeStatus_t {
   m_eState: ESteamNetworkingConnectionState;
   m_nPing: number;
@@ -1183,10 +1267,12 @@ export function encodeSteamNetConnectionRealTimeStatus_t(
   return out;
 }
 
+/** Quick status of a particular lane */
 export interface SteamNetConnectionRealTimeLaneStatus_t {
   m_cbPendingUnreliable: number;
   m_cbPendingReliable: number;
   m_cbSentUnackedReliable: number;
+  /** Reserved for future use */
   _reservePad1: number;
   m_usecQueueTime: bigint;
   reserved: number[];
@@ -1241,6 +1327,7 @@ export function encodeSteamNetConnectionRealTimeLaneStatus_t(
   return out;
 }
 
+/** A message that has been received. */
 export interface SteamNetworkingMessage_t {
   m_pData: Deno.PointerValue;
   m_cbSize: number;
@@ -1340,6 +1427,20 @@ export function encodeSteamNetworkingMessage_t(value: SteamNetworkingMessage_t):
   return out;
 }
 
+/**
+ * Object that describes a "location" on the Internet with sufficient
+ * detail that we can reasonably estimate an upper bound on the ping between
+ * the two hosts, even if a direct route between the hosts is not possible,
+ * and the connection must be routed through the Steam Datagram Relay network.
+ * This does not contain any information that identifies the host.  Indeed,
+ * if two hosts are in the same building or otherwise have nearly identical
+ * networking characteristics, then it's valid to use the same location
+ * object for both of them.
+ * NOTE: This object should only be used in the same process!  Do not serialize it,
+ * send it over the wire, or persist it in a file or database!  If you need
+ * to do that, convert it to a string representation using the methods in
+ * ISteamNetworkingUtils().
+ */
 export interface SteamNetworkPingLocation_t {
   m_data: string;
 }
@@ -1363,6 +1464,18 @@ export function encodeSteamNetworkPingLocation_t(value: SteamNetworkPingLocation
   return out;
 }
 
+/**
+ * In a few places we need to set configuration options on listen sockets and connections, and
+ * have them take effect *before* the listen socket or connection really starts doing anything.
+ * Creating the object and then setting the options "immediately" after creation doesn't work
+ * completely, because network packets could be received between the time the object is created and
+ * when the options are applied.  To set options at creation time in a reliable way, they must be
+ * passed to the creation function.  This structure is used to pass those options.
+ * For the meaning of these fields, see ISteamNetworkingUtils::SetConfigValue.  Basically
+ * when the object is created, we just iterate over the list of options and call
+ * ISteamNetworkingUtils::SetConfigValueStruct, where the scope arguments are supplied by the
+ * object being created.
+ */
 export interface SteamNetworkingConfigValue_t {
   m_eValue: ESteamNetworkingConfigValue;
   m_eDataType: ESteamNetworkingConfigDataType;
@@ -1484,10 +1597,15 @@ export function encodeSteamDatagramGameCoordinatorServerLogin(
   return out;
 }
 
+/** Internal structure used in manual callback dispatch */
 export interface CallbackMsg_t {
+  /** Specific user to whom this callback applies. */
   m_hSteamUser: number;
+  /** Callback identifier.  (Corresponds to the k_iCallback enum in the callback structure.) */
   m_iCallback: number;
+  /** Points to the callback structure */
   m_pubParam: Deno.PointerValue;
+  /** Size of the data pointed to by m_pubParam */
   m_cubParam: number;
 }
 
@@ -1610,6 +1728,13 @@ export function encodeDigitalAction_t(value: DigitalAction_t): Uint8Array {
   return out;
 }
 
+/**
+ * Purpose: Called when an authenticated connection to the Steam back-end has been established.
+ * This means the Steam client now has a working connection to the Steam servers.
+ * Usually this will have occurred before the game has launched, and should
+ * only be seen if the user has dropped connection due to a networking issue
+ * or a Steam server update.
+ */
 export type SteamServersConnected_t = Record<string, never>;
 
 export const SteamServersConnected_t_layout = {
@@ -1622,6 +1747,11 @@ export function decodeSteamServersConnected_t(bytes: Uint8Array): SteamServersCo
   return {};
 }
 
+/**
+ * Purpose: called when a connection attempt has failed
+ * this will occur periodically if the Steam client is not connected,
+ * and has failed in it's retry to establish a connection
+ */
 export interface SteamServerConnectFailure_t {
   m_eResult: EResult;
   m_bStillRetrying: boolean;
@@ -1640,6 +1770,10 @@ export function decodeSteamServerConnectFailure_t(bytes: Uint8Array): SteamServe
   };
 }
 
+/**
+ * Purpose: called if the client has lost connection to the Steam servers
+ * real-time services will be disabled until a matching SteamServersConnected_t has been posted
+ */
 export interface SteamServersDisconnected_t {
   m_eResult: EResult;
 }
@@ -1656,6 +1790,12 @@ export function decodeSteamServersDisconnected_t(bytes: Uint8Array): SteamServer
   };
 }
 
+/**
+ * Purpose: Sent by the Steam server to the client telling it to disconnect from the specified game server,
+ * which it may be in the process of or already connected to.
+ * The game client should immediately disconnect upon receiving this message.
+ * This can usually occur if the user doesn't have rights to play on the game server.
+ */
 export interface ClientGameServerDeny_t {
   m_uAppID: number;
   m_unGameServerIP: number;
@@ -1694,6 +1834,11 @@ export function decodeClientGameServerDeny_t(bytes: Uint8Array): ClientGameServe
   };
 }
 
+/**
+ * Purpose: called when the callback system for this client is in an error state (and has flushed pending callbacks)
+ * When getting this message the client should disconnect from Steam, reset any stored Steam state and reconnect.
+ * This usually occurs in the rare event the Steam client has some kind of fatal error.
+ */
 export interface IPCFailure_t {
   m_eFailureType: number;
 }
@@ -1710,6 +1855,7 @@ export function decodeIPCFailure_t(bytes: Uint8Array): IPCFailure_t {
   };
 }
 
+/** Purpose: Signaled whenever licenses change */
 export type LicensesUpdated_t = Record<string, never>;
 
 export const LicensesUpdated_t_layout = {
@@ -1722,9 +1868,11 @@ export function decodeLicensesUpdated_t(bytes: Uint8Array): LicensesUpdated_t {
   return {};
 }
 
+/** callback for BeginAuthSession */
 export interface ValidateAuthTicketResponse_t {
   m_SteamID: bigint;
   m_eAuthSessionResponse: EAuthSessionResponse;
+  /** different from m_SteamID if borrowed */
   m_OwnerSteamID: bigint;
 }
 
@@ -1744,9 +1892,13 @@ export function decodeValidateAuthTicketResponse_t(
   };
 }
 
+/** Purpose: called when a user has responded to a microtransaction authorization request */
 export interface MicroTxnAuthorizationResponse_t {
+  /** AppID for this microtransaction */
   m_unAppID: number;
+  /** OrderID provided for the microtransaction */
   m_ulOrderID: bigint;
+  /** if user authorized transaction */
   m_bAuthorized: number;
 }
 
@@ -1766,6 +1918,7 @@ export function decodeMicroTxnAuthorizationResponse_t(
   };
 }
 
+/** Purpose: Result from RequestEncryptedAppTicket */
 export interface EncryptedAppTicketResponse_t {
   m_eResult: EResult;
 }
@@ -1784,6 +1937,7 @@ export function decodeEncryptedAppTicketResponse_t(
   };
 }
 
+/** callback for GetAuthSessionTicket */
 export interface GetAuthSessionTicketResponse_t {
   m_hAuthTicket: number;
   m_eResult: EResult;
@@ -1804,6 +1958,7 @@ export function decodeGetAuthSessionTicketResponse_t(
   };
 }
 
+/** Purpose: sent to your game in response to a steam://gamewebcallback/ command */
 export interface GameWebCallback_t {
   m_szURL: string;
 }
@@ -1820,6 +1975,7 @@ export function decodeGameWebCallback_t(bytes: Uint8Array): GameWebCallback_t {
   };
 }
 
+/** Purpose: sent to your game in response to ISteamUser::RequestStoreAuthURL */
 export interface StoreAuthURLResponse_t {
   m_szURL: string;
 }
@@ -1836,11 +1992,14 @@ export function decodeStoreAuthURLResponse_t(bytes: Uint8Array): StoreAuthURLRes
   };
 }
 
+/** Purpose: sent in response to ISteamUser::GetMarketEligibility */
 export interface MarketEligibilityResponse_t {
   m_bAllowed: boolean;
   m_eNotAllowedReason: EMarketNotAllowedReasonFlags;
   m_rtAllowedAtTime: number;
+  /** The number of days any user is required to have had Steam Guard before they can use the market */
   m_cdaySteamGuardRequiredDays: number;
+  /** The number of days after initial device authorization a user must wait before using the market on that device */
   m_cdayNewDeviceCooldown: number;
 }
 
@@ -1874,14 +2033,29 @@ export function decodeMarketEligibilityResponse_t(bytes: Uint8Array): MarketElig
   };
 }
 
+/**
+ * Purpose: sent for games with enabled anti indulgence / duration control, for
+ * enabled users. Lets the game know whether the user can keep playing or
+ * whether the game should exit, and returns info about remaining gameplay time.
+ * This callback is fired asynchronously in response to timers triggering.
+ * It is also fired in response to calls to GetDurationControl().
+ */
 export interface DurationControl_t {
+  /** result of call (always k_EResultOK for asynchronous timer-based notifications) */
   m_eResult: EResult;
+  /** appid generating playtime */
   m_appid: number;
+  /** is duration control applicable to user + game combination */
   m_bApplicable: boolean;
+  /** playtime since most recent 5 hour gap in playtime, only counting up to regulatory limit of playtime, in seconds */
   m_csecsLast5h: number;
+  /** recommended progress (either everything is fine, or please exit game) */
   m_progress: EDurationControlProgress;
+  /** notification to show, if any (always k_EDurationControlNotification_None for API calls) */
   m_notification: EDurationControlNotification;
+  /** playtime on current calendar day */
   m_csecsToday: number;
+  /** playtime remaining until the user hits a regulatory limit */
   m_csecsRemaining: number;
 }
 
@@ -1924,6 +2098,7 @@ export function decodeDurationControl_t(bytes: Uint8Array): DurationControl_t {
   };
 }
 
+/** callback for GetTicketForWebApi */
 export interface GetTicketForWebApiResponse_t {
   m_hAuthTicket: number;
   m_eResult: EResult;
@@ -1948,8 +2123,11 @@ export function decodeGetTicketForWebApiResponse_t(
   };
 }
 
+/** Purpose: called when a friends' status changes */
 export interface PersonaStateChange_t {
+  /** steamID of the friend who changed */
   m_ulSteamID: bigint;
+  /** what's changed */
   m_nChangeFlags: number;
 }
 
@@ -1966,10 +2144,18 @@ export function decodePersonaStateChange_t(bytes: Uint8Array): PersonaStateChang
   };
 }
 
+/**
+ * Purpose: posted when game overlay activates or deactivates
+ * the game can use this to be pause or resume single player games
+ */
 export interface GameOverlayActivated_t {
+  /** true if it's just been activated, false otherwise */
   m_bActive: number;
+  /** true if the user asked for the overlay to be activated/deactivated */
   m_bUserInitiated: boolean;
+  /** the appID of the game (should always be the current game) */
   m_nAppID: number;
+  /** used internally */
   m_dwOverlayPID: number;
 }
 
@@ -1988,8 +2174,14 @@ export function decodeGameOverlayActivated_t(bytes: Uint8Array): GameOverlayActi
   };
 }
 
+/**
+ * Purpose: called when the user tries to join a different game server from their friends list
+ * game client should attempt to connect to specified server when this is received
+ */
 export interface GameServerChangeRequested_t {
+  /** server address ("127.0.0.1:27015", "tf2.valvesoftware.com") */
   m_rgchServer: string;
+  /** server password, if any */
   m_rgchPassword: string;
 }
 
@@ -2006,6 +2198,10 @@ export function decodeGameServerChangeRequested_t(bytes: Uint8Array): GameServer
   };
 }
 
+/**
+ * Purpose: called when the user tries to join a lobby from their friends list
+ * game client should attempt to connect to specified lobby when this is received
+ */
 export interface GameLobbyJoinRequested_t {
   m_steamIDLobby: bigint;
   m_steamIDFriend: bigint;
@@ -2024,10 +2220,18 @@ export function decodeGameLobbyJoinRequested_t(bytes: Uint8Array): GameLobbyJoin
   };
 }
 
+/**
+ * Purpose: called when an avatar is loaded in from a previous GetLargeFriendAvatar() call
+ * if the image wasn't already available
+ */
 export interface AvatarImageLoaded_t {
+  /** steamid the avatar has been loaded for */
   m_steamID: bigint;
+  /** the image index of the now loaded image */
   m_iImage: number;
+  /** width of the loaded image */
   m_iWide: number;
+  /** height of the loaded image */
   m_iTall: number;
 }
 
@@ -2046,6 +2250,7 @@ export function decodeAvatarImageLoaded_t(bytes: Uint8Array): AvatarImageLoaded_
   };
 }
 
+/** Purpose: marks the return of a request officer list call */
 export interface ClanOfficerListResponse_t {
   m_steamIDClan: bigint;
   m_cOfficers: number;
@@ -2066,8 +2271,11 @@ export function decodeClanOfficerListResponse_t(bytes: Uint8Array): ClanOfficerL
   };
 }
 
+/** Purpose: callback indicating updated data about friends rich presence information */
 export interface FriendRichPresenceUpdate_t {
+  /** friend who's rich presence has changed */
   m_steamIDFriend: bigint;
+  /** the appID of the game (should always be the current game) */
   m_nAppID: number;
 }
 
@@ -2084,7 +2292,12 @@ export function decodeFriendRichPresenceUpdate_t(bytes: Uint8Array): FriendRichP
   };
 }
 
+/**
+ * Purpose: called when the user tries to join a game from their friends list
+ * rich presence will have been set with the "connect" key which is set here
+ */
 export interface GameRichPresenceJoinRequested_t {
+  /** the friend they did the join via (will be invalid if not directly via a friend) */
   m_steamIDFriend: bigint;
   m_rgchConnect: string;
 }
@@ -2104,6 +2317,7 @@ export function decodeGameRichPresenceJoinRequested_t(
   };
 }
 
+/** Purpose: a chat message has been received for a clan chat the game has joined */
 export interface GameConnectedClanChatMsg_t {
   m_steamIDClanChat: bigint;
   m_steamIDUser: bigint;
@@ -2124,6 +2338,7 @@ export function decodeGameConnectedClanChatMsg_t(bytes: Uint8Array): GameConnect
   };
 }
 
+/** Purpose: a user has joined a clan chat */
 export interface GameConnectedChatJoin_t {
   m_steamIDClanChat: bigint;
   m_steamIDUser: bigint;
@@ -2142,10 +2357,13 @@ export function decodeGameConnectedChatJoin_t(bytes: Uint8Array): GameConnectedC
   };
 }
 
+/** Purpose: a user has left the chat we're in */
 export interface GameConnectedChatLeave_t {
   m_steamIDClanChat: bigint;
   m_steamIDUser: bigint;
+  /** true if admin kicked */
   m_bKicked: boolean;
+  /** true if Steam connection dropped */
   m_bDropped: boolean;
 }
 
@@ -2164,6 +2382,7 @@ export function decodeGameConnectedChatLeave_t(bytes: Uint8Array): GameConnected
   };
 }
 
+/** Purpose: a DownloadClanActivityCounts() call has finished */
 export interface DownloadClanActivityCountsResult_t {
   m_bSuccess: boolean;
 }
@@ -2182,6 +2401,7 @@ export function decodeDownloadClanActivityCountsResult_t(
   };
 }
 
+/** Purpose: a JoinClanChatRoom() call has finished */
 export interface JoinClanChatRoomCompletionResult_t {
   m_steamIDClanChat: bigint;
   m_eChatRoomEnterResponse: EChatRoomEnterResponse;
@@ -2202,6 +2422,7 @@ export function decodeJoinClanChatRoomCompletionResult_t(
   };
 }
 
+/** Purpose: a chat message has been received from a user */
 export interface GameConnectedFriendChatMsg_t {
   m_steamIDUser: bigint;
   m_iMessageID: number;
@@ -2286,6 +2507,7 @@ export function decodeFriendsEnumerateFollowingList_t(
   };
 }
 
+/** Purpose: Invoked when the status of unread messages changes */
 export type UnreadChatMessagesChanged_t = Record<string, never>;
 
 export const UnreadChatMessagesChanged_t_layout = {
@@ -2298,6 +2520,7 @@ export function decodeUnreadChatMessagesChanged_t(bytes: Uint8Array): UnreadChat
   return {};
 }
 
+/** Purpose: Dispatched when an overlay browser instance is navigated to a protocol/scheme registered by RegisterProtocolInOverlayBrowser() */
 export interface OverlayBrowserProtocolNavigation_t {
   rgchURI: string;
 }
@@ -2316,6 +2539,7 @@ export function decodeOverlayBrowserProtocolNavigation_t(
   };
 }
 
+/** Purpose: A user's equipped profile items have changed */
 export interface EquippedProfileItemsChanged_t {
   m_steamID: bigint;
 }
@@ -2334,6 +2558,7 @@ export function decodeEquippedProfileItemsChanged_t(
   };
 }
 
+/** Purpose: */
 export interface EquippedProfileItems_t {
   m_eResult: EResult;
   m_steamID: bigint;
@@ -2384,6 +2609,7 @@ export function decodeEquippedProfileItems_t(bytes: Uint8Array): EquippedProfile
   };
 }
 
+/** Purpose: The country of the user changed */
 export type IPCountry_t = Record<string, never>;
 
 export const IPCountry_t_layout = {
@@ -2396,6 +2622,7 @@ export function decodeIPCountry_t(bytes: Uint8Array): IPCountry_t {
   return {};
 }
 
+/** Purpose: Fired when running on a handheld PC or laptop with less than 10 minutes of battery is left, fires then every minute */
 export interface LowBatteryPower_t {
   m_nMinutesBatteryLeft: number;
 }
@@ -2412,6 +2639,7 @@ export function decodeLowBatteryPower_t(bytes: Uint8Array): LowBatteryPower_t {
   };
 }
 
+/** Purpose: called when a SteamAsyncCall_t has completed (or failed) */
 export interface SteamAPICallCompleted_t {
   m_hAsyncCall: bigint;
   m_iCallback: number;
@@ -2432,6 +2660,7 @@ export function decodeSteamAPICallCompleted_t(bytes: Uint8Array): SteamAPICallCo
   };
 }
 
+/** called when Steam wants to shutdown */
 export type SteamShutdown_t = Record<string, never>;
 
 export const SteamShutdown_t_layout = {
@@ -2444,6 +2673,7 @@ export function decodeSteamShutdown_t(bytes: Uint8Array): SteamShutdown_t {
   return {};
 }
 
+/** callback for CheckFileSignature */
 export interface CheckFileSignature_t {
   m_eCheckFileSignature: ECheckFileSignature;
 }
@@ -2460,7 +2690,9 @@ export function decodeCheckFileSignature_t(bytes: Uint8Array): CheckFileSignatur
   };
 }
 
+/** Full Screen gamepad text input has been closed */
 export interface GamepadTextInputDismissed_t {
+  /** true if user entered & accepted text (Call ISteamUtils::GetEnteredGamepadTextInput() for text), false if canceled input */
   m_bSubmitted: boolean;
   m_unSubmittedText: number;
   m_unAppID: number;
@@ -2492,6 +2724,7 @@ export function decodeAppResumingFromSuspend_t(bytes: Uint8Array): AppResumingFr
   return {};
 }
 
+/** The floating on-screen keyboard has been closed */
 export type FloatingGamepadTextInputDismissed_t = Record<string, never>;
 
 export const FloatingGamepadTextInputDismissed_t_layout = {
@@ -2506,7 +2739,9 @@ export function decodeFloatingGamepadTextInputDismissed_t(
   return {};
 }
 
+/** The text filtering dictionary has changed */
 export interface FilterTextDictionaryChanged_t {
+  /** One of ELanguage, or k_LegallyRequiredFiltering */
   m_eLanguage: number;
 }
 
@@ -2524,12 +2759,15 @@ export function decodeFilterTextDictionaryChanged_t(
   };
 }
 
+/** Purpose: a server was added/removed from the favorites list, you should refresh now */
 export interface FavoritesListChanged_t {
+  /** an IP of 0 means reload the whole list, any other value means just one server */
   m_nIP: number;
   m_nQueryPort: number;
   m_nConnPort: number;
   m_nAppID: number;
   m_nFlags: number;
+  /** true if this is adding the entry, otherwise it is a remove */
   m_bAdd: boolean;
   m_unAccountId: number;
 }
@@ -2570,9 +2808,19 @@ export function decodeFavoritesListChanged_t(bytes: Uint8Array): FavoritesListCh
   };
 }
 
+/**
+ * Purpose: Someone has invited you to join a Lobby
+ * normally you don't need to do anything with this, since
+ * the Steam UI will also display a '<user> has invited you to the lobby, join?' dialog
+ * if the user outside a game chooses to join, your game will be launched with the parameter "+connect_lobby <64-bit lobby id>",
+ * or with the callback GameLobbyJoinRequested_t if they're already in-game
+ */
 export interface LobbyInvite_t {
+  /** Steam ID of the person making the invite */
   m_ulSteamIDUser: bigint;
+  /** Steam ID of the Lobby */
   m_ulSteamIDLobby: bigint;
+  /** GameID of the Lobby */
   m_ulGameID: bigint;
 }
 
@@ -2590,10 +2838,19 @@ export function decodeLobbyInvite_t(bytes: Uint8Array): LobbyInvite_t {
   };
 }
 
+/**
+ * Purpose: Sent on entering a lobby, or on failing to enter
+ * m_EChatRoomEnterResponse will be set to k_EChatRoomEnterResponseSuccess on success,
+ * or a higher value on failure (see enum EChatRoomEnterResponse)
+ */
 export interface LobbyEnter_t {
+  /** SteamID of the Lobby you have entered */
   m_ulSteamIDLobby: bigint;
+  /** Permissions of the current user */
   m_rgfChatPermissions: number;
+  /** If true, then only invited users may join */
   m_bLocked: boolean;
+  /** EChatRoomEnterResponse */
   m_EChatRoomEnterResponse: number;
 }
 
@@ -2624,9 +2881,17 @@ export function decodeLobbyEnter_t(bytes: Uint8Array): LobbyEnter_t {
   };
 }
 
+/**
+ * Purpose: The lobby metadata has changed
+ * if m_ulSteamIDMember is the steamID of a lobby member, use GetLobbyMemberData() to access per-user details
+ * if m_ulSteamIDMember == m_ulSteamIDLobby, use GetLobbyData() to access lobby metadata
+ */
 export interface LobbyDataUpdate_t {
+  /** steamID of the Lobby */
   m_ulSteamIDLobby: bigint;
+  /** steamID of the member whose data changed, or the room itself */
   m_ulSteamIDMember: bigint;
+  /** true if we lobby data was successfully changed; */
   m_bSuccess: number;
 }
 
@@ -2644,10 +2909,18 @@ export function decodeLobbyDataUpdate_t(bytes: Uint8Array): LobbyDataUpdate_t {
   };
 }
 
+/**
+ * Purpose: The lobby chat room state has changed
+ * this is usually sent when a user has joined or left the lobby
+ */
 export interface LobbyChatUpdate_t {
+  /** Lobby ID */
   m_ulSteamIDLobby: bigint;
+  /** user who's status in the lobby just changed - can be recipient */
   m_ulSteamIDUserChanged: bigint;
+  /** Chat member who made the change (different from SteamIDUserChange if kicking, muting, etc.) */
   m_ulSteamIDMakingChange: bigint;
+  /** bitfield of EChatMemberStateChange values */
   m_rgfChatMemberStateChange: number;
 }
 
@@ -2678,10 +2951,18 @@ export function decodeLobbyChatUpdate_t(bytes: Uint8Array): LobbyChatUpdate_t {
   };
 }
 
+/**
+ * Purpose: A chat message for this lobby has been sent
+ * use GetLobbyChatEntry( m_iChatID ) to retrieve the contents of this message
+ */
 export interface LobbyChatMsg_t {
+  /** the lobby id this is in */
   m_ulSteamIDLobby: bigint;
+  /** steamID of the user who has sent this message */
   m_ulSteamIDUser: bigint;
+  /** type of message */
   m_eChatEntryType: number;
+  /** index of the chat entry to lookup */
   m_iChatID: number;
 }
 
@@ -2700,9 +2981,18 @@ export function decodeLobbyChatMsg_t(bytes: Uint8Array): LobbyChatMsg_t {
   };
 }
 
+/**
+ * Purpose: A game created a game for all the members of the lobby to join,
+ * as triggered by a SetLobbyGameServer()
+ * it's up to the individual clients to take action on this; the usual
+ * game behavior is to leave the lobby and connect to the specified game server
+ */
 export interface LobbyGameCreated_t {
+  /** the lobby we were in */
   m_ulSteamIDLobby: bigint;
+  /** the new game server that has been created or found for the lobby members */
   m_ulSteamIDGameServer: bigint;
+  /** IP & Port of the game server (if any) */
   m_unIP: number;
   m_usPort: number;
 }
@@ -2722,7 +3012,12 @@ export function decodeLobbyGameCreated_t(bytes: Uint8Array): LobbyGameCreated_t 
   };
 }
 
+/**
+ * Purpose: Number of matching lobbies found
+ * iterate the returned lobbies with GetLobbyByIndex(), from values 0 to m_nLobbiesMatching-1
+ */
 export interface LobbyMatchList_t {
+  /** Number of lobbies that matched search criteria and we have SteamIDs for */
   m_nLobbiesMatching: number;
 }
 
@@ -2738,9 +3033,16 @@ export function decodeLobbyMatchList_t(bytes: Uint8Array): LobbyMatchList_t {
   };
 }
 
+/**
+ * Purpose: posted if a user is forcefully removed from a lobby
+ * can occur if a user loses connection to Steam
+ */
 export interface LobbyKicked_t {
+  /** Lobby */
   m_ulSteamIDLobby: bigint;
+  /** User who kicked you - possibly the ID of the lobby itself */
   m_ulSteamIDAdmin: bigint;
+  /** true if you were kicked from the lobby due to the user losing connection to Steam (currently always true) */
   m_bKickedDueToDisconnect: number;
 }
 
@@ -2758,8 +3060,16 @@ export function decodeLobbyKicked_t(bytes: Uint8Array): LobbyKicked_t {
   };
 }
 
+/**
+ * Purpose: Result of our request to create a Lobby
+ * m_eResult == k_EResultOK on success
+ * at this point, the lobby has been joined and is ready for use
+ * a LobbyEnter_t callback will also be received (since the local user is joining their own lobby)
+ */
 export interface LobbyCreated_t {
+  /** k_EResultOK - the lobby was successfully created */
   m_eResult: EResult;
+  /** chat room, zero if failed */
   m_ulSteamIDLobby: bigint;
 }
 
@@ -2776,6 +3086,12 @@ export function decodeLobbyCreated_t(bytes: Uint8Array): LobbyCreated_t {
   };
 }
 
+/**
+ * Purpose: Result of our request to create a Lobby
+ * m_eResult == k_EResultOK on success
+ * at this point, the lobby has been joined and is ready for use
+ * a LobbyEnter_t callback will also be received (since the local user is joining their own lobby)
+ */
 export interface FavoritesListAccountsUpdated_t {
   m_eResult: EResult;
 }
@@ -2794,6 +3110,11 @@ export function decodeFavoritesListAccountsUpdated_t(
   };
 }
 
+/**
+ * Steam has responded to the user request to join a party via the given Beacon ID.
+ * If successful, the connect string contains game-specific instructions to connect
+ * to the game with that party.
+ */
 export interface JoinPartyCallback_t {
   m_eResult: EResult;
   m_ulBeaconID: bigint;
@@ -2828,6 +3149,7 @@ export function decodeJoinPartyCallback_t(bytes: Uint8Array): JoinPartyCallback_
   };
 }
 
+/** Response to CreateBeacon request. If successful, the beacon ID is provided. */
 export interface CreateBeaconCallback_t {
   m_eResult: EResult;
   m_ulBeaconID: bigint;
@@ -2846,6 +3168,12 @@ export function decodeCreateBeaconCallback_t(bytes: Uint8Array): CreateBeaconCal
   };
 }
 
+/**
+ * Someone has used the beacon to join your party - they are in-flight now
+ * and we've reserved one of the open slots for them.
+ * You should confirm when they join your party by calling OnReservationCompleted().
+ * Otherwise, Steam may timeout their reservation eventually.
+ */
 export interface ReservationNotificationCallback_t {
   m_ulBeaconID: bigint;
   m_steamIDJoiner: bigint;
@@ -2866,6 +3194,7 @@ export function decodeReservationNotificationCallback_t(
   };
 }
 
+/** Response to ChangeNumOpenSlots call */
 export interface ChangeNumOpenSlotsCallback_t {
   m_eResult: EResult;
 }
@@ -2884,6 +3213,7 @@ export function decodeChangeNumOpenSlotsCallback_t(
   };
 }
 
+/** The list of possible Party beacon locations has changed */
 export type AvailableBeaconLocationsUpdated_t = Record<string, never>;
 
 export const AvailableBeaconLocationsUpdated_t_layout = {
@@ -2898,6 +3228,7 @@ export function decodeAvailableBeaconLocationsUpdated_t(
   return {};
 }
 
+/** The list of active beacons may have changed */
 export type ActiveBeaconsUpdated_t = Record<string, never>;
 
 export const ActiveBeaconsUpdated_t_layout = {
@@ -2910,9 +3241,13 @@ export function decodeActiveBeaconsUpdated_t(bytes: Uint8Array): ActiveBeaconsUp
   return {};
 }
 
+/** Purpose: The result of a call to FileShare() */
 export interface RemoteStorageFileShareResult_t {
+  /** The result of the operation */
   m_eResult: EResult;
+  /** The handle that can be shared with users and features */
   m_hFile: bigint;
+  /** The name of the file that was shared */
   m_rgchFilename: string;
 }
 
@@ -2932,7 +3267,9 @@ export function decodeRemoteStorageFileShareResult_t(
   };
 }
 
+/** Purpose: The result of a call to PublishFile() */
 export interface RemoteStoragePublishFileResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
   m_bUserNeedsToAcceptWorkshopLegalAgreement: boolean;
@@ -2967,7 +3304,9 @@ export function decodeRemoteStoragePublishFileResult_t(
   };
 }
 
+/** Purpose: The result of a call to DeletePublishedFile() */
 export interface RemoteStorageDeletePublishedFileResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
 }
@@ -2987,7 +3326,9 @@ export function decodeRemoteStorageDeletePublishedFileResult_t(
   };
 }
 
+/** Purpose: The result of a call to EnumerateUserPublishedFiles() */
 export interface RemoteStorageEnumerateUserPublishedFilesResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nResultsReturned: number;
   m_nTotalResultCount: number;
@@ -3023,7 +3364,9 @@ export function decodeRemoteStorageEnumerateUserPublishedFilesResult_t(
   };
 }
 
+/** Purpose: The result of a call to SubscribePublishedFile() */
 export interface RemoteStorageSubscribePublishedFileResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
 }
@@ -3043,7 +3386,9 @@ export function decodeRemoteStorageSubscribePublishedFileResult_t(
   };
 }
 
+/** Purpose: The result of a call to EnumerateSubscribePublishedFiles() */
 export interface RemoteStorageEnumerateUserSubscribedFilesResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nResultsReturned: number;
   m_nTotalResultCount: number;
@@ -3083,7 +3428,9 @@ export function decodeRemoteStorageEnumerateUserSubscribedFilesResult_t(
   };
 }
 
+/** Purpose: The result of a call to UnsubscribePublishedFile() */
 export interface RemoteStorageUnsubscribePublishedFileResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
 }
@@ -3103,7 +3450,9 @@ export function decodeRemoteStorageUnsubscribePublishedFileResult_t(
   };
 }
 
+/** Purpose: The result of a call to CommitPublishedFileUpdate() */
 export interface RemoteStorageUpdatePublishedFileResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
   m_bUserNeedsToAcceptWorkshopLegalAgreement: boolean;
@@ -3138,12 +3487,19 @@ export function decodeRemoteStorageUpdatePublishedFileResult_t(
   };
 }
 
+/** Purpose: The result of a call to UGCDownload() */
 export interface RemoteStorageDownloadUGCResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
+  /** The handle to the file that was attempted to be downloaded. */
   m_hFile: bigint;
+  /** ID of the app that created this file. */
   m_nAppID: number;
+  /** The size of the file that was downloaded, in bytes. */
   m_nSizeInBytes: number;
+  /** The name of the file that was downloaded. */
   m_pchFileName: string;
+  /** Steam ID of the user who created this content. */
   m_ulSteamIDOwner: bigint;
 }
 
@@ -3182,27 +3538,46 @@ export function decodeRemoteStorageDownloadUGCResult_t(
   };
 }
 
+/** Purpose: The result of a call to GetPublishedFileDetails() */
 export interface RemoteStorageGetPublishedFileDetailsResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
+  /** ID of the app that created this file. */
   m_nCreatorAppID: number;
+  /** ID of the app that will consume this file. */
   m_nConsumerAppID: number;
+  /** title of document */
   m_rgchTitle: string;
+  /** description of document */
   m_rgchDescription: string;
+  /** The handle of the primary file */
   m_hFile: bigint;
+  /** The handle of the preview file */
   m_hPreviewFile: bigint;
+  /** Steam ID of the user who created this content. */
   m_ulSteamIDOwner: bigint;
+  /** time when the published file was created */
   m_rtimeCreated: number;
+  /** time when the published file was last updated */
   m_rtimeUpdated: number;
   m_eVisibility: ERemoteStoragePublishedFileVisibility;
   m_bBanned: boolean;
+  /** comma separated list of all tags associated with this file */
   m_rgchTags: string;
+  /** whether the list of tags was too long to be returned in the provided buffer */
   m_bTagsTruncated: boolean;
+  /** The name of the primary file */
   m_pchFileName: string;
+  /** Size of the primary file */
   m_nFileSize: number;
+  /** Size of the preview file */
   m_nPreviewFileSize: number;
+  /** URL (for a video or a website) */
   m_rgchURL: string;
+  /** Type of the file */
   m_eFileType: EWorkshopFileType;
+  /** developer has specifically flagged this item as accepted in the Workshop */
   m_bAcceptedForUse: boolean;
 }
 
@@ -3334,6 +3709,7 @@ export function decodeRemoteStorageEnumerateWorkshopFilesResult_t(
   };
 }
 
+/** Purpose: The result of GetPublishedItemVoteDetails */
 export interface RemoteStorageGetPublishedItemVoteDetailsResult_t {
   m_eResult: EResult;
   m_unPublishedFileId: bigint;
@@ -3378,8 +3754,11 @@ export function decodeRemoteStorageGetPublishedItemVoteDetailsResult_t(
   };
 }
 
+/** Purpose: User subscribed to a file for the app (from within the app or on the web) */
 export interface RemoteStoragePublishedFileSubscribed_t {
+  /** The published file id */
   m_nPublishedFileId: bigint;
+  /** ID of the app that will consume this file. */
   m_nAppID: number;
 }
 
@@ -3398,8 +3777,11 @@ export function decodeRemoteStoragePublishedFileSubscribed_t(
   };
 }
 
+/** Purpose: User unsubscribed from a file for the app (from within the app or on the web) */
 export interface RemoteStoragePublishedFileUnsubscribed_t {
+  /** The published file id */
   m_nPublishedFileId: bigint;
+  /** ID of the app that will consume this file. */
   m_nAppID: number;
 }
 
@@ -3418,8 +3800,11 @@ export function decodeRemoteStoragePublishedFileUnsubscribed_t(
   };
 }
 
+/** Purpose: Published file that a user owns was deleted (from within the app or the web) */
 export interface RemoteStoragePublishedFileDeleted_t {
+  /** The published file id */
   m_nPublishedFileId: bigint;
+  /** ID of the app that will consume this file. */
   m_nAppID: number;
 }
 
@@ -3438,8 +3823,11 @@ export function decodeRemoteStoragePublishedFileDeleted_t(
   };
 }
 
+/** Purpose: The result of a call to UpdateUserPublishedItemVote() */
 export interface RemoteStorageUpdateUserPublishedItemVoteResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
+  /** The published file id */
   m_nPublishedFileId: bigint;
 }
 
@@ -3458,9 +3846,13 @@ export function decodeRemoteStorageUpdateUserPublishedItemVoteResult_t(
   };
 }
 
+/** Purpose: The result of a call to GetUserPublishedItemVoteDetails() */
 export interface RemoteStorageUserVoteDetails_t {
+  /** The result of the operation. */
   m_eResult: EResult;
+  /** The published file id */
   m_nPublishedFileId: bigint;
+  /** what the user voted */
   m_eVote: EWorkshopVote;
 }
 
@@ -3481,6 +3873,7 @@ export function decodeRemoteStorageUserVoteDetails_t(
 }
 
 export interface RemoteStorageEnumerateUserSharedWorkshopFilesResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nResultsReturned: number;
   m_nTotalResultCount: number;
@@ -3517,8 +3910,11 @@ export function decodeRemoteStorageEnumerateUserSharedWorkshopFilesResult_t(
 }
 
 export interface RemoteStorageSetUserPublishedFileActionResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
+  /** The published file id */
   m_nPublishedFileId: bigint;
+  /** the action that was attempted */
   m_eAction: EWorkshopFileAction;
 }
 
@@ -3539,7 +3935,9 @@ export function decodeRemoteStorageSetUserPublishedFileActionResult_t(
 }
 
 export interface RemoteStorageEnumeratePublishedFilesByUserActionResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
+  /** the action that was filtered on */
   m_eAction: EWorkshopFileAction;
   m_nResultsReturned: number;
   m_nTotalResultCount: number;
@@ -3582,6 +3980,7 @@ export function decodeRemoteStorageEnumeratePublishedFilesByUserActionResult_t(
   };
 }
 
+/** Purpose: Called periodically while a PublishWorkshopFile is in progress */
 export interface RemoteStoragePublishFileProgress_t {
   m_dPercentFile: number;
   m_bPreview: boolean;
@@ -3602,9 +4001,13 @@ export function decodeRemoteStoragePublishFileProgress_t(
   };
 }
 
+/** Purpose: Called when the content for a published file is updated */
 export interface RemoteStoragePublishedFileUpdated_t {
+  /** The published file id */
   m_nPublishedFileId: bigint;
+  /** ID of the app that will consume this file. */
   m_nAppID: number;
+  /** not used anymore */
   m_ulUnused: bigint;
 }
 
@@ -3624,7 +4027,9 @@ export function decodeRemoteStoragePublishedFileUpdated_t(
   };
 }
 
+/** Purpose: Called when a FileWriteAsync completes */
 export interface RemoteStorageFileWriteAsyncComplete_t {
+  /** result */
   m_eResult: EResult;
 }
 
@@ -3642,10 +4047,15 @@ export function decodeRemoteStorageFileWriteAsyncComplete_t(
   };
 }
 
+/** Purpose: Called when a FileReadAsync completes */
 export interface RemoteStorageFileReadAsyncComplete_t {
+  /** call handle of the async read which was made */
   m_hFileReadAsync: bigint;
+  /** result */
   m_eResult: EResult;
+  /** offset in the file this read was at */
   m_nOffset: number;
+  /** amount read - will the <= the amount requested */
   m_cubRead: number;
 }
 
@@ -3666,6 +4076,11 @@ export function decodeRemoteStorageFileReadAsyncComplete_t(
   };
 }
 
+/**
+ * Purpose: one or more files for this app have changed locally after syncing
+ * to remote session changes
+ * Note: only posted if this happens DURING the local app session
+ */
 export type RemoteStorageLocalFileChange_t = Record<string, never>;
 
 export const RemoteStorageLocalFileChange_t_layout = {
@@ -3680,9 +4095,16 @@ export function decodeRemoteStorageLocalFileChange_t(
   return {};
 }
 
+/**
+ * Purpose: called when the latests stats and achievements have been received
+ * from the server
+ */
 export interface UserStatsReceived_t {
+  /** Game these stats are for */
   m_nGameID: bigint;
+  /** Success / error fetching the stats */
   m_eResult: EResult;
+  /** The user for whom the stats are retrieved for */
   m_steamIDUser: bigint;
 }
 
@@ -3700,8 +4122,11 @@ export function decodeUserStatsReceived_t(bytes: Uint8Array): UserStatsReceived_
   };
 }
 
+/** Purpose: result of a request to store the user stats for a game */
 export interface UserStatsStored_t {
+  /** Game these stats are for */
   m_nGameID: bigint;
+  /** success / error */
   m_eResult: EResult;
 }
 
@@ -3718,11 +4143,21 @@ export function decodeUserStatsStored_t(bytes: Uint8Array): UserStatsStored_t {
   };
 }
 
+/**
+ * Purpose: result of a request to store the achievements for a game, or an
+ * "indicate progress" call. If both m_nCurProgress and m_nMaxProgress
+ * are zero, that means the achievement has been fully unlocked.
+ */
 export interface UserAchievementStored_t {
+  /** Game this is for */
   m_nGameID: bigint;
+  /** unused. if this is a "group" achievement */
   m_bGroupAchievement: boolean;
+  /** name of the achievement */
   m_rgchAchievementName: string;
+  /** current progress towards the achievement */
   m_nCurProgress: number;
+  /** "out of" this many */
   m_nMaxProgress: number;
 }
 
@@ -3756,8 +4191,14 @@ export function decodeUserAchievementStored_t(bytes: Uint8Array): UserAchievemen
   };
 }
 
+/**
+ * Purpose: call result for finding a leaderboard, returned as a result of FindOrCreateLeaderboard() or FindLeaderboard()
+ * use CCallResult<> to map this async result to a member function
+ */
 export interface LeaderboardFindResult_t {
+  /** handle to the leaderboard serarched for, 0 if no leaderboard found */
   m_hSteamLeaderboard: bigint;
+  /** 0 if no leaderboard found */
   m_bLeaderboardFound: number;
 }
 
@@ -3774,9 +4215,15 @@ export function decodeLeaderboardFindResult_t(bytes: Uint8Array): LeaderboardFin
   };
 }
 
+/**
+ * Purpose: call result indicating scores for a leaderboard have been downloaded and are ready to be retrieved, returned as a result of DownloadLeaderboardEntries()
+ * use CCallResult<> to map this async result to a member function
+ */
 export interface LeaderboardScoresDownloaded_t {
   m_hSteamLeaderboard: bigint;
+  /** the handle to pass into GetDownloadedLeaderboardEntries() */
   m_hSteamLeaderboardEntries: bigint;
+  /** the number of entries downloaded */
   m_cEntryCount: number;
 }
 
@@ -3796,12 +4243,22 @@ export function decodeLeaderboardScoresDownloaded_t(
   };
 }
 
+/**
+ * Purpose: call result indicating scores has been uploaded, returned as a result of UploadLeaderboardScore()
+ * use CCallResult<> to map this async result to a member function
+ */
 export interface LeaderboardScoreUploaded_t {
+  /** 1 if the call was successful */
   m_bSuccess: number;
+  /** the leaderboard handle that was */
   m_hSteamLeaderboard: bigint;
+  /** the score that was attempted to set */
   m_nScore: number;
+  /** true if the score in the leaderboard change, false if the existing score was better */
   m_bScoreChanged: number;
+  /** the new global rank of the user in this leaderboard */
   m_nGlobalRankNew: number;
+  /** the previous global rank of the user in this leaderboard; 0 if the user had no existing entry in the leaderboard */
   m_nGlobalRankPrevious: number;
 }
 
@@ -3839,7 +4296,9 @@ export function decodeLeaderboardScoreUploaded_t(bytes: Uint8Array): Leaderboard
 }
 
 export interface NumberOfCurrentPlayers_t {
+  /** 1 if the call was successful */
   m_bSuccess: number;
+  /** Number of players currently playing */
   m_cPlayers: number;
 }
 
@@ -3856,7 +4315,12 @@ export function decodeNumberOfCurrentPlayers_t(bytes: Uint8Array): NumberOfCurre
   };
 }
 
+/**
+ * Purpose: Callback indicating that a user's stats have been unloaded.
+ * Call RequestUserStats again to access stats for this user
+ */
 export interface UserStatsUnloaded_t {
+  /** User whose stats have been unloaded */
   m_steamIDUser: bigint;
 }
 
@@ -3872,10 +4336,15 @@ export function decodeUserStatsUnloaded_t(bytes: Uint8Array): UserStatsUnloaded_
   };
 }
 
+/** Purpose: Callback indicating that an achievement icon has been fetched */
 export interface UserAchievementIconFetched_t {
+  /** Game this is for */
   m_nGameID: bigint;
+  /** name of the achievement */
   m_rgchAchievementName: string;
+  /** Is the icon for the achieved or not achieved version? */
   m_bAchieved: boolean;
+  /** Handle to the image, which can be used in SteamUtils()->GetImageRGBA(), 0 means no image is set for the achievement */
   m_nIconHandle: number;
 }
 
@@ -3896,8 +4365,11 @@ export function decodeUserAchievementIconFetched_t(
   };
 }
 
+/** Purpose: Callback indicating that global achievement percentages are fetched */
 export interface GlobalAchievementPercentagesReady_t {
+  /** Game this is for */
   m_nGameID: bigint;
+  /** Result of the operation */
   m_eResult: EResult;
 }
 
@@ -3916,8 +4388,11 @@ export function decodeGlobalAchievementPercentagesReady_t(
   };
 }
 
+/** Purpose: call result indicating UGC has been uploaded, returned as a result of SetLeaderboardUGC() */
 export interface LeaderboardUGCSet_t {
+  /** The result of the operation */
   m_eResult: EResult;
+  /** the leaderboard handle that was */
   m_hSteamLeaderboard: bigint;
 }
 
@@ -3934,8 +4409,14 @@ export function decodeLeaderboardUGCSet_t(bytes: Uint8Array): LeaderboardUGCSet_
   };
 }
 
+/**
+ * Purpose: callback indicating global stats have been received.
+ * Returned as a result of RequestGlobalStats()
+ */
 export interface GlobalStatsReceived_t {
+  /** Game global stats were requested for */
   m_nGameID: bigint;
+  /** The result of the request */
   m_eResult: EResult;
 }
 
@@ -3952,7 +4433,9 @@ export function decodeGlobalStatsReceived_t(bytes: Uint8Array): GlobalStatsRecei
   };
 }
 
+/** Purpose: posted after the user gains ownership of DLC & that DLC is installed */
 export interface DlcInstalled_t {
+  /** AppID of the DLC */
   m_nAppID: number;
 }
 
@@ -3968,6 +4451,12 @@ export function decodeDlcInstalled_t(bytes: Uint8Array): DlcInstalled_t {
   };
 }
 
+/**
+ * Purpose: posted after the user gains executes a Steam URL with command line or query parameters
+ * such as steam://run/<appid>//-commandline/?param1=value1&param2=value2&param3=value3 etc
+ * while the game is already running.  The new params can be queried
+ * with GetLaunchQueryParam and GetLaunchCommandLine
+ */
 export type NewUrlLaunchParameters_t = Record<string, never>;
 
 export const NewUrlLaunchParameters_t_layout = {
@@ -3980,6 +4469,10 @@ export function decodeNewUrlLaunchParameters_t(bytes: Uint8Array): NewUrlLaunchP
   return {};
 }
 
+/**
+ * Purpose: response to RequestAppProofOfPurchaseKey/RequestAllProofOfPurchaseKeys
+ * for supporting third-party CD keys, or other proof-of-purchase systems.
+ */
 export interface AppProofOfPurchaseKeyResponse_t {
   m_eResult: EResult;
   m_nAppID: number;
@@ -4004,9 +4497,12 @@ export function decodeAppProofOfPurchaseKeyResponse_t(
   };
 }
 
+/** Purpose: response to GetFileDetails */
 export interface FileDetailsResult_t {
   m_eResult: EResult;
+  /** original file size in bytes */
   m_ulFileSize: bigint;
+  /** original file SHA1 hash */
   m_FileSHA: string;
   m_unFlags: number;
 }
@@ -4026,10 +4522,15 @@ export function decodeFileDetailsResult_t(bytes: Uint8Array): FileDetailsResult_
   };
 }
 
+/** Purpose: called for games in Timed Trial mode */
 export interface TimedTrialStatus_t {
+  /** appID */
   m_unAppID: number;
+  /** if true, time allowed / played refers to offline time, not total time */
   m_bIsOffline: boolean;
+  /** how many seconds the app can be played in total */
   m_unSecondsAllowed: number;
+  /** how many seconds the app was already played */
   m_unSecondsPlayed: number;
 }
 
@@ -4048,7 +4549,12 @@ export function decodeTimedTrialStatus_t(bytes: Uint8Array): TimedTrialStatus_t 
   };
 }
 
+/**
+ * callback notification - a user wants to talk to us over the P2P channel via the SendP2PPacket() API
+ * in response, a call to AcceptP2PPacketsFromUser() needs to be made, if you want to talk with them
+ */
 export interface P2PSessionRequest_t {
+  /** user who wants to talk to us */
   m_steamIDRemote: bigint;
 }
 
@@ -4064,8 +4570,15 @@ export function decodeP2PSessionRequest_t(bytes: Uint8Array): P2PSessionRequest_
   };
 }
 
+/**
+ * callback notification - packets can't get through to the specified user via the SendP2PPacket() API
+ * all packets queued packets unsent at this point will be dropped
+ * further attempts to send will retry making the connection (but will be dropped if we fail again)
+ */
 export interface P2PSessionConnectFail_t {
+  /** user we were sending packets to */
   m_steamIDRemote: bigint;
+  /** EP2PSessionError indicating why we're having trouble */
   m_eP2PSessionError: number;
 }
 
@@ -4082,10 +4595,18 @@ export function decodeP2PSessionConnectFail_t(bytes: Uint8Array): P2PSessionConn
   };
 }
 
+/**
+ * callback notification - status of a socket has changed
+ * used as part of the CreateListenSocket() / CreateP2PConnectionSocket()
+ */
 export interface SocketStatusCallback_t {
+  /** the socket used to send/receive data to the remote host */
   m_hSocket: number;
+  /** this is the server socket that we were listening on; NULL if this was an outgoing connection */
   m_hListenSocket: number;
+  /** remote steamID we have connected to, if it has one */
   m_steamIDRemote: bigint;
+  /** socket state, ESNetSocketState */
   m_eSNetSocketState: number;
 }
 
@@ -4104,6 +4625,10 @@ export function decodeSocketStatusCallback_t(bytes: Uint8Array): SocketStatusCal
   };
 }
 
+/**
+ * Purpose: Screenshot successfully written or otherwise added to the library
+ * and can now be tagged
+ */
 export interface ScreenshotReady_t {
   m_hLocal: number;
   m_eResult: EResult;
@@ -4122,6 +4647,11 @@ export function decodeScreenshotReady_t(bytes: Uint8Array): ScreenshotReady_t {
   };
 }
 
+/**
+ * Purpose: Screenshot has been requested by the user.  Only sent if
+ * HookScreenshots() has been called, in which case Steam will not take
+ * the screenshot itself.
+ */
 export type ScreenshotRequested_t = Record<string, never>;
 
 export const ScreenshotRequested_t_layout = {
@@ -4167,6 +4697,7 @@ export interface HTTPRequestCompleted_t {
   m_ulContextValue: bigint;
   m_bRequestSuccessful: boolean;
   m_eStatusCode: EHTTPStatusCode;
+  /** Same as GetHTTPResponseBodySize() */
   m_unBodySize: number;
 }
 
@@ -4242,7 +4773,12 @@ export function decodeHTTPRequestDataReceived_t(bytes: Uint8Array): HTTPRequestD
   };
 }
 
+/**
+ * Purpose: called when a new controller has been connected, will fire once
+ * per controller if multiple new controllers connect in the same frame
+ */
 export interface SteamInputDeviceConnected_t {
+  /** Handle for device */
   m_ulConnectedDeviceHandle: bigint;
 }
 
@@ -4258,7 +4794,12 @@ export function decodeSteamInputDeviceConnected_t(bytes: Uint8Array): SteamInput
   };
 }
 
+/**
+ * Purpose: called when a new controller has been connected, will fire once
+ * per controller if multiple new controllers connect in the same frame
+ */
 export interface SteamInputDeviceDisconnected_t {
+  /** Handle for device */
   m_ulDisconnectedDeviceHandle: bigint;
 }
 
@@ -4276,13 +4817,22 @@ export function decodeSteamInputDeviceDisconnected_t(
   };
 }
 
+/**
+ * Purpose: called when a controller configuration has been loaded, will fire once
+ * per controller per focus change for Steam Input enabled controllers
+ */
 export interface SteamInputConfigurationLoaded_t {
   m_unAppID: number;
+  /** Handle for device */
   m_ulDeviceHandle: bigint;
+  /** May differ from local user when using */
   m_ulMappingCreator: bigint;
+  /** Binding revision from In-game Action File. */
   m_unMajorRevision: number;
   m_unMinorRevision: number;
+  /** Does the configuration contain any Analog/Digital actions? */
   m_bUsesSteamInputAPI: boolean;
+  /** Does the configuration contain any Xinput bindings? */
   m_bUsesGamepadAPI: boolean;
 }
 
@@ -4324,11 +4874,19 @@ export function decodeSteamInputConfigurationLoaded_t(
   };
 }
 
+/**
+ * Purpose: called when controller gamepad slots change - on Linux/macOS these
+ * slots are shared for all running apps.
+ */
 export interface SteamInputGamepadSlotChange_t {
   m_unAppID: number;
+  /** Handle for device */
   m_ulDeviceHandle: bigint;
+  /** Type of device */
   m_eDeviceType: ESteamInputType;
+  /** Previous GamepadSlot - can be -1 controller doesn't uses gamepad bindings */
   m_nOldGamepadSlot: number;
+  /** New Gamepad Slot - can be -1 controller doesn't uses gamepad bindings */
   m_nNewGamepadSlot: number;
 }
 
@@ -4364,12 +4922,15 @@ export function decodeSteamInputGamepadSlotChange_t(
   };
 }
 
+/** Purpose: Callback for querying UGC */
 export interface SteamUGCQueryCompleted_t {
   m_handle: bigint;
   m_eResult: EResult;
   m_unNumResultsReturned: number;
   m_unTotalMatchingResults: number;
+  /** indicates whether this data was retrieved from the local on-disk cache */
   m_bCachedData: boolean;
+  /** If a paging cursor was used, then this will be the next cursor to get the next result set. */
   m_rgchNextCursor: string;
 }
 
@@ -4406,8 +4967,10 @@ export function decodeSteamUGCQueryCompleted_t(bytes: Uint8Array): SteamUGCQuery
   };
 }
 
+/** Purpose: Callback for requesting details on one piece of UGC */
 export interface SteamUGCRequestUGCDetailsResult_t {
   m_details: SteamUGCDetails_t;
+  /** indicates whether this data was retrieved from the local on-disk cache */
   m_bCachedData: boolean;
 }
 
@@ -4428,8 +4991,10 @@ export function decodeSteamUGCRequestUGCDetailsResult_t(
   };
 }
 
+/** Purpose: result for ISteamUGC::CreateItem() */
 export interface CreateItemResult_t {
   m_eResult: EResult;
+  /** new item got this UGC PublishFileID */
   m_nPublishedFileId: bigint;
   m_bUserNeedsToAcceptWorkshopLegalAgreement: boolean;
 }
@@ -4461,6 +5026,7 @@ export function decodeCreateItemResult_t(bytes: Uint8Array): CreateItemResult_t 
   };
 }
 
+/** Purpose: result for ISteamUGC::SubmitItemUpdate() */
 export interface SubmitItemUpdateResult_t {
   m_eResult: EResult;
   m_bUserNeedsToAcceptWorkshopLegalAgreement: boolean;
@@ -4494,6 +5060,7 @@ export function decodeSubmitItemUpdateResult_t(bytes: Uint8Array): SubmitItemUpd
   };
 }
 
+/** Purpose: a Workshop item has been installed or updated */
 export interface ItemInstalled_t {
   m_unAppID: number;
   m_nPublishedFileId: bigint;
@@ -4516,6 +5083,7 @@ export function decodeItemInstalled_t(bytes: Uint8Array): ItemInstalled_t {
   };
 }
 
+/** Purpose: result of DownloadItem(), existing item files can be accessed again */
 export interface DownloadItemResult_t {
   m_unAppID: number;
   m_nPublishedFileId: bigint;
@@ -4536,6 +5104,7 @@ export function decodeDownloadItemResult_t(bytes: Uint8Array): DownloadItemResul
   };
 }
 
+/** Purpose: result of AddItemToFavorites() or RemoveItemFromFavorites() */
 export interface UserFavoriteItemsListChanged_t {
   m_nPublishedFileId: bigint;
   m_eResult: EResult;
@@ -4558,6 +5127,7 @@ export function decodeUserFavoriteItemsListChanged_t(
   };
 }
 
+/** Purpose: The result of a call to SetUserItemVote() */
 export interface SetUserItemVoteResult_t {
   m_nPublishedFileId: bigint;
   m_eResult: EResult;
@@ -4578,6 +5148,7 @@ export function decodeSetUserItemVoteResult_t(bytes: Uint8Array): SetUserItemVot
   };
 }
 
+/** Purpose: The result of a call to GetUserItemVote() */
 export interface GetUserItemVoteResult_t {
   m_nPublishedFileId: bigint;
   m_eResult: EResult;
@@ -4616,6 +5187,7 @@ export function decodeGetUserItemVoteResult_t(bytes: Uint8Array): GetUserItemVot
   };
 }
 
+/** Purpose: The result of a call to StartPlaytimeTracking() */
 export interface StartPlaytimeTrackingResult_t {
   m_eResult: EResult;
 }
@@ -4634,6 +5206,7 @@ export function decodeStartPlaytimeTrackingResult_t(
   };
 }
 
+/** Purpose: The result of a call to StopPlaytimeTracking() */
 export interface StopPlaytimeTrackingResult_t {
   m_eResult: EResult;
 }
@@ -4652,6 +5225,7 @@ export function decodeStopPlaytimeTrackingResult_t(
   };
 }
 
+/** Purpose: The result of a call to AddDependency */
 export interface AddUGCDependencyResult_t {
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
@@ -4672,6 +5246,7 @@ export function decodeAddUGCDependencyResult_t(bytes: Uint8Array): AddUGCDepende
   };
 }
 
+/** Purpose: The result of a call to RemoveDependency */
 export interface RemoveUGCDependencyResult_t {
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
@@ -4692,6 +5267,7 @@ export function decodeRemoveUGCDependencyResult_t(bytes: Uint8Array): RemoveUGCD
   };
 }
 
+/** Purpose: The result of a call to AddAppDependency */
 export interface AddAppDependencyResult_t {
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
@@ -4712,6 +5288,7 @@ export function decodeAddAppDependencyResult_t(bytes: Uint8Array): AddAppDepende
   };
 }
 
+/** Purpose: The result of a call to RemoveAppDependency */
 export interface RemoveAppDependencyResult_t {
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
@@ -4732,11 +5309,17 @@ export function decodeRemoveAppDependencyResult_t(bytes: Uint8Array): RemoveAppD
   };
 }
 
+/**
+ * Purpose: The result of a call to GetAppDependencies.  Callback may be called
+ * multiple times until all app dependencies have been returned.
+ */
 export interface GetAppDependenciesResult_t {
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
   m_rgAppIDs: number[];
+  /** number returned in this struct */
   m_nNumAppDependencies: number;
+  /** total found */
   m_nTotalNumAppDependencies: number;
 }
 
@@ -4770,6 +5353,7 @@ export function decodeGetAppDependenciesResult_t(bytes: Uint8Array): GetAppDepen
   };
 }
 
+/** Purpose: The result of a call to DeleteItem */
 export interface DeleteItemResult_t {
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
@@ -4788,6 +5372,7 @@ export function decodeDeleteItemResult_t(bytes: Uint8Array): DeleteItemResult_t 
   };
 }
 
+/** Purpose: signal that the list of subscribed items changed */
 export interface UserSubscribedItemsListChanged_t {
   m_nAppID: number;
 }
@@ -4806,6 +5391,7 @@ export function decodeUserSubscribedItemsListChanged_t(
   };
 }
 
+/** Purpose: Status of the user's acceptable/rejection of the app's specific Workshop EULA */
 export interface WorkshopEULAStatus_t {
   m_eResult: EResult;
   m_nAppID: number;
@@ -4848,6 +5434,7 @@ export function decodeWorkshopEULAStatus_t(bytes: Uint8Array): WorkshopEULAStatu
   };
 }
 
+/** Purpose: The browser is ready for use */
 export interface HTML_BrowserReady_t {
   unBrowserHandle: number;
 }
@@ -4864,6 +5451,7 @@ export function decodeHTML_BrowserReady_t(bytes: Uint8Array): HTML_BrowserReady_
   };
 }
 
+/** Purpose: the browser has a pending paint */
 export interface HTML_NeedsPaint_t {
   unBrowserHandle: number;
   pBGRA: string;
@@ -4930,6 +5518,10 @@ export function decodeHTML_NeedsPaint_t(bytes: Uint8Array): HTML_NeedsPaint_t {
   };
 }
 
+/**
+ * Purpose: The browser wanted to navigate to a new page
+ * NOTE - you MUST call AllowStartRequest in response to this callback
+ */
 export interface HTML_StartRequest_t {
   unBrowserHandle: number;
   pchURL: string;
@@ -4954,6 +5546,7 @@ export function decodeHTML_StartRequest_t(bytes: Uint8Array): HTML_StartRequest_
   };
 }
 
+/** Purpose: The browser has been requested to close due to user interaction (usually from a javascript window.close() call) */
 export interface HTML_CloseBrowser_t {
   unBrowserHandle: number;
 }
@@ -4970,6 +5563,7 @@ export function decodeHTML_CloseBrowser_t(bytes: Uint8Array): HTML_CloseBrowser_
   };
 }
 
+/** Purpose: the browser is navigating to a new url */
 export interface HTML_URLChanged_t {
   unBrowserHandle: number;
   pchURL: string;
@@ -5012,6 +5606,7 @@ export function decodeHTML_URLChanged_t(bytes: Uint8Array): HTML_URLChanged_t {
   };
 }
 
+/** Purpose: A page is finished loading */
 export interface HTML_FinishedRequest_t {
   unBrowserHandle: number;
   pchURL: string;
@@ -5032,6 +5627,7 @@ export function decodeHTML_FinishedRequest_t(bytes: Uint8Array): HTML_FinishedRe
   };
 }
 
+/** Purpose: a request to load this url in a new tab */
 export interface HTML_OpenLinkInNewTab_t {
   unBrowserHandle: number;
   pchURL: string;
@@ -5050,6 +5646,7 @@ export function decodeHTML_OpenLinkInNewTab_t(bytes: Uint8Array): HTML_OpenLinkI
   };
 }
 
+/** Purpose: the page has a new title now */
 export interface HTML_ChangedTitle_t {
   unBrowserHandle: number;
   pchTitle: string;
@@ -5068,6 +5665,7 @@ export function decodeHTML_ChangedTitle_t(bytes: Uint8Array): HTML_ChangedTitle_
   };
 }
 
+/** Purpose: results from a search */
 export interface HTML_SearchResults_t {
   unBrowserHandle: number;
   unResults: number;
@@ -5088,6 +5686,7 @@ export function decodeHTML_SearchResults_t(bytes: Uint8Array): HTML_SearchResult
   };
 }
 
+/** Purpose: page history status changed on the ability to go backwards and forward */
 export interface HTML_CanGoBackAndForward_t {
   unBrowserHandle: number;
   bCanGoBack: boolean;
@@ -5108,6 +5707,7 @@ export function decodeHTML_CanGoBackAndForward_t(bytes: Uint8Array): HTML_CanGoB
   };
 }
 
+/** Purpose: details on the visibility and size of the horizontal scrollbar */
 export interface HTML_HorizontalScroll_t {
   unBrowserHandle: number;
   unScrollMax: number;
@@ -5150,6 +5750,7 @@ export function decodeHTML_HorizontalScroll_t(bytes: Uint8Array): HTML_Horizonta
   };
 }
 
+/** Purpose: details on the visibility and size of the vertical scrollbar */
 export interface HTML_VerticalScroll_t {
   unBrowserHandle: number;
   unScrollMax: number;
@@ -5192,6 +5793,7 @@ export function decodeHTML_VerticalScroll_t(bytes: Uint8Array): HTML_VerticalScr
   };
 }
 
+/** Purpose: response to GetLinkAtPosition call */
 export interface HTML_LinkAtPosition_t {
   unBrowserHandle: number;
   x: number;
@@ -5218,6 +5820,10 @@ export function decodeHTML_LinkAtPosition_t(bytes: Uint8Array): HTML_LinkAtPosit
   };
 }
 
+/**
+ * Purpose: show a Javascript alert dialog, call JSDialogResponse
+ * when the user dismisses this dialog (or right away to ignore it)
+ */
 export interface HTML_JSAlert_t {
   unBrowserHandle: number;
   pchMessage: string;
@@ -5236,6 +5842,10 @@ export function decodeHTML_JSAlert_t(bytes: Uint8Array): HTML_JSAlert_t {
   };
 }
 
+/**
+ * Purpose: show a Javascript confirmation dialog, call JSDialogResponse
+ * when the user dismisses this dialog (or right away to ignore it)
+ */
 export interface HTML_JSConfirm_t {
   unBrowserHandle: number;
   pchMessage: string;
@@ -5254,6 +5864,10 @@ export function decodeHTML_JSConfirm_t(bytes: Uint8Array): HTML_JSConfirm_t {
   };
 }
 
+/**
+ * Purpose: when received show a file open dialog
+ * then call FileLoadDialogResponse with the file(s) the user selected.
+ */
 export interface HTML_FileOpenDialog_t {
   unBrowserHandle: number;
   pchTitle: string;
@@ -5274,6 +5888,14 @@ export function decodeHTML_FileOpenDialog_t(bytes: Uint8Array): HTML_FileOpenDia
   };
 }
 
+/**
+ * Purpose: a new html window is being created.
+ * IMPORTANT NOTE: at this time, the API does not allow you to acknowledge or
+ * render the contents of this new window, so the new window is always destroyed
+ * immediately. The URL and other parameters of the new window are passed here
+ * to give your application the opportunity to call CreateBrowser and set up
+ * a new browser in response to the attempted popup, if you wish to do so.
+ */
 export interface HTML_NewWindow_t {
   unBrowserHandle: number;
   pchURL: string;
@@ -5320,6 +5942,7 @@ export function decodeHTML_NewWindow_t(bytes: Uint8Array): HTML_NewWindow_t {
   };
 }
 
+/** Purpose: change the cursor to display */
 export interface HTML_SetCursor_t {
   unBrowserHandle: number;
   eMouseCursor: number;
@@ -5338,6 +5961,7 @@ export function decodeHTML_SetCursor_t(bytes: Uint8Array): HTML_SetCursor_t {
   };
 }
 
+/** Purpose: informational message from the browser */
 export interface HTML_StatusText_t {
   unBrowserHandle: number;
   pchMsg: string;
@@ -5356,6 +5980,7 @@ export function decodeHTML_StatusText_t(bytes: Uint8Array): HTML_StatusText_t {
   };
 }
 
+/** Purpose: show a tooltip */
 export interface HTML_ShowToolTip_t {
   unBrowserHandle: number;
   pchMsg: string;
@@ -5374,6 +5999,7 @@ export function decodeHTML_ShowToolTip_t(bytes: Uint8Array): HTML_ShowToolTip_t 
   };
 }
 
+/** Purpose: update the text of an existing tooltip */
 export interface HTML_UpdateToolTip_t {
   unBrowserHandle: number;
   pchMsg: string;
@@ -5392,6 +6018,7 @@ export function decodeHTML_UpdateToolTip_t(bytes: Uint8Array): HTML_UpdateToolTi
   };
 }
 
+/** Purpose: hide the tooltip you are showing */
 export interface HTML_HideToolTip_t {
   unBrowserHandle: number;
 }
@@ -5408,6 +6035,7 @@ export function decodeHTML_HideToolTip_t(bytes: Uint8Array): HTML_HideToolTip_t 
   };
 }
 
+/** Purpose: The browser has restarted due to an internal failure, use this new handle value */
 export interface HTML_BrowserRestarted_t {
   unBrowserHandle: number;
   unOldBrowserHandle: number;
@@ -5426,6 +6054,11 @@ export function decodeHTML_BrowserRestarted_t(bytes: Uint8Array): HTML_BrowserRe
   };
 }
 
+/**
+ * SteamInventoryResultReady_t callbacks are fired whenever asynchronous
+ * results transition from "Pending" to "OK" or an error state. There will
+ * always be exactly one callback per handle.
+ */
 export interface SteamInventoryResultReady_t {
   m_handle: number;
   m_result: EResult;
@@ -5444,6 +6077,15 @@ export function decodeSteamInventoryResultReady_t(bytes: Uint8Array): SteamInven
   };
 }
 
+/**
+ * SteamInventoryFullUpdate_t callbacks are triggered when GetAllItems
+ * successfully returns a result which is newer / fresher than the last
+ * known result. (It will not trigger if the inventory hasn't changed,
+ * or if results from two overlapping calls are reversed in flight and
+ * the earlier result is already known to be stale/out-of-date.)
+ * The normal ResultReady callback will still be triggered immediately
+ * afterwards; this is an additional notification for your convenience.
+ */
 export interface SteamInventoryFullUpdate_t {
   m_handle: number;
 }
@@ -5460,6 +6102,12 @@ export function decodeSteamInventoryFullUpdate_t(bytes: Uint8Array): SteamInvent
   };
 }
 
+/**
+ * A SteamInventoryDefinitionUpdate_t callback is triggered whenever
+ * item definitions have been updated, which could be in response to
+ * LoadItemDefinitions() or any other async request which required
+ * a definition update in order to process results from the server.
+ */
 export type SteamInventoryDefinitionUpdate_t = Record<string, never>;
 
 export const SteamInventoryDefinitionUpdate_t_layout = {
@@ -5474,10 +6122,12 @@ export function decodeSteamInventoryDefinitionUpdate_t(
   return {};
 }
 
+/** Returned */
 export interface SteamInventoryEligiblePromoItemDefIDs_t {
   m_result: EResult;
   m_steamID: bigint;
   m_numEligiblePromoItemDefs: number;
+  /** indicates that the data was retrieved from the cache and not the server */
   m_bCachedData: boolean;
 }
 
@@ -5498,6 +6148,7 @@ export function decodeSteamInventoryEligiblePromoItemDefIDs_t(
   };
 }
 
+/** Triggered from StartPurchase call */
 export interface SteamInventoryStartPurchaseResult_t {
   m_result: EResult;
   m_ulOrderID: bigint;
@@ -5520,6 +6171,7 @@ export function decodeSteamInventoryStartPurchaseResult_t(
   };
 }
 
+/** Triggered from RequestPrices */
 export interface SteamInventoryRequestPricesResult_t {
   m_result: EResult;
   m_rgchCurrency: string;
@@ -5540,6 +6192,7 @@ export function decodeSteamInventoryRequestPricesResult_t(
   };
 }
 
+/** Purpose: Callback for querying UGC */
 export interface SteamTimelineGamePhaseRecordingExists_t {
   m_rgchPhaseID: string;
   m_ulRecordingMS: bigint;
@@ -5580,6 +6233,7 @@ export function decodeSteamTimelineGamePhaseRecordingExists_t(
   };
 }
 
+/** Purpose: Callback for querying UGC */
 export interface SteamTimelineEventRecordingExists_t {
   m_ulEventID: bigint;
   m_bRecordingExists: boolean;
@@ -5670,6 +6324,7 @@ export function decodeBroadcastUploadStop_t(bytes: Uint8Array): BroadcastUploadS
   };
 }
 
+/** Purpose: Callback for querying UGC */
 export type SteamParentalSettingsChanged_t = Record<string, never>;
 
 export const SteamParentalSettingsChanged_t_layout = {
@@ -5762,7 +6417,9 @@ export function decodeSteamRemotePlaySessionAvatarLoaded_t(
   };
 }
 
+/** Posted when a remote host is sending us a message, and we do not already have a session with them */
 export interface SteamNetworkingMessagesSessionRequest_t {
+  /** user who wants to talk to us */
   m_identityRemote: SteamNetworkingIdentity;
 }
 
@@ -5785,6 +6442,17 @@ export function decodeSteamNetworkingMessagesSessionRequest_t(
   };
 }
 
+/**
+ * Posted when we fail to establish a connection, or we detect that communications
+ * have been disrupted it an unusual way.  There is no notification when a peer proactively
+ * closes the session.  ("Closed by peer" is not a concept of UDP-style communications, and
+ * SteamNetworkingMessages is primarily intended to make porting UDP code easy.)
+ * Remember: callbacks are asynchronous.   See notes on SendMessageToUser,
+ * and k_nSteamNetworkingSend_AutoRestartBrokenSession in particular.
+ * Also, if a session times out due to inactivity, no callbacks will be posted.  The only
+ * way to detect that this is happening is that querying the session state may return
+ * none, connecting, and findingroute again.
+ */
 export interface SteamNetworkingMessagesSessionFailed_t {
   m_info: SteamNetConnectionInfo_t;
 }
@@ -5805,6 +6473,40 @@ export function decodeSteamNetworkingMessagesSessionFailed_t(
   };
 }
 
+/**
+ * This callback is posted whenever a connection is created, destroyed, or changes state.
+ * The m_info field will contain a complete description of the connection at the time the
+ * change occurred and the callback was posted.  In particular, m_eState will have the
+ * new connection state.
+ * You will usually need to listen for this callback to know when:
+ * - A new connection arrives on a listen socket.
+ * m_info.m_hListenSocket will be set, m_eOldState = k_ESteamNetworkingConnectionState_None,
+ * and m_info.m_eState = k_ESteamNetworkingConnectionState_Connecting.
+ * See ISteamNetworkigSockets::AcceptConnection.
+ * - A connection you initiated has been accepted by the remote host.
+ * m_eOldState = k_ESteamNetworkingConnectionState_Connecting, and
+ * m_info.m_eState = k_ESteamNetworkingConnectionState_Connected.
+ * Some connections might transition to k_ESteamNetworkingConnectionState_FindingRoute first.
+ * - A connection has been actively rejected or closed by the remote host.
+ * m_eOldState = k_ESteamNetworkingConnectionState_Connecting or k_ESteamNetworkingConnectionState_Connected,
+ * and m_info.m_eState = k_ESteamNetworkingConnectionState_ClosedByPeer.  m_info.m_eEndReason
+ * and m_info.m_szEndDebug will have for more details.
+ * NOTE: upon receiving this callback, you must still destroy the connection using
+ * ISteamNetworkingSockets::CloseConnection to free up local resources.  (The details
+ * passed to the function are not used in this case, since the connection is already closed.)
+ * - A problem was detected with the connection, and it has been closed by the local host.
+ * The most common failure is timeout, but other configuration or authentication failures
+ * can cause this.  m_eOldState = k_ESteamNetworkingConnectionState_Connecting or
+ * k_ESteamNetworkingConnectionState_Connected, and m_info.m_eState = k_ESteamNetworkingConnectionState_ProblemDetectedLocally.
+ * m_info.m_eEndReason and m_info.m_szEndDebug will have for more details.
+ * NOTE: upon receiving this callback, you must still destroy the connection using
+ * ISteamNetworkingSockets::CloseConnection to free up local resources.  (The details
+ * passed to the function are not used in this case, since the connection is already closed.)
+ * Remember that callbacks are posted to a queue, and networking connections can
+ * change at any time.  It is possible that the connection has already changed
+ * state by the time you process this callback.
+ * Also note that callbacks will be posted when connections are created and destroyed by your own API calls.
+ */
 export interface SteamNetConnectionStatusChangedCallback_t {
   m_hConn: number;
   m_info: SteamNetConnectionInfo_t;
@@ -5829,6 +6531,14 @@ export function decodeSteamNetConnectionStatusChangedCallback_t(
   };
 }
 
+/**
+ * A struct used to describe our readiness to participate in authenticated,
+ * encrypted communication.  In order to do this we need:
+ * - The list of trusted CA certificates that might be relevant for this
+ * app.
+ * - A valid certificate issued by a CA.
+ * This callback is posted whenever the state of our readiness changes.
+ */
 export interface SteamNetAuthenticationStatus_t {
   m_eAvail: ESteamNetworkingAvailability;
   m_debugMsg: string;
@@ -5849,6 +6559,11 @@ export function decodeSteamNetAuthenticationStatus_t(
   };
 }
 
+/**
+ * A struct used to describe our readiness to use the relay network.
+ * To do this we first need to fetch the network configuration,
+ * which describes what POPs are available.
+ */
 export interface SteamRelayNetworkStatus_t {
   m_eAvail: ESteamNetworkingAvailability;
   m_bPingMeasurementInProgress: number;
@@ -5887,8 +6602,11 @@ export function decodeSteamRelayNetworkStatus_t(bytes: Uint8Array): SteamRelayNe
   };
 }
 
+/** client has been approved to connect to this game server */
 export interface GSClientApprove_t {
+  /** SteamID of approved player */
   m_SteamID: bigint;
+  /** SteamID of original owner for game license */
   m_OwnerSteamID: bigint;
 }
 
@@ -5905,6 +6623,7 @@ export function decodeGSClientApprove_t(bytes: Uint8Array): GSClientApprove_t {
   };
 }
 
+/** client has been denied to connection to this game server */
 export interface GSClientDeny_t {
   m_SteamID: bigint;
   m_eDenyReason: EDenyReason;
@@ -5925,6 +6644,7 @@ export function decodeGSClientDeny_t(bytes: Uint8Array): GSClientDeny_t {
   };
 }
 
+/** request the game server should kick the user */
 export interface GSClientKick_t {
   m_SteamID: bigint;
   m_eDenyReason: EDenyReason;
@@ -5943,6 +6663,7 @@ export function decodeGSClientKick_t(bytes: Uint8Array): GSClientKick_t {
   };
 }
 
+/** client achievement info */
 export interface GSClientAchievementStatus_t {
   m_SteamID: bigint;
   m_pchAchievement: string;
@@ -5963,6 +6684,10 @@ export function decodeGSClientAchievementStatus_t(bytes: Uint8Array): GSClientAc
   };
 }
 
+/**
+ * received when the game server requests to be displayed as secure (VAC protected)
+ * m_bSecure is true if the game server should display itself as secure to users, false otherwise
+ */
 export interface GSPolicyResponse_t {
   m_bSecure: number;
 }
@@ -5979,10 +6704,15 @@ export function decodeGSPolicyResponse_t(bytes: Uint8Array): GSPolicyResponse_t 
   };
 }
 
+/** GS gameplay stats info */
 export interface GSGameplayStats_t {
+  /** Result of the call */
   m_eResult: EResult;
+  /** Overall rank of the server (0-based) */
   m_nRank: number;
+  /** Total number of clients who have ever connected to the server */
   m_unTotalConnects: number;
+  /** Total number of minutes ever played on the server */
   m_unTotalMinutesPlayed: number;
 }
 
@@ -6001,6 +6731,7 @@ export function decodeGSGameplayStats_t(bytes: Uint8Array): GSGameplayStats_t {
   };
 }
 
+/** send as a reply to RequestUserGroupStatus() */
 export interface GSClientGroupStatus_t {
   m_SteamIDUser: bigint;
   m_SteamIDGroup: bigint;
@@ -6023,13 +6754,21 @@ export function decodeGSClientGroupStatus_t(bytes: Uint8Array): GSClientGroupSta
   };
 }
 
+/** Sent as a reply to GetServerReputation() */
 export interface GSReputation_t {
+  /** Result of the call; */
   m_eResult: EResult;
+  /** The reputation score for the game server */
   m_unReputationScore: number;
+  /** True if the server is banned from the Steam */
   m_bBanned: boolean;
+  /** The IP of the banned server */
   m_unBannedIP: number;
+  /** The port of the banned server */
   m_usBannedPort: number;
+  /** The game ID the banned server is serving */
   m_ulBannedGameID: bigint;
+  /** Time the ban expires, expressed in the Unix epoch (seconds since 1/1/1970) */
   m_unBanExpires: number;
 }
 
@@ -6069,7 +6808,9 @@ export function decodeGSReputation_t(bytes: Uint8Array): GSReputation_t {
   };
 }
 
+/** Sent as a reply to AssociateWithClan() */
 export interface AssociateWithClanResult_t {
+  /** Result of the call; */
   m_eResult: EResult;
 }
 
@@ -6085,7 +6826,9 @@ export function decodeAssociateWithClanResult_t(bytes: Uint8Array): AssociateWit
   };
 }
 
+/** Sent as a reply to ComputeNewPlayerCompatibility() */
 export interface ComputeNewPlayerCompatibilityResult_t {
+  /** Result of the call; */
   m_eResult: EResult;
   m_cPlayersThatDontLikeCandidate: number;
   m_cPlayersThatCandidateDoesntLike: number;
@@ -6125,8 +6868,14 @@ export function decodeComputeNewPlayerCompatibilityResult_t(
   };
 }
 
+/**
+ * Purpose: called when the latests stats and achievements have been received
+ * from the server
+ */
 export interface GSStatsReceived_t {
+  /** Success / error fetching the stats */
   m_eResult: EResult;
+  /** The user for whom the stats are retrieved for */
   m_steamIDUser: bigint;
 }
 
@@ -6143,8 +6892,11 @@ export function decodeGSStatsReceived_t(bytes: Uint8Array): GSStatsReceived_t {
   };
 }
 
+/** Purpose: result of a request to store the user stats for a game */
 export interface GSStatsStored_t {
+  /** success / error */
   m_eResult: EResult;
+  /** The user for whom the stats were stored */
   m_steamIDUser: bigint;
 }
 
@@ -6161,7 +6913,12 @@ export function decodeGSStatsStored_t(bytes: Uint8Array): GSStatsStored_t {
   };
 }
 
+/**
+ * Purpose: Callback indicating that a user's stats have been unloaded.
+ * Call RequestUserStats again to access stats for this user
+ */
 export interface GSStatsUnloaded_t {
+  /** User whose stats have been unloaded */
   m_steamIDUser: bigint;
 }
 
@@ -6177,6 +6934,12 @@ export function decodeGSStatsUnloaded_t(bytes: Uint8Array): GSStatsUnloaded_t {
   };
 }
 
+/**
+ * A struct used to describe a "fake IP" we have been assigned to
+ * use as an identifier.  This callback is posted when
+ * ISteamNetworkingSoockets::BeginAsyncRequestFakeIP completes.
+ * See also ISteamNetworkingSockets::GetFakeIP
+ */
 export interface SteamNetworkingFakeIPResult_t {
   m_eResult: EResult;
   m_identity: SteamNetworkingIdentity;

@@ -6,6 +6,8 @@ import type { Interface, Method } from "../schema.ts";
 import { type MappedType, mapType, type TypeContext } from "../types.ts";
 import type { LayoutResolver } from "../layout.ts";
 import { type ClassifiedMethod, type ClassifiedParam, classify } from "../params.ts";
+import type { DocIndex } from "../docscan.ts";
+import { jsdoc } from "./jsdoc.ts";
 
 const lcFirst = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
 
@@ -313,6 +315,7 @@ export function emitInterface(
   iface: Interface,
   ctx: TypeContext,
   resolver: LayoutResolver,
+  docs?: DocIndex,
 ): string {
   const accessor = iface.accessors?.find((a) => a.kind === "user") ?? iface.accessors?.[0];
 
@@ -365,7 +368,8 @@ export function emitInterface(
     `    private readonly host: CallResultHost,\n` +
     `  ) {}\n`;
   for (const e of emitted) {
-    out += `\n  ${e.out.signature} {\n${e.out.body}\n  }\n`;
+    const doc = docs?.methods.get(`${iface.classname}.${e.cm.method.methodname}`);
+    out += `\n${jsdoc(doc, "  ")}  ${e.out.signature} {\n${e.out.body}\n  }\n`;
   }
   out += `}\n`;
   return out;

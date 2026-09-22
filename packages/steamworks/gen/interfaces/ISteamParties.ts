@@ -66,6 +66,7 @@ export class ISteamParties {
     private readonly host: CallResultHost,
   ) {}
 
+  /** Enumerate any active beacons for parties you may wish to join */
   getNumActiveBeacons(): number {
     return this.s.SteamAPI_ISteamParties_GetNumActiveBeacons(this.self);
   }
@@ -91,11 +92,16 @@ export class ISteamParties {
     return decodeSteamPartyBeaconLocation_t(pLocation_buf);
   }
 
+  /**
+   * Join an open party. Steam will reserve one beacon slot for your SteamID,
+   * and return the necessary JoinGame string for you to use to connect
+   */
   joinParty(ulBeaconID: bigint): Promise<JoinPartyCallback_t> {
     const call = this.s.SteamAPI_ISteamParties_JoinParty(this.self, ulBeaconID);
     return this.host.callResult(call, 5301, decodeJoinPartyCallback_t);
   }
 
+  /** Get a list of possible beacon locations */
   getNumAvailableBeaconLocations(): { ok: boolean; puNumLocations: number } {
     const puNumLocations_buf = scalarOut("u32");
     const ok = this.s.SteamAPI_ISteamParties_GetNumAvailableBeaconLocations(
@@ -117,6 +123,12 @@ export class ISteamParties {
     return decodeSteamPartyBeaconLocation_t(pLocationList_buf);
   }
 
+  /**
+   * Create a new party beacon and activate it in the selected location.
+   * unOpenSlots is the maximum number of users that Steam will send to you.
+   * When people begin responding to your beacon, Steam will send you
+   * PartyReservationCallback_t callbacks to let you know who is on the way.
+   */
   createBeacon(
     unOpenSlots: number,
     pchConnectString: string,
@@ -133,23 +145,39 @@ export class ISteamParties {
     return this.host.callResult(call, 5302, decodeCreateBeaconCallback_t);
   }
 
+  /**
+   * Call this function when a user that had a reservation (see callback below)
+   * has successfully joined your party.
+   * Steam will manage the remaining open slots automatically.
+   */
   onReservationCompleted(ulBeacon: bigint, steamIDUser: bigint): void {
     this.s.SteamAPI_ISteamParties_OnReservationCompleted(this.self, ulBeacon, steamIDUser);
   }
 
+  /**
+   * To cancel a reservation (due to timeout or user input), call this.
+   * Steam will open a new reservation slot.
+   * Note: The user may already be in-flight to your game, so it's possible they will still connect and try to join your party.
+   */
   cancelReservation(ulBeacon: bigint, steamIDUser: bigint): void {
     this.s.SteamAPI_ISteamParties_CancelReservation(this.self, ulBeacon, steamIDUser);
   }
 
+  /**
+   * Change the number of open beacon reservation slots.
+   * Call this if, for example, someone without a reservation joins your party (eg a friend, or via your own matchmaking system).
+   */
   changeNumOpenSlots(ulBeacon: bigint, unOpenSlots: number): Promise<ChangeNumOpenSlotsCallback_t> {
     const call = this.s.SteamAPI_ISteamParties_ChangeNumOpenSlots(this.self, ulBeacon, unOpenSlots);
     return this.host.callResult(call, 5304, decodeChangeNumOpenSlotsCallback_t);
   }
 
+  /** Turn off the beacon. */
   destroyBeacon(ulBeacon: bigint): boolean {
     return this.s.SteamAPI_ISteamParties_DestroyBeacon(this.self, ulBeacon);
   }
 
+  /** Utils */
   getBeaconLocationData(
     BeaconLocation: SteamPartyBeaconLocation_t,
     eData: ESteamPartyBeaconLocationData,

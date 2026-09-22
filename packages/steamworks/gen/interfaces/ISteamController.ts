@@ -152,6 +152,7 @@ export class ISteamController {
     private readonly host: CallResultHost,
   ) {}
 
+  /** Init and Shutdown must be called when starting/ending use of this interface */
   init(): boolean {
     return this.s.SteamAPI_ISteamController_Init(this.self);
   }
@@ -160,16 +161,28 @@ export class ISteamController {
     return this.s.SteamAPI_ISteamController_Shutdown(this.self);
   }
 
+  /**
+   * Synchronize API state with the latest Steam Controller inputs available. This
+   * is performed automatically by SteamAPI_RunCallbacks, but for the absolute lowest
+   * possible latency, you call this directly before reading controller state. This must
+   * be called from somewhere before GetConnectedControllers will return any handles
+   */
   runFrame(): void {
     this.s.SteamAPI_ISteamController_RunFrame(this.self);
   }
 
+  /**
+   * Enumerate currently connected controllers
+   * handlesOut should point to a STEAM_CONTROLLER_MAX_COUNT sized array of ControllerHandle_t handles
+   * Returns the number of handles written to handlesOut
+   */
   getConnectedControllers(): bigint[] {
     const handlesOut_buf = arrayOut("u64", 16);
     const n = this.s.SteamAPI_ISteamController_GetConnectedControllers(this.self, handlesOut_buf);
     return readScalarArray(handlesOut_buf, "u64", n) as bigint[];
   }
 
+  /** Lookup the handle for an Action Set. Best to do this once on startup, and store the handles for all future API calls. */
   getActionSetHandle(pszActionSetName: string): bigint {
     return this.s.SteamAPI_ISteamController_GetActionSetHandle(
       this.self,
@@ -177,6 +190,11 @@ export class ISteamController {
     );
   }
 
+  /**
+   * Reconfigure the controller to use the specified action set (ie 'Menu', 'Walk' or 'Drive')
+   * This is cheap, and can be safely called repeatedly. It's often easier to repeatedly call it in
+   * your state loops, instead of trying to place it in all of your state transitions.
+   */
   activateActionSet(controllerHandle: bigint, actionSetHandle: bigint): void {
     this.s.SteamAPI_ISteamController_ActivateActionSet(
       this.self,
@@ -189,6 +207,7 @@ export class ISteamController {
     return this.s.SteamAPI_ISteamController_GetCurrentActionSet(this.self, controllerHandle);
   }
 
+  /** ACTION SET LAYERS */
   activateActionSetLayer(controllerHandle: bigint, actionSetLayerHandle: bigint): void {
     this.s.SteamAPI_ISteamController_ActivateActionSetLayer(
       this.self,
@@ -209,6 +228,11 @@ export class ISteamController {
     this.s.SteamAPI_ISteamController_DeactivateAllActionSetLayers(this.self, controllerHandle);
   }
 
+  /**
+   * Enumerate currently active layers
+   * handlesOut should point to a STEAM_CONTROLLER_MAX_ACTIVE_LAYERS sized array of ControllerActionSetHandle_t handles.
+   * Returns the number of handles written to handlesOut
+   */
   getActiveActionSetLayers(controllerHandle: bigint): bigint[] {
     const handlesOut_buf = arrayOut("u64", 16);
     const n = this.s.SteamAPI_ISteamController_GetActiveActionSetLayers(
@@ -219,6 +243,7 @@ export class ISteamController {
     return readScalarArray(handlesOut_buf, "u64", n) as bigint[];
   }
 
+  /** Lookup the handle for a digital action. Best to do this once on startup, and store the handles for all future API calls. */
   getDigitalActionHandle(pszActionName: string): bigint {
     return this.s.SteamAPI_ISteamController_GetDigitalActionHandle(
       this.self,
@@ -226,6 +251,7 @@ export class ISteamController {
     );
   }
 
+  /** Returns the current state of the supplied digital game action */
   getDigitalActionData(
     controllerHandle: bigint,
     digitalActionHandle: bigint,
@@ -239,6 +265,11 @@ export class ISteamController {
     );
   }
 
+  /**
+   * Get the origin(s) for a digital action within an action set. Returns the number of origins supplied in originsOut. Use this to display the appropriate on-screen prompt for the action.
+   * originsOut should point to a STEAM_CONTROLLER_MAX_ORIGINS sized array of EControllerActionOrigin handles. The EControllerActionOrigin enum will get extended as support for new controller controllers gets added to
+   * the Steam client and will exceed the values from this header, please check bounds if you are using a look up table.
+   */
   getDigitalActionOrigins(
     controllerHandle: bigint,
     actionSetHandle: bigint,
@@ -255,6 +286,7 @@ export class ISteamController {
     return readScalarArray(originsOut_buf, "i32", n) as EControllerActionOrigin[];
   }
 
+  /** Lookup the handle for an analog action. Best to do this once on startup, and store the handles for all future API calls. */
   getAnalogActionHandle(pszActionName: string): bigint {
     return this.s.SteamAPI_ISteamController_GetAnalogActionHandle(
       this.self,
@@ -262,6 +294,7 @@ export class ISteamController {
     );
   }
 
+  /** Returns the current state of these supplied analog game action */
   getAnalogActionData(
     controllerHandle: bigint,
     analogActionHandle: bigint,
@@ -275,6 +308,11 @@ export class ISteamController {
     );
   }
 
+  /**
+   * Get the origin(s) for an analog action within an action set. Returns the number of origins supplied in originsOut. Use this to display the appropriate on-screen prompt for the action.
+   * originsOut should point to a STEAM_CONTROLLER_MAX_ORIGINS sized array of EControllerActionOrigin handles. The EControllerActionOrigin enum will get extended as support for new controller controllers gets added to
+   * the Steam client and will exceed the values from this header, please check bounds if you are using a look up table.
+   */
   getAnalogActionOrigins(
     controllerHandle: bigint,
     actionSetHandle: bigint,
@@ -291,12 +329,14 @@ export class ISteamController {
     return readScalarArray(originsOut_buf, "i32", n) as EControllerActionOrigin[];
   }
 
+  /** Get a local path to art for on-screen glyph for a particular origin - this call is cheap */
   getGlyphForActionOrigin(eOrigin: EControllerActionOrigin): string {
     return readCString(
       this.s.SteamAPI_ISteamController_GetGlyphForActionOrigin(this.self, eOrigin),
     );
   }
 
+  /** Returns a localized string (from Steam's language setting) for the specified origin - this call is serialized */
   getStringForActionOrigin(eOrigin: EControllerActionOrigin): string {
     return readCString(
       this.s.SteamAPI_ISteamController_GetStringForActionOrigin(this.self, eOrigin),
@@ -307,12 +347,14 @@ export class ISteamController {
     this.s.SteamAPI_ISteamController_StopAnalogActionMomentum(this.self, controllerHandle, eAction);
   }
 
+  /** Returns raw motion data from the specified controller */
   getMotionData(controllerHandle: bigint): InputMotionData_t {
     return decodeInputMotionData_t(
       this.s.SteamAPI_ISteamController_GetMotionData(this.self, controllerHandle) as Uint8Array,
     );
   }
 
+  /** Trigger a haptic pulse on a controller */
   triggerHapticPulse(
     controllerHandle: bigint,
     eTargetPad: ESteamControllerPad,
@@ -326,6 +368,10 @@ export class ISteamController {
     );
   }
 
+  /**
+   * Trigger a pulse with a duty cycle of usDurationMicroSec / usOffMicroSec, unRepeat times.
+   * nFlags is currently unused and reserved for future use.
+   */
   triggerRepeatedHapticPulse(
     controllerHandle: bigint,
     eTargetPad: ESteamControllerPad,
@@ -345,6 +391,7 @@ export class ISteamController {
     );
   }
 
+  /** Trigger a vibration event on supported controllers. */
   triggerVibration(controllerHandle: bigint, usLeftSpeed: number, usRightSpeed: number): void {
     this.s.SteamAPI_ISteamController_TriggerVibration(
       this.self,
@@ -354,6 +401,7 @@ export class ISteamController {
     );
   }
 
+  /** Set the controller LED color on supported controllers. */
   setLEDColor(
     controllerHandle: bigint,
     nColorR: number,
@@ -371,10 +419,18 @@ export class ISteamController {
     );
   }
 
+  /**
+   * Invokes the Steam overlay and brings up the binding screen if the user is using Big Picture Mode
+   * If the user is not in Big Picture Mode it will open up the binding in a new window
+   */
   showBindingPanel(controllerHandle: bigint): boolean {
     return this.s.SteamAPI_ISteamController_ShowBindingPanel(this.self, controllerHandle);
   }
 
+  /**
+   * Returns the input type for a particular handle - unlike EControllerActionOrigin which update with Steam and may return unrecognized values
+   * ESteamInputType will remain static and only return valid values from your SDK version
+   */
   getInputTypeForHandle(controllerHandle: bigint): ESteamInputType {
     return this.s.SteamAPI_ISteamController_GetInputTypeForHandle(
       this.self,
@@ -382,10 +438,15 @@ export class ISteamController {
     ) as ESteamInputType;
   }
 
+  /**
+   * Returns the associated controller handle for the specified emulated gamepad - can be used with the above 2 functions
+   * to identify controllers presented to your game over Xinput. Returns 0 if the Xinput index isn't associated with Steam Input
+   */
   getControllerForGamepadIndex(nIndex: number): bigint {
     return this.s.SteamAPI_ISteamController_GetControllerForGamepadIndex(this.self, nIndex);
   }
 
+  /** Returns the associated gamepad index for the specified controller, if emulating a gamepad or -1 if not associated with an Xinput index */
   getGamepadIndexForController(ulControllerHandle: bigint): number {
     return this.s.SteamAPI_ISteamController_GetGamepadIndexForController(
       this.self,
@@ -393,14 +454,20 @@ export class ISteamController {
     );
   }
 
+  /** Returns a localized string (from Steam's language setting) for the specified Xbox controller origin. */
   getStringForXboxOrigin(eOrigin: EXboxOrigin): string {
     return readCString(this.s.SteamAPI_ISteamController_GetStringForXboxOrigin(this.self, eOrigin));
   }
 
+  /** Get a local path to art for on-screen glyph for a particular Xbox controller origin. */
   getGlyphForXboxOrigin(eOrigin: EXboxOrigin): string {
     return readCString(this.s.SteamAPI_ISteamController_GetGlyphForXboxOrigin(this.self, eOrigin));
   }
 
+  /**
+   * Get the equivalent ActionOrigin for a given Xbox controller origin this can be chained with GetGlyphForActionOrigin to provide future proof glyphs for
+   * non-Steam Input API action games. Note - this only translates the buttons directly and doesn't take into account any remapping a user has made in their configuration
+   */
   getActionOriginFromXboxOrigin(
     controllerHandle: bigint,
     eOrigin: EXboxOrigin,
@@ -412,6 +479,7 @@ export class ISteamController {
     ) as EControllerActionOrigin;
   }
 
+  /** Convert an origin to another controller type - for inputs not present on the other controller type this will return k_EControllerActionOrigin_None */
   translateActionOrigin(
     eDestinationInputType: ESteamInputType,
     eSourceOrigin: EControllerActionOrigin,
@@ -423,6 +491,7 @@ export class ISteamController {
     ) as EControllerActionOrigin;
   }
 
+  /** Get the binding revision for a given device. Returns false if the handle was not valid or if a mapping is not yet loaded for the device */
   getControllerBindingRevision(
     controllerHandle: bigint,
   ): { ok: boolean; pMajor: number; pMinor: number } {

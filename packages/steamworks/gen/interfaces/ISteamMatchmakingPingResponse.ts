@@ -24,12 +24,14 @@ export class ISteamMatchmakingPingResponse {
     private readonly host: CallResultHost,
   ) {}
 
+  /** Server has responded successfully and has updated data */
   serverResponded(): gameserveritem_t {
     const server_buf = new Uint8Array(gameserveritem_t_layout[PACK].size);
     this.s.SteamAPI_ISteamMatchmakingPingResponse_ServerResponded(this.self, server_buf);
     return decodegameserveritem_t(server_buf);
   }
 
+  /** Server failed to respond to the ping request */
   serverFailedToRespond(): void {
     this.s.SteamAPI_ISteamMatchmakingPingResponse_ServerFailedToRespond(this.self);
   }

@@ -99,6 +99,12 @@ export class ISteamHTTP {
     private readonly host: CallResultHost,
   ) {}
 
+  /**
+   * Initializes a new HTTP request, returning a handle to use in further operations on it.  Requires
+   * the method (GET or POST) and the absolute URL for the request.  Both http and https are supported,
+   * so this string must start with http:// or https:// and should look like http://store.steampowered.com/app/250/
+   * or such.
+   */
   createHTTPRequest(eHTTPRequestMethod: EHTTPMethod, pchAbsoluteURL: string): number {
     return this.s.SteamAPI_ISteamHTTP_CreateHTTPRequest(
       this.self,
@@ -107,6 +113,10 @@ export class ISteamHTTP {
     );
   }
 
+  /**
+   * Set a context value for the request, which will be returned in the HTTPRequestCompleted_t callback after
+   * sending the request.  This is just so the caller can easily keep track of which callbacks go with which request data.
+   */
   setHTTPRequestContextValue(hRequest: number, ulContextValue: bigint): boolean {
     return this.s.SteamAPI_ISteamHTTP_SetHTTPRequestContextValue(
       this.self,
@@ -115,6 +125,11 @@ export class ISteamHTTP {
     );
   }
 
+  /**
+   * Set a timeout in seconds for the HTTP request, must be called prior to sending the request.  Default
+   * timeout is 60 seconds if you don't call this.  Returns false if the handle is invalid, or the request
+   * has already been sent.
+   */
   setHTTPRequestNetworkActivityTimeout(hRequest: number, unTimeoutSeconds: number): boolean {
     return this.s.SteamAPI_ISteamHTTP_SetHTTPRequestNetworkActivityTimeout(
       this.self,
@@ -123,6 +138,10 @@ export class ISteamHTTP {
     );
   }
 
+  /**
+   * Set a request header value for the request, must be called prior to sending the request.  Will
+   * return false if the handle is invalid or the request is already sent.
+   */
   setHTTPRequestHeaderValue(
     hRequest: number,
     pchHeaderName: string,
@@ -136,6 +155,11 @@ export class ISteamHTTP {
     );
   }
 
+  /**
+   * Set a GET or POST parameter value on the request, which is set will depend on the EHTTPMethod specified
+   * when creating the request.  Must be called prior to sending the request.  Will return false if the
+   * handle is invalid or the request is already sent.
+   */
   setHTTPRequestGetOrPostParameter(
     hRequest: number,
     pchParamName: string,
@@ -149,12 +173,23 @@ export class ISteamHTTP {
     );
   }
 
+  /**
+   * Sends the HTTP request, will return false on a bad handle, otherwise use SteamCallHandle to wait on
+   * asynchronous response via callback.
+   * Note: If the user is in offline mode in Steam, then this will add a only-if-cached cache-control
+   * header and only do a local cache lookup rather than sending any actual remote request.
+   */
   sendHTTPRequest(hRequest: number): { ok: boolean; pCallHandle: bigint } {
     const pCallHandle_buf = scalarOut("u64");
     const ok = this.s.SteamAPI_ISteamHTTP_SendHTTPRequest(this.self, hRequest, pCallHandle_buf);
     return { ok, pCallHandle: readScalar(pCallHandle_buf, "u64") as bigint };
   }
 
+  /**
+   * Sends the HTTP request, will return false on a bad handle, otherwise use SteamCallHandle to wait on
+   * asynchronous response via callback for completion, and listen for HTTPRequestHeadersReceived_t and
+   * HTTPRequestDataReceived_t callbacks while streaming.
+   */
   sendHTTPRequestAndStreamResponse(hRequest: number): { ok: boolean; pCallHandle: bigint } {
     const pCallHandle_buf = scalarOut("u64");
     const ok = this.s.SteamAPI_ISteamHTTP_SendHTTPRequestAndStreamResponse(
@@ -165,14 +200,27 @@ export class ISteamHTTP {
     return { ok, pCallHandle: readScalar(pCallHandle_buf, "u64") as bigint };
   }
 
+  /**
+   * Defers a request you have sent, the actual HTTP client code may have many requests queued, and this will move
+   * the specified request to the tail of the queue.  Returns false on invalid handle, or if the request is not yet sent.
+   */
   deferHTTPRequest(hRequest: number): boolean {
     return this.s.SteamAPI_ISteamHTTP_DeferHTTPRequest(this.self, hRequest);
   }
 
+  /**
+   * Prioritizes a request you have sent, the actual HTTP client code may have many requests queued, and this will move
+   * the specified request to the head of the queue.  Returns false on invalid handle, or if the request is not yet sent.
+   */
   prioritizeHTTPRequest(hRequest: number): boolean {
     return this.s.SteamAPI_ISteamHTTP_PrioritizeHTTPRequest(this.self, hRequest);
   }
 
+  /**
+   * Checks if a response header is present in a HTTP response given a handle from HTTPRequestCompleted_t, also
+   * returns the size of the header value if present so the caller and allocate a correctly sized buffer for
+   * GetHTTPResponseHeaderValue.
+   */
   getHTTPResponseHeaderSize(
     hRequest: number,
     pchHeaderName: string,
@@ -187,6 +235,11 @@ export class ISteamHTTP {
     return { ok, unResponseHeaderSize: readScalar(unResponseHeaderSize_buf, "u32") as number };
   }
 
+  /**
+   * Gets header values from a HTTP response given a handle from HTTPRequestCompleted_t, will return false if the
+   * header is not present or if your buffer is too small to contain it's value.  You should first call
+   * BGetHTTPResponseHeaderSize to check for the presence of the header and to find out the size buffer needed.
+   */
   getHTTPResponseHeaderValue(
     hRequest: number,
     pchHeaderName: string,
@@ -203,6 +256,10 @@ export class ISteamHTTP {
     return { ok, pHeaderValueBuffer: readScalar(pHeaderValueBuffer_buf, "u8") as number };
   }
 
+  /**
+   * Gets the size of the body data from a HTTP response given a handle from HTTPRequestCompleted_t, will return false if the
+   * handle is invalid.
+   */
   getHTTPResponseBodySize(hRequest: number): { ok: boolean; unBodySize: number } {
     const unBodySize_buf = scalarOut("u32");
     const ok = this.s.SteamAPI_ISteamHTTP_GetHTTPResponseBodySize(
@@ -213,6 +270,11 @@ export class ISteamHTTP {
     return { ok, unBodySize: readScalar(unBodySize_buf, "u32") as number };
   }
 
+  /**
+   * Gets the body data from a HTTP response given a handle from HTTPRequestCompleted_t, will return false if the
+   * handle is invalid or is to a streaming response, or if the provided buffer is not the correct size.  Use BGetHTTPResponseBodySize first to find out
+   * the correct buffer size to use.
+   */
   getHTTPResponseBodyData(
     hRequest: number,
     unBufferSize: number,
@@ -227,6 +289,11 @@ export class ISteamHTTP {
     return { ok, pBodyDataBuffer: readScalar(pBodyDataBuffer_buf, "u8") as number };
   }
 
+  /**
+   * Gets the body data from a streaming HTTP response given a handle from HTTPRequestDataReceived_t. Will return false if the
+   * handle is invalid or is to a non-streaming response (meaning it wasn't sent with SendHTTPRequestAndStreamResponse), or if the buffer size and offset
+   * do not match the size and offset sent in HTTPRequestDataReceived_t.
+   */
   getHTTPStreamingResponseBodyData(
     hRequest: number,
     cOffset: number,
@@ -243,10 +310,19 @@ export class ISteamHTTP {
     return { ok, pBodyDataBuffer: readScalar(pBodyDataBuffer_buf, "u8") as number };
   }
 
+  /**
+   * Releases an HTTP response handle, should always be called to free resources after receiving a HTTPRequestCompleted_t
+   * callback and finishing using the response.
+   */
   releaseHTTPRequest(hRequest: number): boolean {
     return this.s.SteamAPI_ISteamHTTP_ReleaseHTTPRequest(this.self, hRequest);
   }
 
+  /**
+   * Gets progress on downloading the body for the request.  This will be zero unless a response header has already been
+   * received which included a content-length field.  For responses that contain no content-length it will report
+   * zero for the duration of the request as the size is unknown until the connection closes.
+   */
   getHTTPDownloadProgressPct(hRequest: number): { ok: boolean; pflPercentOut: number } {
     const pflPercentOut_buf = scalarOut("f32");
     const ok = this.s.SteamAPI_ISteamHTTP_GetHTTPDownloadProgressPct(
@@ -257,6 +333,11 @@ export class ISteamHTTP {
     return { ok, pflPercentOut: readScalar(pflPercentOut_buf, "f32") as number };
   }
 
+  /**
+   * Sets the body for an HTTP Post request.  Will fail and return false on a GET request, and will fail if POST params
+   * have already been set for the request.  Setting this raw body makes it the only contents for the post, the pchContentType
+   * parameter will set the content-type header for the request so the server may know how to interpret the body.
+   */
   setHTTPRequestRawPostBody(
     hRequest: number,
     pchContentType: string,
@@ -273,14 +354,23 @@ export class ISteamHTTP {
     return { ok, pubBody: readScalar(pubBody_buf, "u8") as number };
   }
 
+  /**
+   * Creates a cookie container handle which you must later free with ReleaseCookieContainer().  If bAllowResponsesToModify=true
+   * than any response to your requests using this cookie container may add new cookies which may be transmitted with
+   * future requests.  If bAllowResponsesToModify=false than only cookies you explicitly set will be sent.  This API is just for
+   * during process lifetime, after steam restarts no cookies are persisted and you have no way to access the cookie container across
+   * repeat executions of your process.
+   */
   createCookieContainer(bAllowResponsesToModify: boolean): number {
     return this.s.SteamAPI_ISteamHTTP_CreateCookieContainer(this.self, bAllowResponsesToModify);
   }
 
+  /** Release a cookie container you are finished using, freeing it's memory */
   releaseCookieContainer(hCookieContainer: number): boolean {
     return this.s.SteamAPI_ISteamHTTP_ReleaseCookieContainer(this.self, hCookieContainer);
   }
 
+  /** Adds a cookie to the specified cookie container that will be used with future requests. */
   setCookie(hCookieContainer: number, pchHost: string, pchUrl: string, pchCookie: string): boolean {
     return this.s.SteamAPI_ISteamHTTP_SetCookie(
       this.self,
@@ -291,6 +381,7 @@ export class ISteamHTTP {
     );
   }
 
+  /** Set the cookie container to use for a HTTP request */
   setHTTPRequestCookieContainer(hRequest: number, hCookieContainer: number): boolean {
     return this.s.SteamAPI_ISteamHTTP_SetHTTPRequestCookieContainer(
       this.self,
@@ -299,6 +390,7 @@ export class ISteamHTTP {
     );
   }
 
+  /** Set the extra user agent info for a request, this doesn't clobber the normal user agent, it just adds the extra info on the end */
   setHTTPRequestUserAgentInfo(hRequest: number, pchUserAgentInfo: string): boolean {
     return this.s.SteamAPI_ISteamHTTP_SetHTTPRequestUserAgentInfo(
       this.self,
@@ -307,6 +399,10 @@ export class ISteamHTTP {
     );
   }
 
+  /**
+   * Disable or re-enable verification of SSL/TLS certificates.
+   * By default, certificates are checked for all HTTPS requests.
+   */
   setHTTPRequestRequiresVerifiedCertificate(
     hRequest: number,
     bRequireVerifiedCertificate: boolean,
@@ -318,6 +414,10 @@ export class ISteamHTTP {
     );
   }
 
+  /**
+   * Set an absolute timeout on the HTTP request, this is just a total time timeout different than the network activity timeout
+   * which can bump everytime we get more data
+   */
   setHTTPRequestAbsoluteTimeoutMS(hRequest: number, unMilliseconds: number): boolean {
     return this.s.SteamAPI_ISteamHTTP_SetHTTPRequestAbsoluteTimeoutMS(
       this.self,
@@ -326,6 +426,7 @@ export class ISteamHTTP {
     );
   }
 
+  /** Check if the reason the request failed was because we timed it out (rather than some harder failure) */
   getHTTPRequestWasTimedOut(hRequest: number): { ok: boolean; pbWasTimedOut: boolean } {
     const pbWasTimedOut_buf = scalarOut("bool");
     const ok = this.s.SteamAPI_ISteamHTTP_GetHTTPRequestWasTimedOut(

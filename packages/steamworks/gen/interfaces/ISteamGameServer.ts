@@ -141,34 +141,62 @@ export class ISteamGameServer {
     private readonly host: CallResultHost,
   ) {}
 
+  /**
+   * Game product identifier.  This is currently used by the master server for version checking purposes.
+   * It's a required field, but will eventually will go away, and the AppID will be used for this purpose.
+   */
   setProduct(pszProduct: string): void {
     this.s.SteamAPI_ISteamGameServer_SetProduct(this.self, cstrArg(pszProduct));
   }
 
+  /**
+   * Description of the game.  This is a required field and is displayed in the steam server browser....for now.
+   * This is a required field, but it will go away eventually, as the data should be determined from the AppID.
+   */
   setGameDescription(pszGameDescription: string): void {
     this.s.SteamAPI_ISteamGameServer_SetGameDescription(this.self, cstrArg(pszGameDescription));
   }
 
+  /**
+   * If your game is a "mod," pass the string that identifies it.  The default is an empty string, meaning
+   * this application is the original game, not a mod.
+   * @see k_cbMaxGameServerGameDir
+   */
   setModDir(pszModDir: string): void {
     this.s.SteamAPI_ISteamGameServer_SetModDir(this.self, cstrArg(pszModDir));
   }
 
+  /** Is this is a dedicated server?  The default value is false. */
   setDedicatedServer(bDedicated: boolean): void {
     this.s.SteamAPI_ISteamGameServer_SetDedicatedServer(this.self, bDedicated);
   }
 
+  /**
+   * Begin process to login to a persistent game server account
+   * You need to register for callbacks to determine the result of this operation.
+   * @see SteamServersConnected_t
+   * @see SteamServerConnectFailure_t
+   * @see SteamServersDisconnected_t
+   */
   logOn(pszToken: string): void {
     this.s.SteamAPI_ISteamGameServer_LogOn(this.self, cstrArg(pszToken));
   }
 
+  /**
+   * Login to a generic, anonymous account.
+   * Note: in previous versions of the SDK, this was automatically called within SteamGameServer_Init,
+   * but this is no longer the case.
+   */
   logOnAnonymous(): void {
     this.s.SteamAPI_ISteamGameServer_LogOnAnonymous(this.self);
   }
 
+  /** Begin process of logging game server out of steam */
   logOff(): void {
     this.s.SteamAPI_ISteamGameServer_LogOff(this.self);
   }
 
+  /** status functions */
   bLoggedOn(): boolean {
     return this.s.SteamAPI_ISteamGameServer_BLoggedOn(this.self);
   }
@@ -181,34 +209,64 @@ export class ISteamGameServer {
     return this.s.SteamAPI_ISteamGameServer_GetSteamID(this.self);
   }
 
+  /**
+   * Returns true if the master server has requested a restart.
+   * Only returns true once per request.
+   */
   wasRestartRequested(): boolean {
     return this.s.SteamAPI_ISteamGameServer_WasRestartRequested(this.self);
   }
 
+  /** Max player count that will be reported to server browser and client queries */
   setMaxPlayerCount(cPlayersMax: number): void {
     this.s.SteamAPI_ISteamGameServer_SetMaxPlayerCount(this.self, cPlayersMax);
   }
 
+  /** Number of bots.  Default value is zero */
   setBotPlayerCount(cBotplayers: number): void {
     this.s.SteamAPI_ISteamGameServer_SetBotPlayerCount(this.self, cBotplayers);
   }
 
+  /**
+   * Set the name of server as it will appear in the server browser
+   * @see k_cbMaxGameServerName
+   */
   setServerName(pszServerName: string): void {
     this.s.SteamAPI_ISteamGameServer_SetServerName(this.self, cstrArg(pszServerName));
   }
 
+  /**
+   * Set name of map to report in the server browser
+   * @see k_cbMaxGameServerMapName
+   */
   setMapName(pszMapName: string): void {
     this.s.SteamAPI_ISteamGameServer_SetMapName(this.self, cstrArg(pszMapName));
   }
 
+  /** Let people know if your server will require a password */
   setPasswordProtected(bPasswordProtected: boolean): void {
     this.s.SteamAPI_ISteamGameServer_SetPasswordProtected(this.self, bPasswordProtected);
   }
 
+  /**
+   * Spectator server port to advertise.  The default value is zero, meaning the
+   * service is not used.  If your server receives any info requests on the LAN,
+   * this is the value that will be placed into the reply for such local queries.
+   * This is also the value that will be advertised by the master server.
+   * The only exception is if your server is using a FakeIP.  Then then the second
+   * fake port number (index 1) assigned to your server will be listed on the master
+   * server as the spectator port, if you set this value to any nonzero value.
+   * This function merely controls the values that are advertised -- it's up to you to
+   * configure the server to actually listen on this port and handle any spectator traffic
+   */
   setSpectatorPort(unSpectatorPort: number): void {
     this.s.SteamAPI_ISteamGameServer_SetSpectatorPort(this.self, unSpectatorPort);
   }
 
+  /**
+   * Name of the spectator server.  (Only used if spectator port is nonzero.)
+   * @see k_cbMaxGameServerMapName
+   */
   setSpectatorServerName(pszSpectatorServerName: string): void {
     this.s.SteamAPI_ISteamGameServer_SetSpectatorServerName(
       this.self,
@@ -216,30 +274,58 @@ export class ISteamGameServer {
     );
   }
 
+  /** Call this to clear the whole list of key/values that are sent in rules queries. */
   clearAllKeyValues(): void {
     this.s.SteamAPI_ISteamGameServer_ClearAllKeyValues(this.self);
   }
 
+  /** Call this to add/update a key/value pair. */
   setKeyValue(pKey: string, pValue: string): void {
     this.s.SteamAPI_ISteamGameServer_SetKeyValue(this.self, cstrArg(pKey), cstrArg(pValue));
   }
 
+  /**
+   * Sets a string defining the "gametags" for this server, this is optional, but if it is set
+   * it allows users to filter in the matchmaking/server-browser interfaces based on the value
+   * @see k_cbMaxGameServerTags
+   */
   setGameTags(pchGameTags: string): void {
     this.s.SteamAPI_ISteamGameServer_SetGameTags(this.self, cstrArg(pchGameTags));
   }
 
+  /**
+   * Sets a string defining the "gamedata" for this server, this is optional, but if it is set
+   * it allows users to filter in the matchmaking/server-browser interfaces based on the value
+   * @see k_cbMaxGameServerGameData
+   */
   setGameData(pchGameData: string): void {
     this.s.SteamAPI_ISteamGameServer_SetGameData(this.self, cstrArg(pchGameData));
   }
 
+  /** Region identifier.  This is an optional field, the default value is empty, meaning the "world" region */
   setRegion(pszRegion: string): void {
     this.s.SteamAPI_ISteamGameServer_SetRegion(this.self, cstrArg(pszRegion));
   }
 
+  /**
+   * Indicate whether you wish to be listed on the master server list
+   * and/or respond to server browser / LAN discovery packets.
+   * The server starts with this value set to false.  You should set all
+   * relevant server parameters before enabling advertisement on the server.
+   * (This function used to be named EnableHeartbeats, so if you are wondering
+   * where that function went, it's right here.  It does the same thing as before,
+   * the old name was just confusing.)
+   */
   setAdvertiseServerActive(bActive: boolean): void {
     this.s.SteamAPI_ISteamGameServer_SetAdvertiseServerActive(this.self, bActive);
   }
 
+  /**
+   * Retrieve ticket to be sent to the entity who wishes to authenticate you ( using BeginAuthSession API ).
+   * pcbTicket retrieves the length of the actual ticket.
+   * SteamNetworkingIdentity is an optional parameter to hold the public IP address of the entity you are connecting to
+   * if an IP address is passed Steam will only allow the ticket to be used by an entity with that IP address
+   */
   getAuthSessionTicket(
     pTicket: Uint8Array,
     cbMaxTicket: number,
@@ -256,6 +342,10 @@ export class ISteamGameServer {
     return { result, pcbTicket: readScalar(pcbTicket_buf, "u32") as number };
   }
 
+  /**
+   * Authenticate ticket ( from GetAuthSessionTicket ) from entity steamID to be sure it is valid and isnt reused
+   * Registers for callbacks if the entity goes offline or cancels the ticket ( see ValidateAuthTicketResponse_t callback and EAuthSessionResponse )
+   */
   beginAuthSession(
     pAuthTicket: Uint8Array,
     cbAuthTicket: number,
@@ -269,14 +359,20 @@ export class ISteamGameServer {
     ) as EBeginAuthSessionResult;
   }
 
+  /** Stop tracking started by BeginAuthSession - called when no longer playing game with this entity */
   endAuthSession(steamID: bigint): void {
     this.s.SteamAPI_ISteamGameServer_EndAuthSession(this.self, steamID);
   }
 
+  /** Cancel auth ticket from GetAuthSessionTicket, called when no longer playing game with the entity you gave the ticket to */
   cancelAuthTicket(hAuthTicket: number): void {
     this.s.SteamAPI_ISteamGameServer_CancelAuthTicket(this.self, hAuthTicket);
   }
 
+  /**
+   * After receiving a user's authentication data, and passing it to SendUserConnectAndAuthenticate, use this function
+   * to determine if the user owns downloadable content specified by the provided AppID.
+   */
   userHasLicenseForApp(steamID: bigint, appID: number): EUserHasLicenseForAppResult {
     return this.s.SteamAPI_ISteamGameServer_UserHasLicenseForApp(
       this.self,
@@ -285,6 +381,10 @@ export class ISteamGameServer {
     ) as EUserHasLicenseForAppResult;
   }
 
+  /**
+   * Ask if a user in in the specified group, results returns async by GSUserGroupStatus_t
+   * returns false if we're not connected to the steam servers and thus cannot ask
+   */
   requestUserGroupStatus(steamIDUser: bigint, steamIDGroup: bigint): boolean {
     return this.s.SteamAPI_ISteamGameServer_RequestUserGroupStatus(
       this.self,
@@ -293,6 +393,10 @@ export class ISteamGameServer {
     );
   }
 
+  /**
+   * these two functions s are deprecated, and will not return results
+   * they will be removed in a future version of the SDK
+   */
   getGameplayStats(): void {
     this.s.SteamAPI_ISteamGameServer_GetGameplayStats(this.self);
   }
@@ -302,12 +406,21 @@ export class ISteamGameServer {
     return this.host.callResult(call, 209, decodeGSReputation_t);
   }
 
+  /**
+   * Returns the public IP of the server according to Steam, useful when the server is
+   * behind NAT and you want to advertise its IP in a lobby for other clients to directly
+   * connect to
+   */
   getPublicIP(): SteamIPAddress_t {
     return decodeSteamIPAddress_t(
       this.s.SteamAPI_ISteamGameServer_GetPublicIP(this.self) as Uint8Array,
     );
   }
 
+  /**
+   * Call this when a packet that starts with 0xFFFFFFFF comes in. That means
+   * it's for us.
+   */
   handleIncomingPacket(pData: Uint8Array, cbData: number, srcIP: number, srcPort: number): boolean {
     return this.s.SteamAPI_ISteamGameServer_HandleIncomingPacket(
       this.self,
@@ -318,6 +431,12 @@ export class ISteamGameServer {
     );
   }
 
+  /**
+   * AFTER calling HandleIncomingPacket for any packets that came in that frame, call this.
+   * This gets a packet that the master server updater needs to send out on UDP.
+   * It returns the length of the packet it wants to send, or 0 if there are no more packets to send.
+   * Call this each frame until it returns 0.
+   */
   getNextOutgoingPacket(
     pOut: Uint8Array,
     cbMaxOut: number,
@@ -338,11 +457,13 @@ export class ISteamGameServer {
     };
   }
 
+  /** associate this game server with this clan for the purposes of computing player compat */
   associateWithClan(steamIDClan: bigint): Promise<AssociateWithClanResult_t> {
     const call = this.s.SteamAPI_ISteamGameServer_AssociateWithClan(this.self, steamIDClan);
     return this.host.callResult(call, 210, decodeAssociateWithClanResult_t);
   }
 
+  /** ask if any of the current players dont want to play with this new player - or vice versa */
   computeNewPlayerCompatibility(
     steamIDNewPlayer: bigint,
   ): Promise<ComputeNewPlayerCompatibilityResult_t> {
@@ -353,6 +474,18 @@ export class ISteamGameServer {
     return this.host.callResult(call, 211, decodeComputeNewPlayerCompatibilityResult_t);
   }
 
+  /**
+   * Handles receiving a new connection from a Steam user.  This call will ask the Steam
+   * servers to validate the users identity, app ownership, and VAC status.  If the Steam servers
+   * are off-line, then it will validate the cached ticket itself which will validate app ownership
+   * and identity.  The AuthBlob here should be acquired on the game client using SteamUser()->InitiateGameConnection()
+   * and must then be sent up to the game server for authentication.
+   * Return Value: returns true if the users ticket passes basic checks. pSteamIDUser will contain the Steam ID of this user. pSteamIDUser must NOT be NULL
+   * If the call succeeds then you should expect a GSClientApprove_t or GSClientDeny_t callback which will tell you whether authentication
+   * for the user has succeeded or failed (the steamid in the callback will match the one returned by this call)
+   * DEPRECATED!  This function will be removed from the SDK in an upcoming version.
+   * Please migrate to BeginAuthSession and related functions.
+   */
   sendUserConnectAndAuthenticate_DEPRECATED(
     unIPClient: number,
     pvAuthBlob: Uint8Array,
@@ -369,14 +502,32 @@ export class ISteamGameServer {
     return { ok, pSteamIDUser: readScalar(pSteamIDUser_buf, "u64") as bigint };
   }
 
+  /**
+   * Creates a fake user (ie, a bot) which will be listed as playing on the server, but skips validation.
+   * Return Value: Returns a SteamID for the user to be tracked with, you should call EndAuthSession()
+   * when this user leaves the server just like you would for a real user.
+   */
   createUnauthenticatedUserConnection(): bigint {
     return this.s.SteamAPI_ISteamGameServer_CreateUnauthenticatedUserConnection(this.self);
   }
 
+  /**
+   * Should be called whenever a user leaves our game server, this lets Steam internally
+   * track which users are currently on which servers for the purposes of preventing a single
+   * account being logged into multiple servers, showing who is currently on a server, etc.
+   * DEPRECATED!  This function will be removed from the SDK in an upcoming version.
+   * Please migrate to BeginAuthSession and related functions.
+   */
   sendUserDisconnect_DEPRECATED(steamIDUser: bigint): void {
     this.s.SteamAPI_ISteamGameServer_SendUserDisconnect_DEPRECATED(this.self, steamIDUser);
   }
 
+  /**
+   * Update the data to be displayed in the server browser and matchmaking interfaces for a user
+   * currently connected to the server.  For regular users you must call this after you receive a
+   * GSUserValidationSuccess callback.
+   * Return Value: true if successful, false if failure (ie, steamIDUser wasn't for an active player)
+   */
   bUpdateUserData(steamIDUser: bigint, pchPlayerName: string, uScore: number): boolean {
     return this.s.SteamAPI_ISteamGameServer_BUpdateUserData(
       this.self,

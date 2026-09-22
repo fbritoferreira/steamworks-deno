@@ -5,6 +5,7 @@ export enum ESteamIPType {
   k_ESteamIPTypeIPv6 = 1,
 }
 
+/** Steam universes.  Each universe is a self-contained Steam instance. */
 export enum EUniverse {
   k_EUniverseInvalid = 0,
   k_EUniversePublic = 1,
@@ -14,6 +15,7 @@ export enum EUniverse {
   k_EUniverseMax = 5,
 }
 
+/** General result codes */
 export enum EResult {
   k_EResultNone = 0,
   k_EResultOK = 1,
@@ -148,6 +150,7 @@ export enum EResult {
   k_EResultTryLater = 131,
 }
 
+/** Error codes for use with the voice functions */
 export enum EVoiceResult {
   k_EVoiceResultOK = 0,
   k_EVoiceResultNotInitialized = 1,
@@ -161,6 +164,7 @@ export enum EVoiceResult {
   k_EVoiceResultReceiverDidNotAnswer = 9,
 }
 
+/** Result codes to GSHandleClientDeny/Kick */
 export enum EDenyReason {
   k_EDenyInvalid = 0,
   k_EDenyInvalidVersion = 1,
@@ -180,6 +184,7 @@ export enum EDenyReason {
   k_EDenySteamOwnerLeftGuestUser = 15,
 }
 
+/** results from BeginAuthSession */
 export enum EBeginAuthSessionResult {
   k_EBeginAuthSessionResultOK = 0,
   k_EBeginAuthSessionResultInvalidTicket = 1,
@@ -189,6 +194,7 @@ export enum EBeginAuthSessionResult {
   k_EBeginAuthSessionResultExpiredTicket = 5,
 }
 
+/** Callback values for callback ValidateAuthTicketResponse_t which is a response to BeginAuthSession */
 export enum EAuthSessionResponse {
   k_EAuthSessionResponseOK = 0,
   k_EAuthSessionResponseUserNotConnectedToSteam = 1,
@@ -203,12 +209,14 @@ export enum EAuthSessionResponse {
   k_EAuthSessionResponseAuthTicketNetworkIdentityFailure = 10,
 }
 
+/** results from UserHasLicenseForApp */
 export enum EUserHasLicenseForAppResult {
   k_EUserHasLicenseResultHasLicense = 0,
   k_EUserHasLicenseResultDoesNotHaveLicense = 1,
   k_EUserHasLicenseResultNoAuth = 2,
 }
 
+/** Steam account types */
 export enum EAccountType {
   k_EAccountTypeInvalid = 0,
   k_EAccountTypeIndividual = 1,
@@ -224,6 +232,7 @@ export enum EAccountType {
   k_EAccountTypeMax = 11,
 }
 
+/** Purpose: Chat Entry Types (previously was only friend-to-friend message types) */
 export enum EChatEntryType {
   k_EChatEntryTypeInvalid = 0,
   k_EChatEntryTypeChatMsg = 1,
@@ -239,6 +248,7 @@ export enum EChatEntryType {
   k_EChatEntryTypeLinkBlocked = 14,
 }
 
+/** Purpose: Chat Room Enter Responses */
 export enum EChatRoomEnterResponse {
   k_EChatRoomEnterResponseSuccess = 1,
   k_EChatRoomEnterResponseDoesntExist = 2,
@@ -254,6 +264,10 @@ export enum EChatRoomEnterResponse {
   k_EChatRoomEnterResponseRatelimitExceeded = 15,
 }
 
+/**
+ * Special flags for Chat accounts - they go in the top 8 bits
+ * of the steam ID's "instance", leaving 12 for the actual instances
+ */
 export enum EChatSteamIDInstanceFlags {
   k_EChatAccountInstanceMask = 4095,
   k_EChatInstanceFlagClan = 524288,
@@ -261,6 +275,7 @@ export enum EChatSteamIDInstanceFlags {
   k_EChatInstanceFlagMMSLobby = 131072,
 }
 
+/** Purpose: Possible positions to tell the overlay to show notifications in */
 export enum ENotificationPosition {
   k_EPositionInvalid = -1,
   k_EPositionTopLeft = 0,
@@ -269,6 +284,7 @@ export enum ENotificationPosition {
   k_EPositionBottomRight = 3,
 }
 
+/** Purpose: Broadcast upload result details */
 export enum EBroadcastUploadResult {
   k_EBroadcastUploadResultNone = 0,
   k_EBroadcastUploadResultOK = 1,
@@ -296,6 +312,10 @@ export enum EBroadcastUploadResult {
   k_EBroadcastUploadResultAudioInitFailed = 23,
 }
 
+/**
+ * Purpose: Reasons a user may not use the Community Market.
+ * Used in MarketEligibilityResponse_t.
+ */
 export enum EMarketNotAllowedReasonFlags {
   k_EMarketNotAllowedReason_None = 0,
   k_EMarketNotAllowedReason_TemporaryFailure = 1,
@@ -317,6 +337,11 @@ export enum EMarketNotAllowedReasonFlags {
   k_EMarketNotAllowedReason_TradeCooldown = 65536,
 }
 
+/**
+ * describes XP / progress restrictions to apply for games with duration control /
+ * anti-indulgence enabled for minor Steam China users.
+ * WARNING: DO NOT RENUMBER
+ */
 export enum EDurationControlProgress {
   k_EDurationControlProgress_Full = 0,
   k_EDurationControlProgress_Half = 1,
@@ -326,6 +351,10 @@ export enum EDurationControlProgress {
   k_EDurationControl_ExitSoon_Night = 5,
 }
 
+/**
+ * describes which notification timer has expired, for steam china duration control feature
+ * WARNING: DO NOT RENUMBER
+ */
 export enum EDurationControlNotification {
   k_EDurationControlNotification_None = 0,
   k_EDurationControlNotification_1Hour = 1,
@@ -337,6 +366,7 @@ export enum EDurationControlNotification {
   k_EDurationControlNotification_ExitSoon_Night = 7,
 }
 
+/** Specifies a game's online state in relation to duration control */
 export enum EDurationControlOnlineState {
   k_EDurationControlOnlineState_Invalid = 0,
   k_EDurationControlOnlineState_Offline = 1,
@@ -359,12 +389,14 @@ export enum ESteamIPv6ConnectivityProtocol {
   k_ESteamIPv6ConnectivityProtocol_UDP = 2,
 }
 
+/** For the above transport protocol, what do we think the local machine's connectivity to the internet over ipv6 is like */
 export enum ESteamIPv6ConnectivityState {
   k_ESteamIPv6ConnectivityState_Unknown = 0,
   k_ESteamIPv6ConnectivityState_Good = 1,
   k_ESteamIPv6ConnectivityState_Bad = 2,
 }
 
+/** Purpose: set of relationships to other users */
 export enum EFriendRelationship {
   k_EFriendRelationshipNone = 0,
   k_EFriendRelationshipBlocked = 1,
@@ -377,6 +409,7 @@ export enum EFriendRelationship {
   k_EFriendRelationshipMax = 8,
 }
 
+/** Purpose: list of states a friend can be in */
 export enum EPersonaState {
   k_EPersonaStateOffline = 0,
   k_EPersonaStateOnline = 1,
@@ -389,6 +422,7 @@ export enum EPersonaState {
   k_EPersonaStateMax = 8,
 }
 
+/** Purpose: flags for enumerating friends list, or quickly checking a the relationship between users */
 export enum EFriendFlags {
   k_EFriendFlagNone = 0,
   k_EFriendFlagBlocked = 1,
@@ -404,17 +438,20 @@ export enum EFriendFlags {
   k_EFriendFlagAll = 65535,
 }
 
+/** These values are passed as parameters to the store */
 export enum EOverlayToStoreFlag {
   k_EOverlayToStoreFlag_None = 0,
   k_EOverlayToStoreFlag_AddToCart = 1,
   k_EOverlayToStoreFlag_AddToCartAndShow = 2,
 }
 
+/** Purpose: Tells Steam where to place the browser window inside the overlay */
 export enum EActivateGameOverlayToWebPageMode {
   k_EActivateGameOverlayToWebPageMode_Default = 0,
   k_EActivateGameOverlayToWebPageMode_Modal = 1,
 }
 
+/** Purpose: See GetProfileItemPropertyString and GetProfileItemPropertyUint */
 export enum ECommunityProfileItemType {
   k_ECommunityProfileItemType_AnimatedAvatar = 0,
   k_ECommunityProfileItemType_AvatarFrame = 1,
@@ -438,6 +475,10 @@ export enum ECommunityProfileItemProperty {
   k_ECommunityProfileItemProperty_MovieMP4Small = 11,
 }
 
+/**
+ * used in PersonaStateChange_t::m_nChangeFlags to describe what's changed about a user
+ * these flags describe what the client has learned has changed recently, so on startup you'll see a name, avatar & relationship change for every friend
+ */
 export enum EPersonaChange {
   k_EPersonaChangeName = 1,
   k_EPersonaChangeStatus = 2,
@@ -456,6 +497,7 @@ export enum EPersonaChange {
   k_EPersonaChangeRichPresence = 16384,
 }
 
+/** Steam API call failure results */
 export enum ESteamAPICallFailure {
   k_ESteamAPICallFailureNone = -1,
   k_ESteamAPICallFailureSteamGone = 0,
@@ -464,11 +506,13 @@ export enum ESteamAPICallFailure {
   k_ESteamAPICallFailureMismatchedCallback = 3,
 }
 
+/** Input modes for the Big Picture gamepad text entry */
 export enum EGamepadTextInputMode {
   k_EGamepadTextInputModeNormal = 0,
   k_EGamepadTextInputModePassword = 1,
 }
 
+/** Controls number of allowed lines for the Big Picture gamepad text entry */
 export enum EGamepadTextInputLineMode {
   k_EGamepadTextInputLineModeSingleLine = 0,
   k_EGamepadTextInputLineModeMultipleLines = 1,
@@ -481,6 +525,7 @@ export enum EFloatingGamepadTextInputMode {
   k_EFloatingGamepadTextInputModeModeNumeric = 3,
 }
 
+/** The context where text filtering is being done */
 export enum ETextFilteringContext {
   k_ETextFilteringContextUnknown = 0,
   k_ETextFilteringContextGameContent = 1,
@@ -488,6 +533,7 @@ export enum ETextFilteringContext {
   k_ETextFilteringContextName = 3,
 }
 
+/** Steam device list */
 export enum ESteamHardwareType {
   k_ESteamHardwareTypeNone = 0,
   k_ESteamHardwareTypeSteamDeck = 1,
@@ -495,6 +541,7 @@ export enum ESteamHardwareType {
   k_ESteamHardwareTypeSteamFrame = 3,
 }
 
+/** Default game settings profile */
 export enum ESteamHardwareDefaultConfig {
   k_ESteamHardwareDefaultConfigNone = 0,
   k_ESteamHardwareDefaultConfigLow = 1,
@@ -506,6 +553,7 @@ export enum ESteamHardwareDefaultConfig {
   k_ESteamHardwareDefaultConfigSteamFrame = 7,
 }
 
+/** results for CheckFileSignature */
 export enum ECheckFileSignature {
   k_ECheckFileSignatureInvalidSignature = 0,
   k_ECheckFileSignatureValidSignature = 1,
@@ -520,6 +568,7 @@ export enum EMatchMakingServerResponse {
   eNoServersListedOnMasterServer = 2,
 }
 
+/** lobby type description */
 export enum ELobbyType {
   k_ELobbyTypePrivate = 0,
   k_ELobbyTypeFriendsOnly = 1,
@@ -528,6 +577,7 @@ export enum ELobbyType {
   k_ELobbyTypePrivateUnique = 4,
 }
 
+/** lobby search filter tools */
 export enum ELobbyComparison {
   k_ELobbyComparisonEqualToOrLessThan = -2,
   k_ELobbyComparisonLessThan = -1,
@@ -537,6 +587,7 @@ export enum ELobbyComparison {
   k_ELobbyComparisonNotEqual = 3,
 }
 
+/** lobby search distance. Lobby results are sorted from closest to farthest. */
 export enum ELobbyDistanceFilter {
   k_ELobbyDistanceFilterClose = 0,
   k_ELobbyDistanceFilterDefault = 1,
@@ -544,6 +595,7 @@ export enum ELobbyDistanceFilter {
   k_ELobbyDistanceFilterWorldwide = 3,
 }
 
+/** Purpose: Used in ChatInfo messages - fields specific to a chat member - must fit in a uint32 */
 export enum EChatMemberStateChange {
   k_EChatMemberStateChangeEntered = 1,
   k_EChatMemberStateChangeLeft = 2,
@@ -552,6 +604,10 @@ export enum EChatMemberStateChange {
   k_EChatMemberStateChangeBanned = 16,
 }
 
+/**
+ * Purpose: Functions for quickly creating a Party with friends or acquaintances,
+ * EG from chat rooms.
+ */
 export enum ESteamPartyBeaconLocationType {
   k_ESteamPartyBeaconLocationType_Invalid = 0,
   k_ESteamPartyBeaconLocationType_ChatGroup = 1,
@@ -652,6 +708,7 @@ export enum ERemoteStorageFilePathType {
   k_ERemoteStorageFilePathType_APIFilename = 2,
 }
 
+/** type of data request, when downloading leaderboard entries */
 export enum ELeaderboardDataRequest {
   k_ELeaderboardDataRequestGlobal = 0,
   k_ELeaderboardDataRequestGlobalAroundUser = 1,
@@ -659,12 +716,14 @@ export enum ELeaderboardDataRequest {
   k_ELeaderboardDataRequestUsers = 3,
 }
 
+/** the sort order of a leaderboard */
 export enum ELeaderboardSortMethod {
   k_ELeaderboardSortMethodNone = 0,
   k_ELeaderboardSortMethodAscending = 1,
   k_ELeaderboardSortMethodDescending = 2,
 }
 
+/** the display type (used by the Steam Community web site) for a leaderboard */
 export enum ELeaderboardDisplayType {
   k_ELeaderboardDisplayTypeNone = 0,
   k_ELeaderboardDisplayTypeNumeric = 1,
@@ -678,6 +737,10 @@ export enum ELeaderboardUploadScoreMethod {
   k_ELeaderboardUploadScoreMethodForceUpdate = 2,
 }
 
+/**
+ * Games can specify what settings the user has selected or has been selected by default based
+ * on the user's machine.
+ */
 export enum EGamePerformanceSetting {
   k_EGamePerformanceSetting_NotSet = 0,
   k_EGamePerformanceSetting_Low = 1,
@@ -687,6 +750,10 @@ export enum EGamePerformanceSetting {
   k_EGamePerformanceSetting_Custom = 5,
 }
 
+/**
+ * list of possible errors returned by SendP2PPacket() API
+ * these will be posted in the P2PSessionConnectFail_t callback
+ */
 export enum EP2PSessionError {
   k_EP2PSessionErrorNone = 0,
   k_EP2PSessionErrorNoRightsToApp = 2,
@@ -696,6 +763,10 @@ export enum EP2PSessionError {
   k_EP2PSessionErrorMax = 5,
 }
 
+/**
+ * SendP2PPacket() send types
+ * Typically k_EP2PSendUnreliable is what you want for UDP-like packets, k_EP2PSendReliable for TCP-like packets
+ */
 export enum EP2PSend {
   k_EP2PSendUnreliable = 0,
   k_EP2PSendUnreliableNoDelay = 1,
@@ -703,6 +774,7 @@ export enum EP2PSend {
   k_EP2PSendReliableWithBuffering = 3,
 }
 
+/** connection progress indicators, used by CreateP2PConnectionSocket() */
 export enum ESNetSocketState {
   k_ESNetSocketStateInvalid = 0,
   k_ESNetSocketStateConnected = 1,
@@ -717,6 +789,7 @@ export enum ESNetSocketState {
   k_ESNetSocketStateConnectionBroken = 25,
 }
 
+/** describes how the socket is currently connected */
 export enum ESNetSocketConnectionType {
   k_ESNetSocketConnectionTypeNotConnected = 0,
   k_ESNetSocketConnectionTypeUDP = 1,
@@ -732,6 +805,7 @@ export enum EVRScreenshotType {
   k_EVRScreenshotType_StereoPanorama = 5,
 }
 
+/** Purpose: */
 export enum AudioPlayback_Status {
   AudioPlayback_Undefined = 0,
   AudioPlayback_Playing = 1,
@@ -739,6 +813,7 @@ export enum AudioPlayback_Status {
   AudioPlayback_Idle = 3,
 }
 
+/** This enum is used in client API methods, do not re-number existing values. */
 export enum EHTTPMethod {
   k_EHTTPMethodInvalid = 0,
   k_EHTTPMethodGET = 1,
@@ -750,6 +825,10 @@ export enum EHTTPMethod {
   k_EHTTPMethodPATCH = 7,
 }
 
+/**
+ * HTTP Status codes that the server can send in response to a request, see rfc2616 section 10.3 for descriptions
+ * of each of these.
+ */
 export enum EHTTPStatusCode {
   k_EHTTPStatusCodeInvalid = 0,
   k_EHTTPStatusCode100Continue = 100,
@@ -833,6 +912,12 @@ export enum EInputSourceMode {
   k_EInputSourceMode_Switches = 16,
 }
 
+/**
+ * Note: Please do not use action origins as a way to identify controller types. There is no
+ * guarantee that they will be added in a contiguous manner - use GetInputTypeForHandle instead.
+ * Versions of Steam that add new controller types in the future will extend this enum so if you're
+ * using a lookup table please check the bounds of any origins returned by Steam.
+ */
 export enum EInputActionOrigin {
   k_EInputActionOrigin_None = 0,
   k_EInputActionOrigin_SteamController_A = 1,
@@ -1574,6 +1659,7 @@ export enum ESteamControllerPad {
   k_ESteamControllerGrip_Both = 5,
 }
 
+/** Only used in the Legacy haptic call family (Steam Input api). For modern haptic locations we are using ESteamControllerPad. */
 export enum EControllerHapticLocation {
   k_EControllerHapticLocation_Left = 1,
   k_EControllerHapticLocation_Right = 2,
@@ -1610,6 +1696,7 @@ export enum ESteamInputType {
   k_ESteamInputType_MaximumPossibleValue = 255,
 }
 
+/** Individual values are used by the GetSessionInputConfigurationSettings bitmask */
 export enum ESteamInputConfigurationEnableType {
   k_ESteamInputConfigurationEnableType_None = 0,
   k_ESteamInputConfigurationEnableType_Playstation = 1,
@@ -1618,11 +1705,13 @@ export enum ESteamInputConfigurationEnableType {
   k_ESteamInputConfigurationEnableType_Switch = 8,
 }
 
+/** These values are passed into SetLEDColor */
 export enum ESteamInputLEDFlag {
   k_ESteamInputLEDFlag_SetColor = 0,
   k_ESteamInputLEDFlag_RestoreUserDefault = 1,
 }
 
+/** These values are passed into GetGlyphPNGForActionOrigin */
 export enum ESteamInputGlyphSize {
   k_ESteamInputGlyphSize_Small = 0,
   k_ESteamInputGlyphSize_Medium = 1,
@@ -1643,6 +1732,12 @@ export enum ESteamInputActionEventType {
   ESteamInputActionEventType_AnalogAction = 1,
 }
 
+/**
+ * Note: Please do not use action origins as a way to identify controller types. There is no
+ * guarantee that they will be added in a contiguous manner - use GetInputTypeForHandle instead
+ * Versions of Steam that add new controller types in the future will extend this enum if you're
+ * using a lookup table please check the bounds of any origins returned by Steam.
+ */
 export enum EControllerActionOrigin {
   k_EControllerActionOrigin_None = 0,
   k_EControllerActionOrigin_A = 1,
@@ -2328,6 +2423,7 @@ export enum ESteamControllerLEDFlag {
   k_ESteamControllerLEDFlag_RestoreUserDefault = 1,
 }
 
+/** Matching UGC types for queries */
 export enum EUGCMatchingUGCType {
   k_EUGCMatchingUGCType_Items = 0,
   k_EUGCMatchingUGCType_Items_Mtx = 1,
@@ -2345,6 +2441,10 @@ export enum EUGCMatchingUGCType {
   k_EUGCMatchingUGCType_All = -1,
 }
 
+/**
+ * Different lists of published UGC for a user.
+ * If the current logged in user is different than the specified user, then some options may not be allowed.
+ */
 export enum EUserUGCList {
   k_EUserUGCList_Published = 0,
   k_EUserUGCList_VotedOn = 1,
@@ -2357,6 +2457,7 @@ export enum EUserUGCList {
   k_EUserUGCList_Followed = 8,
 }
 
+/** Sort order for user published UGC lists (defaults to creation order descending) */
 export enum EUserUGCListSortOrder {
   k_EUserUGCListSortOrder_CreationOrderDesc = 0,
   k_EUserUGCListSortOrder_CreationOrderAsc = 1,
@@ -2367,6 +2468,7 @@ export enum EUserUGCListSortOrder {
   k_EUserUGCListSortOrder_ForModeration = 6,
 }
 
+/** Combination of sorting and filtering for queries across all UGC */
 export enum EUGCQuery {
   k_EUGCQuery_RankedByVote = 0,
   k_EUGCQuery_RankedByPublicationDate = 1,
@@ -2452,6 +2554,14 @@ export enum ESteamItemFlags {
   k_ESteamItemConsumed = 512,
 }
 
+/**
+ * Controls the color of the timeline bar segments. The value names listed here map to a multiplayer game, where
+ * the user starts a game (in menus), then joins a multiplayer session that first has a character selection lobby
+ * then finally the multiplayer session starts. However, you can also map these values to any type of game. In a single
+ * player game where you visit towns & dungeons, you could set k_ETimelineGameMode_Menus when the player is in a town
+ * buying items, k_ETimelineGameMode_Staging for when a dungeon is loading and k_ETimelineGameMode_Playing for when
+ * inside the dungeon fighting monsters.
+ */
 export enum ETimelineGameMode {
   k_ETimelineGameMode_Invalid = 0,
   k_ETimelineGameMode_Playing = 1,
@@ -2461,6 +2571,7 @@ export enum ETimelineGameMode {
   k_ETimelineGameMode_Max = 5,
 }
 
+/** Used in AddTimelineEvent, where Featured events will be offered before Standard events */
 export enum ETimelineEventClipPriority {
   k_ETimelineEventClipPriority_Invalid = 0,
   k_ETimelineEventClipPriority_None = 1,
@@ -2468,6 +2579,11 @@ export enum ETimelineEventClipPriority {
   k_ETimelineEventClipPriority_Featured = 3,
 }
 
+/**
+ * Feature types for parental settings
+ * These end up in a 32-bit bitfield so we're
+ * limited on how many we can have.
+ */
 export enum EParentalFeature {
   k_EFeatureInvalid = 0,
   k_EFeatureStore = 1,
@@ -2489,6 +2605,7 @@ export enum EParentalFeature {
   k_EFeatureMax = 17,
 }
 
+/** Purpose: The form factor of a device */
 export enum ESteamDeviceFormFactor {
   k_ESteamDeviceFormFactorUnknown = 0,
   k_ESteamDeviceFormFactorPhone = 1,
@@ -2498,6 +2615,7 @@ export enum ESteamDeviceFormFactor {
   k_ESteamDeviceFormFactorVRHeadset = 5,
 }
 
+/** Purpose: The type of input in ERemotePlayInput_t */
 export enum ERemotePlayInputType {
   k_ERemotePlayInputUnknown = 0,
   k_ERemotePlayInputMouseMotion = 1,
@@ -2508,6 +2626,7 @@ export enum ERemotePlayInputType {
   k_ERemotePlayInputKeyUp = 6,
 }
 
+/** Purpose: Mouse buttons in ERemotePlayInput_t */
 export enum ERemotePlayMouseButton {
   k_ERemotePlayMouseButtonLeft = 1,
   k_ERemotePlayMouseButtonRight = 2,
@@ -2516,6 +2635,7 @@ export enum ERemotePlayMouseButton {
   k_ERemotePlayMouseButtonX2 = 64,
 }
 
+/** Purpose: Mouse wheel direction in ERemotePlayInput_t */
 export enum ERemotePlayMouseWheelDirection {
   k_ERemotePlayMouseWheelUp = 1,
   k_ERemotePlayMouseWheelDown = 2,
@@ -2523,6 +2643,11 @@ export enum ERemotePlayMouseWheelDirection {
   k_ERemotePlayMouseWheelRight = 4,
 }
 
+/**
+ * Purpose: Key scancode in ERemotePlayInput_t
+ * This is a USB scancode value as defined for the Keyboard/Keypad Page (0x07)
+ * This enumeration isn't a complete list, just the most commonly used keys.
+ */
 export enum ERemotePlayScancode {
   k_ERemotePlayScancodeUnknown = 0,
   k_ERemotePlayScancodeA = 4,
@@ -2626,6 +2751,7 @@ export enum ERemotePlayScancode {
   k_ERemotePlayScancodeRightGUI = 231,
 }
 
+/** Purpose: Key modifier in ERemotePlayInput_t */
 export enum ERemotePlayKeyModifier {
   k_ERemotePlayKeyModifierNone = 0,
   k_ERemotePlayKeyModifierLeftShift = 1,
@@ -2641,6 +2767,7 @@ export enum ERemotePlayKeyModifier {
   k_ERemotePlayKeyModifierMask = 65535,
 }
 
+/** Describe the status of a particular network resource */
 export enum ESteamNetworkingAvailability {
   k_ESteamNetworkingAvailability_CannotTry = -102,
   k_ESteamNetworkingAvailability_Failed = -101,
@@ -2654,6 +2781,7 @@ export enum ESteamNetworkingAvailability {
   k_ESteamNetworkingAvailability__Force32bit = 2147483647,
 }
 
+/** Different methods of describing the identity of a network host */
 export enum ESteamNetworkingIdentityType {
   k_ESteamNetworkingIdentityType_Invalid = 0,
   k_ESteamNetworkingIdentityType_SteamID = 16,
@@ -2666,6 +2794,10 @@ export enum ESteamNetworkingIdentityType {
   k_ESteamNetworkingIdentityType__Force32bit = 2147483647,
 }
 
+/**
+ * "Fake IPs" are assigned to hosts, to make it easier to interface with
+ * older code that assumed all hosts will have an IPv4 address
+ */
 export enum ESteamNetworkingFakeIPType {
   k_ESteamNetworkingFakeIPType_Invalid = 0,
   k_ESteamNetworkingFakeIPType_NotFake = 1,
@@ -2674,6 +2806,7 @@ export enum ESteamNetworkingFakeIPType {
   k_ESteamNetworkingFakeIPType__Force32Bit = 2147483647,
 }
 
+/** High level connection status */
 export enum ESteamNetworkingConnectionState {
   k_ESteamNetworkingConnectionState_None = 0,
   k_ESteamNetworkingConnectionState_Connecting = 1,
@@ -2687,6 +2820,11 @@ export enum ESteamNetworkingConnectionState {
   k_ESteamNetworkingConnectionState__Force32Bit = 2147483647,
 }
 
+/**
+ * Enumerate various causes of connection termination.  These are designed to work similar
+ * to HTTP error codes: the numeric range gives you a rough classification as to the source
+ * of the problem.
+ */
 export enum ESteamNetConnectionEnd {
   k_ESteamNetConnectionEnd_Invalid = 0,
   k_ESteamNetConnectionEnd_App_Min = 1000,
@@ -2723,6 +2861,7 @@ export enum ESteamNetConnectionEnd {
   k_ESteamNetConnectionEnd__Force32Bit = 2147483647,
 }
 
+/** Configuration values can be applied to different types of objects. */
 export enum ESteamNetworkingConfigScope {
   k_ESteamNetworkingConfig_Global = 1,
   k_ESteamNetworkingConfig_SocketsInterface = 2,
@@ -2731,6 +2870,7 @@ export enum ESteamNetworkingConfigScope {
   k_ESteamNetworkingConfigScope__Force32Bit = 2147483647,
 }
 
+/** Different configuration values have different data types */
 export enum ESteamNetworkingConfigDataType {
   k_ESteamNetworkingConfig_Int32 = 1,
   k_ESteamNetworkingConfig_Int64 = 2,
@@ -2740,6 +2880,7 @@ export enum ESteamNetworkingConfigDataType {
   k_ESteamNetworkingConfigDataType__Force32Bit = 2147483647,
 }
 
+/** Configuration options */
 export enum ESteamNetworkingConfigValue {
   k_ESteamNetworkingConfig_Invalid = 0,
   k_ESteamNetworkingConfig_TimeoutInitial = 24,
@@ -2821,6 +2962,7 @@ export enum ESteamNetworkingConfigValue {
   k_ESteamNetworkingConfigValue__Force32Bit = 2147483647,
 }
 
+/** Return value of ISteamNetworkintgUtils::GetConfigValue */
 export enum ESteamNetworkingGetConfigValueResult {
   k_ESteamNetworkingGetConfigValue_BadValue = -1,
   k_ESteamNetworkingGetConfigValue_BadScopeObj = -2,
@@ -2830,6 +2972,10 @@ export enum ESteamNetworkingGetConfigValueResult {
   k_ESteamNetworkingGetConfigValueResult__Force32Bit = 2147483647,
 }
 
+/**
+ * Detail level for diagnostic output callback.
+ * See ISteamNetworkingUtils::SetDebugOutputFunction
+ */
 export enum ESteamNetworkingSocketsDebugOutputType {
   k_ESteamNetworkingSocketsDebugOutputType_None = 0,
   k_ESteamNetworkingSocketsDebugOutputType_Bug = 1,

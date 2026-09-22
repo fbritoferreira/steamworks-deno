@@ -53,6 +53,7 @@ export class ISteamMusic {
     this.s.SteamAPI_ISteamMusic_PlayNext(this.self);
   }
 
+  /** volume is between 0.0 and 1.0 */
   setVolume(flVolume: number): void {
     this.s.SteamAPI_ISteamMusic_SetVolume(this.self, flVolume);
   }

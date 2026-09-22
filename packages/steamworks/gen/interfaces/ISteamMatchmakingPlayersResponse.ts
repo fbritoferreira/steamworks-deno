@@ -27,6 +27,10 @@ export class ISteamMatchmakingPlayersResponse {
     private readonly host: CallResultHost,
   ) {}
 
+  /**
+   * Got data on a new player on the server -- you'll get this callback once per player
+   * on the server which you have requested player data on.
+   */
   addPlayerToList(pchName: string, nScore: number, flTimePlayed: number): void {
     this.s.SteamAPI_ISteamMatchmakingPlayersResponse_AddPlayerToList(
       this.self,
@@ -36,10 +40,15 @@ export class ISteamMatchmakingPlayersResponse {
     );
   }
 
+  /** The server failed to respond to the request for player details */
   playersFailedToRespond(): void {
     this.s.SteamAPI_ISteamMatchmakingPlayersResponse_PlayersFailedToRespond(this.self);
   }
 
+  /**
+   * The server has finished responding to the player details request
+   * (ie, you won't get anymore AddPlayerToList callbacks)
+   */
   playersRefreshComplete(): void {
     this.s.SteamAPI_ISteamMatchmakingPlayersResponse_PlayersRefreshComplete(this.self);
   }

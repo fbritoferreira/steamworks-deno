@@ -59,11 +59,19 @@ export class ISteamGameServerStats {
     private readonly host: CallResultHost,
   ) {}
 
+  /**
+   * downloads stats for the user
+   * returns a GSStatsReceived_t callback when completed
+   * if the user has no stats, GSStatsReceived_t.m_eResult will be set to k_EResultFail
+   * these stats will only be auto-updated for clients playing on the server. For other
+   * users you'll need to call RequestUserStats() again to refresh any data
+   */
   requestUserStats(steamIDUser: bigint): Promise<GSStatsReceived_t> {
     const call = this.s.SteamAPI_ISteamGameServerStats_RequestUserStats(this.self, steamIDUser);
     return this.host.callResult(call, 1800, decodeGSStatsReceived_t);
   }
 
+  /** requests stat information for a user, usable after a successful call to RequestUserStats() */
   getUserStatInt32(steamIDUser: bigint, pchName: string): { ok: boolean; pData: number } {
     const pData_buf = scalarOut("i32");
     const ok = this.s.SteamAPI_ISteamGameServerStats_GetUserStatInt32(
@@ -75,6 +83,7 @@ export class ISteamGameServerStats {
     return { ok, pData: readScalar(pData_buf, "i32") as number };
   }
 
+  /** requests stat information for a user, usable after a successful call to RequestUserStats() */
   getUserStatFloat(steamIDUser: bigint, pchName: string): { ok: boolean; pData: number } {
     const pData_buf = scalarOut("f32");
     const ok = this.s.SteamAPI_ISteamGameServerStats_GetUserStatFloat(
@@ -146,6 +155,13 @@ export class ISteamGameServerStats {
     );
   }
 
+  /**
+   * Store the current data on the server, will get a GSStatsStored_t callback when set.
+   * If the callback has a result of k_EResultInvalidParam, one or more stats
+   * uploaded has been rejected, either because they broke constraints
+   * or were out of date. In this case the server sends back updated values.
+   * The stats should be re-iterated to keep in sync.
+   */
   storeUserStats(steamIDUser: bigint): Promise<GSStatsStored_t> {
     const call = this.s.SteamAPI_ISteamGameServerStats_StoreUserStats(this.self, steamIDUser);
     return this.host.callResult(call, 1801, decodeGSStatsStored_t);

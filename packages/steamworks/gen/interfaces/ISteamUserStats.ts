@@ -191,22 +191,26 @@ export class ISteamUserStats {
     private readonly host: CallResultHost,
   ) {}
 
+  /** Data accessors */
   getStatInt32(pchName: string): { ok: boolean; pData: number } {
     const pData_buf = scalarOut("i32");
     const ok = this.s.SteamAPI_ISteamUserStats_GetStatInt32(this.self, cstrArg(pchName), pData_buf);
     return { ok, pData: readScalar(pData_buf, "i32") as number };
   }
 
+  /** Data accessors */
   getStatFloat(pchName: string): { ok: boolean; pData: number } {
     const pData_buf = scalarOut("f32");
     const ok = this.s.SteamAPI_ISteamUserStats_GetStatFloat(this.self, cstrArg(pchName), pData_buf);
     return { ok, pData: readScalar(pData_buf, "f32") as number };
   }
 
+  /** Set / update data */
   setStatInt32(pchName: string, nData: number): boolean {
     return this.s.SteamAPI_ISteamUserStats_SetStatInt32(this.self, cstrArg(pchName), nData);
   }
 
+  /** Set / update data */
   setStatFloat(pchName: string, fData: number): boolean {
     return this.s.SteamAPI_ISteamUserStats_SetStatFloat(this.self, cstrArg(pchName), fData);
   }
@@ -220,6 +224,7 @@ export class ISteamUserStats {
     );
   }
 
+  /** Achievement flag accessors */
   getAchievement(pchName: string): { ok: boolean; pbAchieved: boolean } {
     const pbAchieved_buf = scalarOut("bool");
     const ok = this.s.SteamAPI_ISteamUserStats_GetAchievement(
@@ -238,6 +243,11 @@ export class ISteamUserStats {
     return this.s.SteamAPI_ISteamUserStats_ClearAchievement(this.self, cstrArg(pchName));
   }
 
+  /**
+   * Get the achievement status, and the time it was unlocked if unlocked.
+   * If the return value is true, but the unlock time is zero, that means it was unlocked before Steam
+   * began tracking achievement unlock times (December 2009). Time is seconds since January 1, 1970.
+   */
   getAchievementAndUnlockTime(
     pchName: string,
   ): { ok: boolean; pbAchieved: boolean; punUnlockTime: number } {
@@ -256,14 +266,33 @@ export class ISteamUserStats {
     };
   }
 
+  /**
+   * Store the current data on the server, will get a callback when set
+   * And one callback for every new achievement
+   * If the callback has a result of k_EResultInvalidParam, one or more stats
+   * uploaded has been rejected, either because they broke constraints
+   * or were out of date. In this case the server sends back updated values.
+   * The stats should be re-iterated to keep in sync.
+   */
   storeStats(): boolean {
     return this.s.SteamAPI_ISteamUserStats_StoreStats(this.self);
   }
 
+  /**
+   * Gets the icon of the achievement, which is a handle to be used in ISteamUtils::GetImageRGBA(), or 0 if none set.
+   * A return value of 0 may indicate we are still fetching data, and you can wait for the UserAchievementIconFetched_t callback
+   * which will notify you when the bits are ready. If the callback still returns zero, then there is no image set for the
+   * specified achievement.
+   */
   getAchievementIcon(pchName: string): number {
     return this.s.SteamAPI_ISteamUserStats_GetAchievementIcon(this.self, cstrArg(pchName));
   }
 
+  /**
+   * Get general attributes for an achievement. Accepts the following keys:
+   * - "name" and "desc" for retrieving the localized achievement name and description (returned in UTF8)
+   * - "hidden" for retrieving if an achievement is hidden (returns "0" when not hidden, "1" when hidden)
+   */
   getAchievementDisplayAttribute(pchName: string, pchKey: string): string {
     return readCString(
       this.s.SteamAPI_ISteamUserStats_GetAchievementDisplayAttribute(
@@ -274,6 +303,10 @@ export class ISteamUserStats {
     );
   }
 
+  /**
+   * Achievement progress - triggers an AchievementProgress callback, that is all.
+   * Calling this w/ N out of N progress will NOT set the achievement, the game must still do that.
+   */
   indicateAchievementProgress(
     pchName: string,
     nCurProgress: number,
@@ -287,19 +320,31 @@ export class ISteamUserStats {
     );
   }
 
+  /**
+   * Used for iterating achievements. In general games should not need these functions because they should have a
+   * list of existing achievements compiled into them
+   */
   getNumAchievements(): number {
     return this.s.SteamAPI_ISteamUserStats_GetNumAchievements(this.self);
   }
 
+  /** Get achievement name iAchievement in [0,GetNumAchievements) */
   getAchievementName(iAchievement: number): string {
     return readCString(this.s.SteamAPI_ISteamUserStats_GetAchievementName(this.self, iAchievement));
   }
 
+  /**
+   * downloads stats for the user
+   * returns a UserStatsReceived_t received when completed
+   * if the other user has no stats, UserStatsReceived_t.m_eResult will be set to k_EResultFail
+   * these stats won't be auto-updated; you'll need to call RequestUserStats() again to refresh any data
+   */
   requestUserStats(steamIDUser: bigint): Promise<UserStatsReceived_t> {
     const call = this.s.SteamAPI_ISteamUserStats_RequestUserStats(this.self, steamIDUser);
     return this.host.callResult(call, 1101, decodeUserStatsReceived_t);
   }
 
+  /** requests stat information for a user, usable after a successful call to RequestUserStats() */
   getUserStatInt32(steamIDUser: bigint, pchName: string): { ok: boolean; pData: number } {
     const pData_buf = scalarOut("i32");
     const ok = this.s.SteamAPI_ISteamUserStats_GetUserStatInt32(
@@ -311,6 +356,7 @@ export class ISteamUserStats {
     return { ok, pData: readScalar(pData_buf, "i32") as number };
   }
 
+  /** requests stat information for a user, usable after a successful call to RequestUserStats() */
   getUserStatFloat(steamIDUser: bigint, pchName: string): { ok: boolean; pData: number } {
     const pData_buf = scalarOut("f32");
     const ok = this.s.SteamAPI_ISteamUserStats_GetUserStatFloat(
@@ -333,6 +379,7 @@ export class ISteamUserStats {
     return { ok, pbAchieved: readScalar(pbAchieved_buf, "bool") as boolean };
   }
 
+  /** See notes for GetAchievementAndUnlockTime above */
   getUserAchievementAndUnlockTime(
     steamIDUser: bigint,
     pchName: string,
@@ -353,10 +400,15 @@ export class ISteamUserStats {
     };
   }
 
+  /** Reset stats */
   resetAllStats(bAchievementsToo: boolean): boolean {
     return this.s.SteamAPI_ISteamUserStats_ResetAllStats(this.self, bAchievementsToo);
   }
 
+  /**
+   * asks the Steam back-end for a leaderboard by name, and will create it if it's not yet
+   * This call is asynchronous, with the result returned in LeaderboardFindResult_t
+   */
   findOrCreateLeaderboard(
     pchLeaderboardName: string,
     eLeaderboardSortMethod: ELeaderboardSortMethod,
@@ -371,6 +423,10 @@ export class ISteamUserStats {
     return this.host.callResult(call, 1104, decodeLeaderboardFindResult_t);
   }
 
+  /**
+   * as above, but won't create the leaderboard if it's not found
+   * This call is asynchronous, with the result returned in LeaderboardFindResult_t
+   */
   findLeaderboard(pchLeaderboardName: string): Promise<LeaderboardFindResult_t> {
     const call = this.s.SteamAPI_ISteamUserStats_FindLeaderboard(
       this.self,
@@ -379,16 +435,19 @@ export class ISteamUserStats {
     return this.host.callResult(call, 1104, decodeLeaderboardFindResult_t);
   }
 
+  /** returns the name of a leaderboard */
   getLeaderboardName(hSteamLeaderboard: bigint): string {
     return readCString(
       this.s.SteamAPI_ISteamUserStats_GetLeaderboardName(this.self, hSteamLeaderboard),
     );
   }
 
+  /** returns the total number of entries in a leaderboard, as of the last request */
   getLeaderboardEntryCount(hSteamLeaderboard: bigint): number {
     return this.s.SteamAPI_ISteamUserStats_GetLeaderboardEntryCount(this.self, hSteamLeaderboard);
   }
 
+  /** returns the sort method of the leaderboard */
   getLeaderboardSortMethod(hSteamLeaderboard: bigint): ELeaderboardSortMethod {
     return this.s.SteamAPI_ISteamUserStats_GetLeaderboardSortMethod(
       this.self,
@@ -396,6 +455,7 @@ export class ISteamUserStats {
     ) as ELeaderboardSortMethod;
   }
 
+  /** returns the display type of the leaderboard */
   getLeaderboardDisplayType(hSteamLeaderboard: bigint): ELeaderboardDisplayType {
     return this.s.SteamAPI_ISteamUserStats_GetLeaderboardDisplayType(
       this.self,
@@ -403,6 +463,16 @@ export class ISteamUserStats {
     ) as ELeaderboardDisplayType;
   }
 
+  /**
+   * Asks the Steam back-end for a set of rows in the leaderboard.
+   * This call is asynchronous, with the result returned in LeaderboardScoresDownloaded_t
+   * LeaderboardScoresDownloaded_t will contain a handle to pull the results from GetDownloadedLeaderboardEntries() (below)
+   * You can ask for more entries than exist, and it will return as many as do exist.
+   * k_ELeaderboardDataRequestGlobal requests rows in the leaderboard from the full table, with nRangeStart & nRangeEnd in the range [1, TotalEntries]
+   * k_ELeaderboardDataRequestGlobalAroundUser requests rows around the current user, nRangeStart being negate
+   * e.g. DownloadLeaderboardEntries( hLeaderboard, k_ELeaderboardDataRequestGlobalAroundUser, -3, 3 ) will return 7 rows, 3 before the user, 3 after
+   * k_ELeaderboardDataRequestFriends requests all the rows for friends of the current user
+   */
   downloadLeaderboardEntries(
     hSteamLeaderboard: bigint,
     eLeaderboardDataRequest: ELeaderboardDataRequest,
@@ -419,6 +489,11 @@ export class ISteamUserStats {
     return this.host.callResult(call, 1105, decodeLeaderboardScoresDownloaded_t);
   }
 
+  /**
+   * as above, but downloads leaderboard entries for an arbitrary set of users - ELeaderboardDataRequest is k_ELeaderboardDataRequestUsers
+   * if a user doesn't have a leaderboard entry, they won't be included in the result
+   * a max of 100 users can be downloaded at a time, with only one outstanding call at a time
+   */
   downloadLeaderboardEntriesForUsers(
     hSteamLeaderboard: bigint,
     prgUsers: bigint[],
@@ -433,6 +508,22 @@ export class ISteamUserStats {
     return this.host.callResult(call, 1105, decodeLeaderboardScoresDownloaded_t);
   }
 
+  /**
+   * Returns data about a single leaderboard entry
+   * use a for loop from 0 to LeaderboardScoresDownloaded_t::m_cEntryCount to get all the downloaded entries
+   * e.g.
+   * void OnLeaderboardScoresDownloaded( LeaderboardScoresDownloaded_t *pLeaderboardScoresDownloaded )
+   * {
+   * for ( int index = 0; index < pLeaderboardScoresDownloaded->m_cEntryCount; index++ )
+   * {
+   * LeaderboardEntry_t leaderboardEntry;
+   * int32 details[3];		// we know this is how many we've stored previously
+   * GetDownloadedLeaderboardEntry( pLeaderboardScoresDownloaded->m_hSteamLeaderboardEntries, index, &leaderboardEntry, details, 3 );
+   * assert( leaderboardEntry.m_cDetails == 3 );
+   * ...
+   * }
+   * once you've accessed all the entries, the data will be free'd, and the SteamLeaderboardEntries_t handle will become invalid
+   */
   getDownloadedLeaderboardEntry(
     hSteamLeaderboardEntries: bigint,
     index: number,
@@ -453,6 +544,12 @@ export class ISteamUserStats {
     return decodeLeaderboardEntry_t(pLeaderboardEntry_buf);
   }
 
+  /**
+   * Uploads a user score to the Steam back-end.
+   * This call is asynchronous, with the result returned in LeaderboardScoreUploaded_t
+   * Details are extra game-defined information regarding how the user got that score
+   * pScoreDetails points to an array of int32's, cScoreDetailsCount is the number of int32's in the list
+   */
   uploadLeaderboardScore(
     hSteamLeaderboard: bigint,
     eLeaderboardUploadScoreMethod: ELeaderboardUploadScoreMethod,
@@ -471,6 +568,11 @@ export class ISteamUserStats {
     return this.host.callResult(call, 1106, decodeLeaderboardScoreUploaded_t);
   }
 
+  /**
+   * Attaches a piece of user generated content the user's entry on a leaderboard.
+   * hContent is a handle to a piece of user generated content that was shared using ISteamUserRemoteStorage::FileShare().
+   * This call is asynchronous, with the result returned in LeaderboardUGCSet_t.
+   */
   attachLeaderboardUGC(hSteamLeaderboard: bigint, hUGC: bigint): Promise<LeaderboardUGCSet_t> {
     const call = this.s.SteamAPI_ISteamUserStats_AttachLeaderboardUGC(
       this.self,
@@ -480,16 +582,30 @@ export class ISteamUserStats {
     return this.host.callResult(call, 1111, decodeLeaderboardUGCSet_t);
   }
 
+  /**
+   * Retrieves the number of players currently playing your game (online + offline)
+   * This call is asynchronous, with the result returned in NumberOfCurrentPlayers_t
+   */
   getNumberOfCurrentPlayers(): Promise<NumberOfCurrentPlayers_t> {
     const call = this.s.SteamAPI_ISteamUserStats_GetNumberOfCurrentPlayers(this.self);
     return this.host.callResult(call, 1107, decodeNumberOfCurrentPlayers_t);
   }
 
+  /**
+   * Requests that Steam fetch data on the percentage of players who have received each achievement
+   * for the game globally.
+   * This call is asynchronous, with the result returned in GlobalAchievementPercentagesReady_t.
+   */
   requestGlobalAchievementPercentages(): Promise<GlobalAchievementPercentagesReady_t> {
     const call = this.s.SteamAPI_ISteamUserStats_RequestGlobalAchievementPercentages(this.self);
     return this.host.callResult(call, 1110, decodeGlobalAchievementPercentagesReady_t);
   }
 
+  /**
+   * Get the info on the most achieved achievement for the game, returns an iterator index you can use to fetch
+   * the next most achieved afterwards.  Will return -1 if there is no data on achievement
+   * percentages (ie, you haven't called RequestGlobalAchievementPercentages and waited on the callback).
+   */
   getMostAchievedAchievementInfo(
     pchName: string,
     unNameBufLen: number,
@@ -510,6 +626,11 @@ export class ISteamUserStats {
     };
   }
 
+  /**
+   * Get the info on the next most achieved achievement for the game. Call this after GetMostAchievedAchievementInfo or another
+   * GetNextMostAchievedAchievementInfo call passing the iterator from the previous call. Returns -1 after the last
+   * achievement has been iterated.
+   */
   getNextMostAchievedAchievementInfo(
     iIteratorPrevious: number,
     pchName: string,
@@ -532,6 +653,7 @@ export class ISteamUserStats {
     };
   }
 
+  /** Returns the percentage of users who have achieved the specified achievement. */
   getAchievementAchievedPercent(pchName: string): { ok: boolean; pflPercent: number } {
     const pflPercent_buf = scalarOut("f32");
     const ok = this.s.SteamAPI_ISteamUserStats_GetAchievementAchievedPercent(
@@ -542,11 +664,18 @@ export class ISteamUserStats {
     return { ok, pflPercent: readScalar(pflPercent_buf, "f32") as number };
   }
 
+  /**
+   * Requests global stats data, which is available for stats marked as "aggregated".
+   * This call is asynchronous, with the results returned in GlobalStatsReceived_t.
+   * nHistoryDays specifies how many days of day-by-day history to retrieve in addition
+   * to the overall totals. The limit is 60.
+   */
   requestGlobalStats(nHistoryDays: number): Promise<GlobalStatsReceived_t> {
     const call = this.s.SteamAPI_ISteamUserStats_RequestGlobalStats(this.self, nHistoryDays);
     return this.host.callResult(call, 1112, decodeGlobalStatsReceived_t);
   }
 
+  /** Gets the lifetime totals for an aggregated stat */
   getGlobalStatInt64(pchStatName: string): { ok: boolean; pData: bigint } {
     const pData_buf = scalarOut("i64");
     const ok = this.s.SteamAPI_ISteamUserStats_GetGlobalStatInt64(
@@ -557,6 +686,7 @@ export class ISteamUserStats {
     return { ok, pData: readScalar(pData_buf, "i64") as bigint };
   }
 
+  /** Gets the lifetime totals for an aggregated stat */
   getGlobalStatDouble(pchStatName: string): { ok: boolean; pData: number } {
     const pData_buf = scalarOut("f64");
     const ok = this.s.SteamAPI_ISteamUserStats_GetGlobalStatDouble(
@@ -585,6 +715,11 @@ export class ISteamUserStats {
     );
   }
 
+  /**
+   * For achievements that have related Progress stats, use this to query what the bounds of that progress are.
+   * You may want this info to selectively call IndicateAchievementProgress when appropriate milestones of progress
+   * have been made, to show a progress notification to the user.
+   */
   getAchievementProgressLimitsInt32(
     pchName: string,
   ): { ok: boolean; pnMinProgress: number; pnMaxProgress: number } {
@@ -603,6 +738,11 @@ export class ISteamUserStats {
     };
   }
 
+  /**
+   * For achievements that have related Progress stats, use this to query what the bounds of that progress are.
+   * You may want this info to selectively call IndicateAchievementProgress when appropriate milestones of progress
+   * have been made, to show a progress notification to the user.
+   */
   getAchievementProgressLimitsFloat(
     pchName: string,
   ): { ok: boolean; pfMinProgress: number; pfMaxProgress: number } {

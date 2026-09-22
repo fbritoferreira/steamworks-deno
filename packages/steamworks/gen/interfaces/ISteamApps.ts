@@ -119,26 +119,36 @@ export class ISteamApps {
     return readCString(this.s.SteamAPI_ISteamApps_GetAvailableGameLanguages(this.self));
   }
 
+  /** only use this member if you need to check ownership of another game related to yours, a demo for example */
   bIsSubscribedApp(appID: number): boolean {
     return this.s.SteamAPI_ISteamApps_BIsSubscribedApp(this.self, appID);
   }
 
+  /** Takes AppID of DLC and checks if the user owns the DLC & if the DLC is installed */
   bIsDlcInstalled(appID: number): boolean {
     return this.s.SteamAPI_ISteamApps_BIsDlcInstalled(this.self, appID);
   }
 
+  /** returns the Unix time of the purchase of the app */
   getEarliestPurchaseUnixTime(nAppID: number): number {
     return this.s.SteamAPI_ISteamApps_GetEarliestPurchaseUnixTime(this.self, nAppID);
   }
 
+  /**
+   * Checks if the user is subscribed to the current app through a free weekend
+   * This function will return false for users who have a retail or other type of license
+   * Before using, please ask your Valve technical contact how to package and secure your free weekend
+   */
   bIsSubscribedFromFreeWeekend(): boolean {
     return this.s.SteamAPI_ISteamApps_BIsSubscribedFromFreeWeekend(this.self);
   }
 
+  /** Returns the number of DLC pieces for the running app */
   getDLCCount(): number {
     return this.s.SteamAPI_ISteamApps_GetDLCCount(this.self);
   }
 
+  /** Returns metadata for DLC by index, of range [0, GetDLCCount()] */
   bGetDLCDataByIndex(
     iDLC: number,
     cchNameBufferSize = 256,
@@ -162,6 +172,7 @@ export class ISteamApps {
     };
   }
 
+  /** Install/Uninstall control for optional DLC */
   installDLC(nAppID: number): void {
     this.s.SteamAPI_ISteamApps_InstallDLC(this.self, nAppID);
   }
@@ -170,6 +181,13 @@ export class ISteamApps {
     this.s.SteamAPI_ISteamApps_UninstallDLC(this.self, nAppID);
   }
 
+  /**
+   * Request legacy cd-key for yourself or owned DLC. If you are interested in this
+   * data then make sure you provide us with a list of valid keys to be distributed
+   * to users when they purchase the game, before the game ships.
+   * You'll receive an AppProofOfPurchaseKeyResponse_t callback when
+   * the key is available (which may be immediately).
+   */
   requestAppProofOfPurchaseKey(nAppID: number): void {
     this.s.SteamAPI_ISteamApps_RequestAppProofOfPurchaseKey(this.self, nAppID);
   }
@@ -199,6 +217,7 @@ export class ISteamApps {
     return readScalarArray(pvecDepots_buf, "u32", n) as number[];
   }
 
+  /** returns current app install folder for AppID, returns folder name length */
   getAppInstallDir(
     appID: number,
     cchFolderBufferSize = 256,
@@ -217,14 +236,26 @@ export class ISteamApps {
     return this.s.SteamAPI_ISteamApps_BIsAppInstalled(this.self, appID);
   }
 
+  /**
+   * returns the SteamID of the original owner. If this CSteamID is different from ISteamUser::GetSteamID(),
+   * the user has a temporary license borrowed via Family Sharing
+   */
   getAppOwner(): bigint {
     return this.s.SteamAPI_ISteamApps_GetAppOwner(this.self);
   }
 
+  /**
+   * Returns the associated launch param if the game is run via steam://run/<appid>//?param1=value1&param2=value2&param3=value3 etc.
+   * Parameter names starting with the character '@' are reserved for internal use and will always return and empty string.
+   * Parameter names starting with an underscore '_' are reserved for steam features -- they can be queried by the game,
+   * but it is advised that you not param names beginning with an underscore for your own features.
+   * Check for new launch parameters on callback NewUrlLaunchParameters_t
+   */
   getLaunchQueryParam(pchKey: string): string {
     return readCString(this.s.SteamAPI_ISteamApps_GetLaunchQueryParam(this.self, cstrArg(pchKey)));
   }
 
+  /** get download progress for optional DLC */
   getDlcDownloadProgress(
     nAppID: number,
   ): { ok: boolean; punBytesDownloaded: bigint; punBytesTotal: bigint } {
@@ -243,10 +274,17 @@ export class ISteamApps {
     };
   }
 
+  /** return the buildid of this app, may change at any time based on backend updates to the game */
   getAppBuildId(): number {
     return this.s.SteamAPI_ISteamApps_GetAppBuildId(this.self);
   }
 
+  /**
+   * Request all proof of purchase keys for the calling appid and associated DLC.
+   * A series of AppProofOfPurchaseKeyResponse_t callbacks will be sent with
+   * appropriate appid values, ending with a final callback where the m_nAppId
+   * member is k_uAppIdInvalid (zero).
+   */
   requestAllProofOfPurchaseKeys(): void {
     this.s.SteamAPI_ISteamApps_RequestAllProofOfPurchaseKeys(this.self);
   }
@@ -256,6 +294,15 @@ export class ISteamApps {
     return this.host.callResult(call, 1023, decodeFileDetailsResult_t);
   }
 
+  /**
+   * Get command line if game was launched via Steam URL, e.g. steam://run/<appid>//<command line>/.
+   * This method of passing a connect string (used when joining via rich presence, accepting an
+   * invite, etc) is preferable to passing the connect string on the operating system command
+   * line, which is a security risk.  In order for rich presence joins to go through this
+   * path and not be placed on the OS command line, you must set a value in your app's
+   * configuration on Steam.  Ask Valve for help with this.
+   * If game was already running and launched again, the NewUrlLaunchParameters_t will be fired.
+   */
   getLaunchCommandLine(cubCommandLine = 256): { result: number; pszCommandLine: string } {
     const pszCommandLine_buf = outString(cubCommandLine);
     const result = this.s.SteamAPI_ISteamApps_GetLaunchCommandLine(
@@ -266,10 +313,12 @@ export class ISteamApps {
     return { result, pszCommandLine: readOutString(pszCommandLine_buf) };
   }
 
+  /** Check if user borrowed this game via Family Sharing, If true, call GetAppOwner() to get the lender SteamID */
   bIsSubscribedFromFamilySharing(): boolean {
     return this.s.SteamAPI_ISteamApps_BIsSubscribedFromFamilySharing(this.self);
   }
 
+  /** check if game is a timed trial with limited playtime */
   bIsTimedTrial(): { ok: boolean; punSecondsAllowed: number; punSecondsPlayed: number } {
     const punSecondsAllowed_buf = scalarOut("u32");
     const punSecondsPlayed_buf = scalarOut("u32");
@@ -285,10 +334,12 @@ export class ISteamApps {
     };
   }
 
+  /** set current DLC AppID being played (or 0 if none). Allows Steam to track usage of major DLC extensions */
   setDlcContext(nAppID: number): boolean {
     return this.s.SteamAPI_ISteamApps_SetDlcContext(this.self, nAppID);
   }
 
+  /** returns total number of known app branches (including default "public" branch ). nAvailable is number of available betas */
   getNumBetas(): { result: number; pnAvailable: number; pnPrivate: number } {
     const pnAvailable_buf = scalarOut("i32");
     const pnPrivate_buf = scalarOut("i32");
@@ -304,6 +355,7 @@ export class ISteamApps {
     };
   }
 
+  /** return beta branch details, name, description, current BuildID and state flags (EBetaBranchFlags) */
   getBetaInfo(
     iBetaIndex: number,
     cchBetaName = 256,
@@ -342,10 +394,12 @@ export class ISteamApps {
     };
   }
 
+  /** select this beta branch for this app as active, might need the game to restart so Steam can update to that branch */
   setActiveBeta(pchBetaName: string): boolean {
     return this.s.SteamAPI_ISteamApps_SetActiveBeta(this.self, cstrArg(pchBetaName));
   }
 
+  /** game performance settings */
   setGamePerformanceSetting(setting: EGamePerformanceSetting): void {
     this.s.SteamAPI_ISteamApps_SetGamePerformanceSetting(this.self, setting);
   }
