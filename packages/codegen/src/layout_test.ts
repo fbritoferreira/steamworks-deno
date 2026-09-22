@@ -11,25 +11,7 @@ import { LayoutResolver } from "./layout.ts";
 const schema = await loadSchema(
   new URL("../fixtures/steam_api.mini.json", import.meta.url).pathname,
 );
-// Neither struct appears in steam_api.json; both matter to the runtime and to the packing check.
-schema.structs.push({
-  struct: "ValvePackingSentinel_t",
-  fields: [
-    { fieldname: "m_u32", fieldtype: "uint32" },
-    { fieldname: "m_u64", fieldtype: "uint64" },
-    { fieldname: "m_u16", fieldtype: "uint16" },
-    { fieldname: "m_d", fieldtype: "double" },
-  ],
-});
-schema.structs.push({
-  struct: "CallbackMsg_t",
-  fields: [
-    { fieldname: "m_hSteamUser", fieldtype: "HSteamUser" },
-    { fieldname: "m_iCallback", fieldtype: "int" },
-    { fieldname: "m_pubParam", fieldtype: "uint8 *" },
-    { fieldname: "m_cubParam", fieldtype: "int" },
-  ],
-});
+// CallbackMsg_t and ValvePackingSentinel_t arrive through schema_patch.ts.
 const ctx = buildContext(schema);
 const r = new LayoutResolver(schema, ctx);
 const offsets = (name: string, pack: 4 | 8) =>

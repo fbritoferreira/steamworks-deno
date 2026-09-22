@@ -89,6 +89,8 @@ export interface SteamApiJson {
   interfaces: Interface[];
 }
 
+import { patchSchema } from "./schema_patch.ts";
+
 const REQUIRED: (keyof SteamApiJson)[] = [
   "typedefs",
   "consts",
@@ -98,7 +100,10 @@ const REQUIRED: (keyof SteamApiJson)[] = [
   "interfaces",
 ];
 
-/** Read and validate a `steam_api.json`. Throws naming the first missing top-level array. */
+/**
+ * Read and validate a `steam_api.json`, then add the structs the headers define but the
+ * JSON omits. Throws naming the first missing top-level array.
+ */
 export async function loadSchema(path: string): Promise<SteamApiJson> {
   const raw = JSON.parse(await Deno.readTextFile(path)) as Partial<SteamApiJson>;
   for (const key of REQUIRED) {
@@ -106,5 +111,5 @@ export async function loadSchema(path: string): Promise<SteamApiJson> {
       throw new Error(`steam_api.json is missing the "${key}" array (${path})`);
     }
   }
-  return raw as SteamApiJson;
+  return patchSchema(raw as SteamApiJson);
 }

@@ -72,3 +72,9 @@ Deno.test("structs and fixed arrays", () => {
 Deno.test("unknown type throws naming it", () => {
   assertThrows(() => mapType("Nonsense_t", ctx), Error, "Nonsense_t");
 });
+
+Deno.test("function pointer typedefs become addresses", () => {
+  const m = mapType("SteamAPIWarningMessageHook_t", ctx);
+  assertEquals([m.kind, m.native, m.size], ["pointer", "function", 8]);
+  assertEquals(mapType("void (*)(void *)", ctx).native, "function");
+});

@@ -62,6 +62,22 @@ const PRIMITIVES: Record<string, MappedType> = {
   double: { kind: "float", native: "f64", ts: "number", size: 8, align: 8 },
   intptr_t: { kind: "bigint", native: "isize", ts: "bigint", size: 8, align: 8 },
   size_t: { kind: "bigint", native: "usize", ts: "bigint", size: 8, align: 8 },
+  int8_t: { kind: "int", native: "i8", ts: "number", size: 1, align: 1 },
+  uint8_t: { kind: "int", native: "u8", ts: "number", size: 1, align: 1 },
+  int16_t: { kind: "int", native: "i16", ts: "number", size: 2, align: 2 },
+  uint16_t: { kind: "int", native: "u16", ts: "number", size: 2, align: 2 },
+  int32_t: { kind: "int", native: "i32", ts: "number", size: 4, align: 4 },
+  uint32_t: { kind: "int", native: "u32", ts: "number", size: 4, align: 4 },
+  int64_t: { kind: "bigint", native: "i64", ts: "bigint", size: 8, align: 8 },
+  uint64_t: { kind: "bigint", native: "u64", ts: "bigint", size: 8, align: 8 },
+  // Declared in steam_api.h but absent from steam_api.json's typedefs.
+  SteamAPIWarningMessageHook_t: {
+    kind: "pointer",
+    native: "function",
+    ts: "Deno.PointerValue",
+    size: 8,
+    align: 8,
+  },
   // CSteamID and CGameID are 64-bit ids, but steamclientpublic.h declares both inside a
   // `#pragma pack(push, 1)` block, so their alignment is 1, not 8. Under pack(8) that keeps
   // UserStatsReceived_t::m_steamIDUser at offset 12 rather than 16. Measured with clang
@@ -81,10 +97,17 @@ const POINTER: MappedType = {
 };
 
 const ARRAY_RE = /^(.+?)\s*\[(\d+)\]$/;
+/** A C function pointer spelling such as `void (*)(void *)`. */
+const FUNCPTR_RE = /\(\s*\*\s*\)\s*\(/;
 
 /** Resolve a C type spelling to its FFI and TypeScript representation. */
 export function mapType(cType: string, ctx: TypeContext): MappedType {
   const t = cType.replace(/\bconst\b/g, "").replace(/\s+/g, " ").trim();
+
+  // A callback typedef crosses the boundary as a plain address.
+  if (FUNCPTR_RE.test(t)) {
+    return { kind: "pointer", native: "function", ts: "Deno.PointerValue", size: 8, align: 8 };
+  }
 
   const arr = ARRAY_RE.exec(t);
   if (arr) {
@@ -110,5 +133,8 @@ export function mapType(cType: string, ctx: TypeContext): MappedType {
   if (ctx.structs.has(t)) return { kind: "struct", native: null, ts: t, size: -1, align: -1 };
   const aliased = ctx.typedefs.get(t);
   if (aliased !== undefined) return mapType(aliased, ctx);
+  // Types the JSON spells with their enclosing scope, such as
+  // `ISteamHTMLSurface::EHTMLMouseButton`, are registered under the bare name.
+  if (t.includes("::")) return mapType(t.slice(t.lastIndexOf("::") + 2), ctx);
   throw new Error(`Unknown C type "${cType}"`);
 }
