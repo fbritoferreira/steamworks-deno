@@ -5,6 +5,10 @@ import { cstrArg, readScalar, scalarOut } from "../../src/marshal.ts";
 import { encodeSteamIPAddress_t, SteamIPAddress_t } from "../structs.ts";
 import type { EAccountType } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamClient`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamClient_symbols = {
   SteamAPI_ISteamClient_CreateSteamPipe: { parameters: ["pointer"], result: "i32" },
   SteamAPI_ISteamClient_BReleaseSteamPipe: { parameters: ["pointer", "i32"], result: "bool" },
@@ -122,6 +126,10 @@ export const ISteamClient_symbols = {
   },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamClient` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamClient {
   constructor(
     private readonly s: Deno.DynamicLibrary<typeof ISteamClient_symbols>["symbols"],
@@ -129,18 +137,35 @@ export class ISteamClient {
     private readonly host: CallResultHost,
   ) {}
 
+  /**
+   * Creates a communication pipe to the Steam client.
+   * NOT THREADSAFE - ensure that no other threads are accessing Steamworks API when calling
+   */
   createSteamPipe(): number {
     return this.s.SteamAPI_ISteamClient_CreateSteamPipe(this.self);
   }
 
+  /**
+   * Releases a previously created communications pipe
+   * NOT THREADSAFE - ensure that no other threads are accessing Steamworks API when calling
+   */
   bReleaseSteamPipe(hSteamPipe: number): boolean {
     return this.s.SteamAPI_ISteamClient_BReleaseSteamPipe(this.self, hSteamPipe);
   }
 
+  /**
+   * connects to an existing global user, failing if none exists
+   * used by the game to coordinate with the steamUI
+   * NOT THREADSAFE - ensure that no other threads are accessing Steamworks API when calling
+   */
   connectToGlobalUser(hSteamPipe: number): number {
     return this.s.SteamAPI_ISteamClient_ConnectToGlobalUser(this.self, hSteamPipe);
   }
 
+  /**
+   * used by game servers, create a steam user that won't be shared with anyone else
+   * NOT THREADSAFE - ensure that no other threads are accessing Steamworks API when calling
+   */
   createLocalUser(eAccountType: EAccountType): { result: number; phSteamPipe: number } {
     const phSteamPipe_buf = scalarOut("i32");
     const result = this.s.SteamAPI_ISteamClient_CreateLocalUser(
@@ -151,10 +176,15 @@ export class ISteamClient {
     return { result, phSteamPipe: readScalar(phSteamPipe_buf, "i32") as number };
   }
 
+  /**
+   * removes an allocated user
+   * NOT THREADSAFE - ensure that no other threads are accessing Steamworks API when calling
+   */
   releaseUser(hSteamPipe: number, hUser: number): void {
     this.s.SteamAPI_ISteamClient_ReleaseUser(this.self, hSteamPipe, hUser);
   }
 
+  /** retrieves the ISteamUser interface associated with the handle */
   getISteamUser(hSteamUser: number, hSteamPipe: number, pchVersion: string): Deno.PointerValue {
     return this.s.SteamAPI_ISteamClient_GetISteamUser(
       this.self,
@@ -164,6 +194,7 @@ export class ISteamClient {
     );
   }
 
+  /** retrieves the ISteamGameServer interface associated with the handle */
   getISteamGameServer(
     hSteamUser: number,
     hSteamPipe: number,
@@ -177,10 +208,15 @@ export class ISteamClient {
     );
   }
 
+  /**
+   * set the local IP and Port to bind to
+   * this must be set before CreateLocalUser()
+   */
   setLocalIPBinding(unIP: SteamIPAddress_t, usPort: number): void {
     this.s.SteamAPI_ISteamClient_SetLocalIPBinding(this.self, encodeSteamIPAddress_t(unIP), usPort);
   }
 
+  /** returns the ISteamFriends interface */
   getISteamFriends(hSteamUser: number, hSteamPipe: number, pchVersion: string): Deno.PointerValue {
     return this.s.SteamAPI_ISteamClient_GetISteamFriends(
       this.self,
@@ -190,10 +226,12 @@ export class ISteamClient {
     );
   }
 
+  /** returns the ISteamUtils interface */
   getISteamUtils(hSteamPipe: number, pchVersion: string): Deno.PointerValue {
     return this.s.SteamAPI_ISteamClient_GetISteamUtils(this.self, hSteamPipe, cstrArg(pchVersion));
   }
 
+  /** returns the ISteamMatchmaking interface */
   getISteamMatchmaking(
     hSteamUser: number,
     hSteamPipe: number,
@@ -207,6 +245,7 @@ export class ISteamClient {
     );
   }
 
+  /** returns the ISteamMatchmakingServers interface */
   getISteamMatchmakingServers(
     hSteamUser: number,
     hSteamPipe: number,
@@ -220,6 +259,7 @@ export class ISteamClient {
     );
   }
 
+  /** returns the a generic interface */
   getISteamGenericInterface(
     hSteamUser: number,
     hSteamPipe: number,
@@ -233,6 +273,7 @@ export class ISteamClient {
     );
   }
 
+  /** returns the ISteamUserStats interface */
   getISteamUserStats(
     hSteamUser: number,
     hSteamPipe: number,
@@ -246,6 +287,7 @@ export class ISteamClient {
     );
   }
 
+  /** returns the ISteamGameServerStats interface */
   getISteamGameServerStats(
     hSteamuser: number,
     hSteamPipe: number,
@@ -259,6 +301,7 @@ export class ISteamClient {
     );
   }
 
+  /** returns apps interface */
   getISteamApps(hSteamUser: number, hSteamPipe: number, pchVersion: string): Deno.PointerValue {
     return this.s.SteamAPI_ISteamClient_GetISteamApps(
       this.self,
@@ -268,6 +311,7 @@ export class ISteamClient {
     );
   }
 
+  /** networking */
   getISteamNetworking(
     hSteamUser: number,
     hSteamPipe: number,
@@ -281,6 +325,7 @@ export class ISteamClient {
     );
   }
 
+  /** remote storage */
   getISteamRemoteStorage(
     hSteamuser: number,
     hSteamPipe: number,
@@ -294,6 +339,7 @@ export class ISteamClient {
     );
   }
 
+  /** user screenshots */
   getISteamScreenshots(
     hSteamuser: number,
     hSteamPipe: number,
@@ -307,18 +353,32 @@ export class ISteamClient {
     );
   }
 
+  /**
+   * returns the number of IPC calls made since the last time this function was called
+   * Used for perf debugging so you can understand how many IPC calls your game makes per frame
+   * Every IPC call is at minimum a thread context switch if not a process one so you want to rate
+   * control how often you do them.
+   */
   getIPCCallCount(): number {
     return this.s.SteamAPI_ISteamClient_GetIPCCallCount(this.self);
   }
 
+  /**
+   * API warning handling
+   * 'int' is the severity; 0 for msg, 1 for warning
+   * 'const char *' is the text of the message
+   * callbacks will occur directly after the API function is called that generated the warning or message.
+   */
   setWarningMessageHook(pFunction: Deno.PointerValue): void {
     this.s.SteamAPI_ISteamClient_SetWarningMessageHook(this.self, pFunction);
   }
 
+  /** Trigger global shutdown for the DLL */
   bShutdownIfAllPipesClosed(): boolean {
     return this.s.SteamAPI_ISteamClient_BShutdownIfAllPipesClosed(this.self);
   }
 
+  /** Expose HTTP interface */
   getISteamHTTP(hSteamuser: number, hSteamPipe: number, pchVersion: string): Deno.PointerValue {
     return this.s.SteamAPI_ISteamClient_GetISteamHTTP(
       this.self,
@@ -328,6 +388,7 @@ export class ISteamClient {
     );
   }
 
+  /** Exposes the ISteamController interface - deprecated in favor of Steam Input */
   getISteamController(
     hSteamUser: number,
     hSteamPipe: number,
@@ -341,6 +402,7 @@ export class ISteamClient {
     );
   }
 
+  /** Exposes the ISteamUGC interface */
   getISteamUGC(hSteamUser: number, hSteamPipe: number, pchVersion: string): Deno.PointerValue {
     return this.s.SteamAPI_ISteamClient_GetISteamUGC(
       this.self,
@@ -350,6 +412,7 @@ export class ISteamClient {
     );
   }
 
+  /** Music Player */
   getISteamMusic(hSteamuser: number, hSteamPipe: number, pchVersion: string): Deno.PointerValue {
     return this.s.SteamAPI_ISteamClient_GetISteamMusic(
       this.self,
@@ -359,6 +422,7 @@ export class ISteamClient {
     );
   }
 
+  /** html page display */
   getISteamHTMLSurface(
     hSteamuser: number,
     hSteamPipe: number,
@@ -372,6 +436,7 @@ export class ISteamClient {
     );
   }
 
+  /** inventory */
   getISteamInventory(
     hSteamuser: number,
     hSteamPipe: number,
@@ -385,6 +450,7 @@ export class ISteamClient {
     );
   }
 
+  /** Video */
   getISteamVideo(hSteamuser: number, hSteamPipe: number, pchVersion: string): Deno.PointerValue {
     return this.s.SteamAPI_ISteamClient_GetISteamVideo(
       this.self,
@@ -394,6 +460,7 @@ export class ISteamClient {
     );
   }
 
+  /** Parental controls */
   getISteamParentalSettings(
     hSteamuser: number,
     hSteamPipe: number,
@@ -407,6 +474,7 @@ export class ISteamClient {
     );
   }
 
+  /** Exposes the Steam Input interface for controller support */
   getISteamInput(hSteamUser: number, hSteamPipe: number, pchVersion: string): Deno.PointerValue {
     return this.s.SteamAPI_ISteamClient_GetISteamInput(
       this.self,
@@ -416,6 +484,7 @@ export class ISteamClient {
     );
   }
 
+  /** Steam Parties interface */
   getISteamParties(hSteamUser: number, hSteamPipe: number, pchVersion: string): Deno.PointerValue {
     return this.s.SteamAPI_ISteamClient_GetISteamParties(
       this.self,
@@ -425,6 +494,7 @@ export class ISteamClient {
     );
   }
 
+  /** Steam Remote Play interface */
   getISteamRemotePlay(
     hSteamUser: number,
     hSteamPipe: number,

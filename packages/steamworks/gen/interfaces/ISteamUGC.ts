@@ -67,6 +67,10 @@ import type {
   EWorkshopFileType,
 } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamUGC`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamUGC_symbols = {
   SteamAPI_ISteamUGC_CreateQueryUserUGCRequest: {
     parameters: ["pointer", "u32", "i32", "i32", "i32", "u32", "u32", "u32"],
@@ -335,7 +339,12 @@ export const ISteamUGC_symbols = {
   SteamAPI_SteamUGC_v021: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamUGC` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamUGC {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamUGC_v021";
 
   constructor(
@@ -344,6 +353,7 @@ export class ISteamUGC {
     private readonly host: CallResultHost,
   ) {}
 
+  /** Query UGC associated with a user. Creator app id or consumer app id must be valid and be set to the current running app. unPage should start at 1. */
   createQueryUserUGCRequest(
     unAccountID: number,
     eListType: EUserUGCList,
@@ -365,6 +375,7 @@ export class ISteamUGC {
     );
   }
 
+  /** Query for all matching UGC using the new deep paging interface. Creator app id or consumer app id must be valid and be set to the current running app. pchCursor should be set to NULL or "*" to get the first result set. */
   createQueryAllUGCRequestPage(
     eQueryType: EUGCQuery,
     eMatchingeMatchingUGCTypeFileType: EUGCMatchingUGCType,
@@ -382,6 +393,7 @@ export class ISteamUGC {
     );
   }
 
+  /** Query for all matching UGC using the new deep paging interface. Creator app id or consumer app id must be valid and be set to the current running app. pchCursor should be set to NULL or "*" to get the first result set. */
   createQueryAllUGCRequestCursor(
     eQueryType: EUGCQuery,
     eMatchingeMatchingUGCTypeFileType: EUGCMatchingUGCType,
@@ -399,6 +411,7 @@ export class ISteamUGC {
     );
   }
 
+  /** Query for the details of the given published file ids (the RequestUGCDetails call is deprecated and replaced with this) */
   createQueryUGCDetailsRequest(
     unNumPublishedFileIDs: number,
   ): { result: bigint; pvecPublishedFileID: bigint } {
@@ -411,11 +424,13 @@ export class ISteamUGC {
     return { result, pvecPublishedFileID: readScalar(pvecPublishedFileID_buf, "u64") as bigint };
   }
 
+  /** Send the query to Steam */
   sendQueryUGCRequest(handle: bigint): Promise<SteamUGCQueryCompleted_t> {
     const call = this.s.SteamAPI_ISteamUGC_SendQueryUGCRequest(this.self, handle);
     return this.host.callResult(call, 3401, decodeSteamUGCQueryCompleted_t);
   }
 
+  /** Retrieve an individual result after receiving the callback for querying UGC */
   getQueryUGCResult(handle: bigint, index: number): SteamUGCDetails_t | null {
     const pDetails_buf = new Uint8Array(SteamUGCDetails_t_layout[PACK].size);
     if (!this.s.SteamAPI_ISteamUGC_GetQueryUGCResult(this.self, handle, index, pDetails_buf)) {
@@ -567,6 +582,7 @@ export class ISteamUGC {
     return this.s.SteamAPI_ISteamUGC_GetQueryUGCNumKeyValueTags(this.self, handle, index);
   }
 
+  /** Return the first value matching the pchKey. Note that a key may map to multiple values.  Returns false if there was an error or no matching value was found. */
   getQueryUGCKeyValueTag(
     handle: bigint,
     index: number,
@@ -589,6 +605,7 @@ export class ISteamUGC {
     return { ok, pchKey: readOutString(pchKey_buf), pchValue: readOutString(pchValue_buf) };
   }
 
+  /** Return the first value matching the pchKey. Note that a key may map to multiple values.  Returns false if there was an error or no matching value was found. */
   getQueryFirstUGCKeyValueTag(
     handle: bigint,
     index: number,
@@ -607,6 +624,7 @@ export class ISteamUGC {
     return { ok, pchValue: readOutString(pchValue_buf) };
   }
 
+  /** Some items can specify that they have a version that is valid for a range of game versions (Steam branch) */
   getNumSupportedGameVersions(handle: bigint, index: number): number {
     return this.s.SteamAPI_ISteamUGC_GetNumSupportedGameVersions(this.self, handle, index);
   }
@@ -651,10 +669,12 @@ export class ISteamUGC {
     return readScalarArray(pvecDescriptors_buf, "i32", n) as EUGCContentDescriptorID[];
   }
 
+  /** Release the request to free up memory, after retrieving results */
   releaseQueryUGCRequest(handle: bigint): boolean {
     return this.s.SteamAPI_ISteamUGC_ReleaseQueryUGCRequest(this.self, handle);
   }
 
+  /** Options to set for querying UGC */
   addRequiredTag(handle: bigint, pTagName: string): boolean {
     return this.s.SteamAPI_ISteamUGC_AddRequiredTag(this.self, handle, cstrArg(pTagName));
   }
@@ -723,6 +743,7 @@ export class ISteamUGC {
     return this.s.SteamAPI_ISteamUGC_SetAdminQuery(this.self, handle, bAdminQuery);
   }
 
+  /** Options only for querying user UGC */
   setCloudFileNameFilter(handle: bigint, pMatchCloudFileName: string): boolean {
     return this.s.SteamAPI_ISteamUGC_SetCloudFileNameFilter(
       this.self,
@@ -731,6 +752,7 @@ export class ISteamUGC {
     );
   }
 
+  /** Options only for querying all UGC */
   setMatchAnyTag(handle: bigint, bMatchAnyTag: boolean): boolean {
     return this.s.SteamAPI_ISteamUGC_SetMatchAnyTag(this.self, handle, bMatchAnyTag);
   }
@@ -760,6 +782,7 @@ export class ISteamUGC {
     );
   }
 
+  /** DEPRECATED - Use CreateQueryUGCDetailsRequest call above instead! */
   requestUGCDetails(
     nPublishedFileID: bigint,
     unMaxAgeSeconds: number,
@@ -772,6 +795,7 @@ export class ISteamUGC {
     return this.host.callResult(call, 3402, decodeSteamUGCRequestUGCDetailsResult_t);
   }
 
+  /** Steam Workshop Creator API */
   createItem(nConsumerAppId: number, eFileType: EWorkshopFileType): Promise<CreateItemResult_t> {
     const call = this.s.SteamAPI_ISteamUGC_CreateItem(this.self, nConsumerAppId, eFileType);
     return this.host.callResult(call, 3403, decodeCreateItemResult_t);
@@ -926,6 +950,7 @@ export class ISteamUGC {
     };
   }
 
+  /** Steam Workshop Consumer API */
   setUserItemVote(nPublishedFileID: bigint, bVoteUp: boolean): Promise<SetUserItemVoteResult_t> {
     const call = this.s.SteamAPI_ISteamUGC_SetUserItemVote(this.self, nPublishedFileID, bVoteUp);
     return this.host.callResult(call, 3408, decodeSetUserItemVoteResult_t);
@@ -983,10 +1008,15 @@ export class ISteamUGC {
     return readScalarArray(pvecPublishedFileID_buf, "u64", n) as bigint[];
   }
 
+  /** get EItemState flags about item on this client */
   getItemState(nPublishedFileID: bigint): number {
     return this.s.SteamAPI_ISteamUGC_GetItemState(this.self, nPublishedFileID);
   }
 
+  /**
+   * get info about currently installed content on disc for items that have k_EItemStateInstalled set
+   * if k_EItemStateLegacyItem is set, pchFolder contains the path to the legacy file itself (not a folder)
+   */
   getItemInstallInfo(
     nPublishedFileID: bigint,
     cchFolderSize = 256,
@@ -1010,6 +1040,7 @@ export class ISteamUGC {
     };
   }
 
+  /** get info about pending update for items that have k_EItemStateNeedsUpdate set. punBytesTotal will be valid after download started once */
   getItemDownloadInfo(
     nPublishedFileID: bigint,
   ): { ok: boolean; punBytesDownloaded: bigint; punBytesTotal: bigint } {
@@ -1028,10 +1059,19 @@ export class ISteamUGC {
     };
   }
 
+  /**
+   * download new or update already installed item. If function returns true, wait for DownloadItemResult_t. If the item is already installed,
+   * then files on disk should not be used until callback received. If item is not subscribed to, it will be cached for some time.
+   * If bHighPriority is set, any other item download will be suspended and this item downloaded ASAP.
+   */
   downloadItem(nPublishedFileID: bigint, bHighPriority: boolean): boolean {
     return this.s.SteamAPI_ISteamUGC_DownloadItem(this.self, nPublishedFileID, bHighPriority);
   }
 
+  /**
+   * game servers can set a specific workshop folder before issuing any UGC commands.
+   * This is helpful if you want to support multiple game servers running out of the same install folder
+   */
   bInitWorkshopForGameServer(unWorkshopDepotID: number, pszFolder: string): boolean {
     return this.s.SteamAPI_ISteamUGC_BInitWorkshopForGameServer(
       this.self,
@@ -1040,10 +1080,12 @@ export class ISteamUGC {
     );
   }
 
+  /** SuspendDownloads( true ) will suspend all workshop downloads until SuspendDownloads( false ) is called or the game ends */
   suspendDownloads(bSuspend: boolean): void {
     this.s.SteamAPI_ISteamUGC_SuspendDownloads(this.self, bSuspend);
   }
 
+  /** usage tracking */
   startPlaytimeTracking(unNumPublishedFileIDs: number): Promise<StartPlaytimeTrackingResult_t> {
     const pvecPublishedFileID_buf = scalarOut("u64");
     const call = this.s.SteamAPI_ISteamUGC_StartPlaytimeTracking(
@@ -1069,6 +1111,7 @@ export class ISteamUGC {
     return this.host.callResult(call, 3411, decodeStopPlaytimeTrackingResult_t);
   }
 
+  /** parent-child relationship or dependency management */
   addDependency(
     nParentPublishedFileID: bigint,
     nChildPublishedFileID: bigint,
@@ -1093,6 +1136,7 @@ export class ISteamUGC {
     return this.host.callResult(call, 3413, decodeRemoveUGCDependencyResult_t);
   }
 
+  /** add/remove app dependence/requirements (usually DLC) */
   addAppDependency(nPublishedFileID: bigint, nAppID: number): Promise<AddAppDependencyResult_t> {
     const call = this.s.SteamAPI_ISteamUGC_AddAppDependency(this.self, nPublishedFileID, nAppID);
     return this.host.callResult(call, 3414, decodeAddAppDependencyResult_t);
@@ -1106,25 +1150,33 @@ export class ISteamUGC {
     return this.host.callResult(call, 3415, decodeRemoveAppDependencyResult_t);
   }
 
+  /**
+   * request app dependencies. note that whatever callback you register for GetAppDependenciesResult_t may be called multiple times
+   * until all app dependencies have been returned
+   */
   getAppDependencies(nPublishedFileID: bigint): Promise<GetAppDependenciesResult_t> {
     const call = this.s.SteamAPI_ISteamUGC_GetAppDependencies(this.self, nPublishedFileID);
     return this.host.callResult(call, 3416, decodeGetAppDependenciesResult_t);
   }
 
+  /** delete the item without prompting the user */
   deleteItem(nPublishedFileID: bigint): Promise<DeleteItemResult_t> {
     const call = this.s.SteamAPI_ISteamUGC_DeleteItem(this.self, nPublishedFileID);
     return this.host.callResult(call, 3417, decodeDeleteItemResult_t);
   }
 
+  /** Show the app's latest Workshop EULA to the user in an overlay window, where they can accept it or not */
   showWorkshopEULA(): boolean {
     return this.s.SteamAPI_ISteamUGC_ShowWorkshopEULA(this.self);
   }
 
+  /** Retrieve information related to the user's acceptance or not of the app's specific Workshop EULA */
   getWorkshopEULAStatus(): Promise<WorkshopEULAStatus_t> {
     const call = this.s.SteamAPI_ISteamUGC_GetWorkshopEULAStatus(this.self);
     return this.host.callResult(call, 3420, decodeWorkshopEULAStatus_t);
   }
 
+  /** Return the user's community content descriptor preferences */
   getUserContentDescriptorPreferences(cMaxEntries: number): EUGCContentDescriptorID[] {
     const pvecDescriptors_buf = arrayOut("i32", cMaxEntries);
     const n = this.s.SteamAPI_ISteamUGC_GetUserContentDescriptorPreferences(
@@ -1135,6 +1187,7 @@ export class ISteamUGC {
     return readScalarArray(pvecDescriptors_buf, "i32", n) as EUGCContentDescriptorID[];
   }
 
+  /** Sets whether the item should be disabled locally or not. This means that it will not be returned in GetSubscribedItems() by default. */
   setItemsDisabledLocally(
     unNumPublishedFileIDs: number,
     bDisabledLocally: boolean,
@@ -1149,6 +1202,7 @@ export class ISteamUGC {
     return { ok, pvecPublishedFileIDs: readScalar(pvecPublishedFileIDs_buf, "u64") as bigint };
   }
 
+  /** Set the local load order for these items. If there are any items not in the given list, they will sort by the time subscribed. */
   setSubscriptionsLoadOrder(
     unNumPublishedFileIDs: number,
   ): { ok: boolean; pvecPublishedFileIDs: bigint } {
@@ -1161,14 +1215,17 @@ export class ISteamUGC {
     return { ok, pvecPublishedFileIDs: readScalar(pvecPublishedFileIDs_buf, "u64") as bigint };
   }
 
+  /** Tells the client to no longer try to keep the item in its local cache, unless it was subscribed to by other users on this machine */
   markDownloadedItemAsUnused(nPublishedFileID: bigint): boolean {
     return this.s.SteamAPI_ISteamUGC_MarkDownloadedItemAsUnused(this.self, nPublishedFileID);
   }
 
+  /** Returns the number of items actually downloaded locally */
   getNumDownloadedItems(): number {
     return this.s.SteamAPI_ISteamUGC_GetNumDownloadedItems(this.self);
   }
 
+  /** Returns the ids of the items downloaded */
   getDownloadedItems(cMaxEntries: number): bigint[] {
     const pvecPublishedFileIDs_buf = arrayOut("u64", cMaxEntries);
     const n = this.s.SteamAPI_ISteamUGC_GetDownloadedItems(

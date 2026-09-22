@@ -10,6 +10,10 @@ import {
 } from "../structs.ts";
 import type { ETimelineEventClipPriority, ETimelineGameMode } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamTimeline`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamTimeline_symbols = {
   SteamAPI_ISteamTimeline_SetTimelineTooltip: {
     parameters: ["pointer", "buffer", "f32"],
@@ -68,7 +72,12 @@ export const ISteamTimeline_symbols = {
   SteamAPI_SteamTimeline_v004: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamTimeline` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamTimeline {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamTimeline_v004";
 
   constructor(
@@ -77,6 +86,19 @@ export class ISteamTimeline {
     private readonly host: CallResultHost,
   ) {}
 
+  /**
+   * Sets a description for the current game state in the timeline. These help the user to find specific
+   * moments in the timeline when saving clips. Setting a new state description replaces any previous
+   * description.
+   * Examples could include:
+   * * Where the user is in the world in a single player game
+   * * Which round is happening in a multiplayer game
+   * * The current score for a sports game
+   * Parameters:
+   * - pchDescription: provide a localized string in the language returned by SteamUtils()->GetSteamUILanguage()
+   * - flTimeDelta: The time offset in seconds to apply to this event. Negative times indicate an
+   * event that happened in the past.
+   */
   setTimelineTooltip(pchDescription: string, flTimeDelta: number): void {
     this.s.SteamAPI_ISteamTimeline_SetTimelineTooltip(
       this.self,
@@ -89,10 +111,12 @@ export class ISteamTimeline {
     this.s.SteamAPI_ISteamTimeline_ClearTimelineTooltip(this.self, flTimeDelta);
   }
 
+  /** Changes the color of the timeline bar. See ETimelineGameMode comments for how to use each value */
   setTimelineGameMode(eMode: ETimelineGameMode): void {
     this.s.SteamAPI_ISteamTimeline_SetTimelineGameMode(this.self, eMode);
   }
 
+  /** quick helpers that add to the timeline in one call */
   addInstantaneousTimelineEvent(
     pchTitle: string,
     pchDescription: string,
@@ -133,6 +157,10 @@ export class ISteamTimeline {
     );
   }
 
+  /**
+   * Starts a timeline event at a the current time, plus an offset in seconds. This event must be ended with EndRangeTimelineEvent.
+   * Any timeline events that have not been ended when the game exits will be discarded.
+   */
   startRangeTimelineEvent(
     pchTitle: string,
     pchDescription: string,
@@ -152,6 +180,7 @@ export class ISteamTimeline {
     );
   }
 
+  /** Updates fields on a range timeline event that was started with StartRangeTimelineEvent, and which has not been ended. */
   updateRangeTimelineEvent(
     ulEvent: bigint,
     pchTitle: string,
@@ -171,19 +200,57 @@ export class ISteamTimeline {
     );
   }
 
+  /** Ends a range timeline event and shows it in the UI. */
   endRangeTimelineEvent(ulEvent: bigint, flEndOffsetSeconds: number): void {
     this.s.SteamAPI_ISteamTimeline_EndRangeTimelineEvent(this.self, ulEvent, flEndOffsetSeconds);
   }
 
+  /**
+   * delete the event from the timeline. This can be called on a timeline event from AddInstantaneousTimelineEvent,
+   * AddRangeTimelineEvent, or StartRangeTimelineEvent/EndRangeTimelineEvent. The timeline event handle must be from the
+   * current game process.
+   */
   removeTimelineEvent(ulEvent: bigint): void {
     this.s.SteamAPI_ISteamTimeline_RemoveTimelineEvent(this.self, ulEvent);
   }
 
+  /** add a tag to whatever time range is represented by the event */
   doesEventRecordingExist(ulEvent: bigint): Promise<SteamTimelineEventRecordingExists_t> {
     const call = this.s.SteamAPI_ISteamTimeline_DoesEventRecordingExist(this.self, ulEvent);
     return this.host.callResult(call, 6002, decodeSteamTimelineEventRecordingExists_t);
   }
 
+  /**
+   * Game phases allow the user to navigate their background recordings and clips. Exactly what a game phase means will vary game to game, but
+   * the game phase should be a section of gameplay that is usually between 10 minutes and a few hours in length, and should be the
+   * main way a user would think to divide up the game. These are presented to the user in a UI that shows the date the game was played,
+   * with one row per game slice. Game phases should be used to mark sections of gameplay that the user might be interested in watching.
+   * Examples could include:
+   * * A single match in a multiplayer PvP game
+   * * A chapter of a story-based singleplayer game
+   * * A single run in a roguelike
+   * Game phases are started with StartGamePhase, and while a phase is still happening, they can have tags and attributes added to them.
+   * Phase attributes represent generic text fields that can be updated throughout the duration of the phase. They are meant
+   * to be used for phase metadata that is not part of a well defined set of options. For example, a KDA attribute that starts
+   * with the value "0/0/0" and updates as the phase progresses, or something like a played-entered character name. Attributes
+   * can be set as many times as the game likes with SetGamePhaseAttribute, and only the last value will be shown to the user.
+   * Phase tags represent data with a well defined set of options, which could be data such as match resolution, hero played,
+   * game mode, etc. Tags can have an icon in addition to a text name. Multiple tags within the same group may be added per phase
+   * and all will be remembered. For example, AddGamePhaseTag may be called multiple times for a "Bosses Defeated" group, with
+   * different names and icons for each boss defeated during the phase, all of which will be shown to the user.
+   * The phase will continue until the game exits, until the game calls EndGamePhase, or until the game calls
+   * StartGamePhase to start a new phase.
+   * The game phase functions take these parameters:
+   * - pchTagIcon: The name of a game provided timeline icon or builtin "steam_" icon.
+   * - pchPhaseID: A game-provided persistent ID for a game phase. This could be a the match ID in a multiplayer game, a chapter name in a
+   * single player game, the ID of a character, etc.
+   * - pchTagName: The localized name of the tag in the language returned by SteamUtils()->GetSteamUILanguage().
+   * - pchTagGroup: The localized name of the tag group.
+   * - pchAttributeValue: The localized name of the attribute.
+   * - pchAttributeGroup: The localized name of the attribute group.
+   * - unPriority: Used to order tags and attributes in the UI displayed to the user, with higher priority values leading
+   * to more prominent positioning. In contexts where there is limited space, lower priority items may be hidden.
+   */
   startGamePhase(): void {
     this.s.SteamAPI_ISteamTimeline_StartGamePhase(this.self);
   }
@@ -192,6 +259,7 @@ export class ISteamTimeline {
     this.s.SteamAPI_ISteamTimeline_EndGamePhase(this.self);
   }
 
+  /** Games can set a phase ID so they can refer back to a phase in OpenOverlayToPhase */
   setGamePhaseID(pchPhaseID: string): void {
     this.s.SteamAPI_ISteamTimeline_SetGamePhaseID(this.self, cstrArg(pchPhaseID));
   }
@@ -206,6 +274,7 @@ export class ISteamTimeline {
     return this.host.callResult(call, 6001, decodeSteamTimelineGamePhaseRecordingExists_t);
   }
 
+  /** Add a tag that applies to the entire phase */
   addGamePhaseTag(
     pchTagName: string,
     pchTagIcon: string,
@@ -221,6 +290,7 @@ export class ISteamTimeline {
     );
   }
 
+  /** Add a text attribute that applies to the entire phase */
   setGamePhaseAttribute(
     pchAttributeGroup: string,
     pchAttributeValue: string,
@@ -234,10 +304,20 @@ export class ISteamTimeline {
     );
   }
 
+  /**
+   * Opens the Steam overlay to a game phase.
+   * Parameters:
+   * - pchPhaseID: The ID of a phase that was previously provided by the game in SetGamePhaseID.
+   */
   openOverlayToGamePhase(pchPhaseID: string): void {
     this.s.SteamAPI_ISteamTimeline_OpenOverlayToGamePhase(this.self, cstrArg(pchPhaseID));
   }
 
+  /**
+   * Opens the Steam overlay to a timeline event.
+   * Parameters:
+   * - ulEventID: The ID of a timeline event returned by StartEvent or AddSimpleTimelineEvent
+   */
   openOverlayToTimelineEvent(ulEvent: bigint): void {
     this.s.SteamAPI_ISteamTimeline_OpenOverlayToTimelineEvent(this.self, ulEvent);
   }

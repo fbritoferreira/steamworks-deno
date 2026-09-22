@@ -10,6 +10,7 @@ function view(bytes: Uint8Array): DataView {
   return new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
 }
 
+/** Little-endian readers, one per FFI scalar type. */
 export const read = {
   bool: (b: Uint8Array, o: number): boolean => b[o] !== 0,
   u8: (b: Uint8Array, o: number): number => b[o],
@@ -28,6 +29,7 @@ export const read = {
     Deno.UnsafePointer.create(view(b).getBigUint64(o, true)),
 } as const;
 
+/** Little-endian writers, one per FFI scalar type. */
 export const write = {
   bool: (b: Uint8Array, o: number, v: boolean): void => void (b[o] = v ? 1 : 0),
   u8: (b: Uint8Array, o: number, v: number): void => void (b[o] = v),
@@ -46,6 +48,7 @@ export const write = {
     view(b).setBigUint64(o, Deno.UnsafePointer.value(v), true),
 } as const;
 
+/** The scalar types these readers and writers cover. */
 export type ScalarNative = keyof typeof read;
 
 /** Read `count` values of one scalar type laid out end to end. */

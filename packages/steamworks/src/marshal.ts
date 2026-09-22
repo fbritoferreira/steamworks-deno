@@ -28,6 +28,7 @@ const SIZE: Record<ScalarNative, number> = {
   pointer: 8,
 };
 
+/** Encode a string as a NUL-terminated buffer for a `const char *` parameter. */
 export { cstr as cstrArg };
 
 /** Allocate a `char[size]` out buffer for Steam to fill. */
@@ -46,6 +47,7 @@ export function scalarOut(native: ScalarNative): Uint8Array {
   return new Uint8Array(SIZE[native]);
 }
 
+/** Read a single out scalar back out of its buffer. */
 export function readScalar(
   buf: Uint8Array,
   native: ScalarNative,
@@ -58,6 +60,7 @@ export function arrayOut(native: ScalarNative, count: number): Uint8Array {
   return new Uint8Array(SIZE[native] * Math.max(0, count));
 }
 
+/** Read `count` values of one scalar type out of a buffer Steam filled. */
 export function readScalarArray(
   buf: Uint8Array,
   native: ScalarNative,

@@ -32,6 +32,10 @@ import type {
   ESteamNetworkingSocketsDebugOutputType,
 } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamNetworkingUtils`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamNetworkingUtils_symbols = {
   SteamAPI_ISteamNetworkingUtils_AllocateMessage: {
     parameters: ["pointer", "i32"],
@@ -195,7 +199,12 @@ export const ISteamNetworkingUtils_symbols = {
   },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamNetworkingUtils` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamNetworkingUtils {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamNetworkingUtils_SteamAPI_v004";
 
   constructor(
@@ -204,6 +213,20 @@ export class ISteamNetworkingUtils {
     private readonly host: CallResultHost,
   ) {}
 
+  /**
+   * Allocate and initialize a message object.  Usually the reason
+   * you call this is to pass it to ISteamNetworkingSockets::SendMessages.
+   * The returned object will have all of the relevant fields cleared to zero.
+   * Optionally you can also request that this system allocate space to
+   * hold the payload itself.  If cbAllocateBuffer is nonzero, the system
+   * will allocate memory to hold a payload of at least cbAllocateBuffer bytes.
+   * m_pData will point to the allocated buffer, m_cbSize will be set to the
+   * size, and m_pfnFreeData will be set to the proper function to free up
+   * the buffer.
+   * If cbAllocateBuffer=0, then no buffer is allocated.  m_pData will be NULL,
+   * m_cbSize will be zero, and m_pfnFreeData will be NULL.  You will need to
+   * set each of these.
+   */
   allocateMessage(cbAllocateBuffer: number): Deno.PointerValue {
     return this.s.SteamAPI_ISteamNetworkingUtils_AllocateMessage(this.self, cbAllocateBuffer);
   }
@@ -212,18 +235,55 @@ export class ISteamNetworkingUtils {
     this.s.SteamAPI_ISteamNetworkingUtils_InitRelayNetworkAccess(this.self);
   }
 
+  /**
+   * Fetch current status of the relay network.
+   * SteamRelayNetworkStatus_t is also a callback.  It will be triggered on
+   * both the user and gameserver interfaces any time the status changes, or
+   * ping measurement starts or stops.
+   * SteamRelayNetworkStatus_t::m_eAvail is returned.  If you want
+   * more details, you can pass a non-NULL value.
+   */
   getRelayNetworkStatus(): SteamRelayNetworkStatus_t {
     const pDetails_buf = new Uint8Array(SteamRelayNetworkStatus_t_layout[PACK].size);
     this.s.SteamAPI_ISteamNetworkingUtils_GetRelayNetworkStatus(this.self, pDetails_buf);
     return decodeSteamRelayNetworkStatus_t(pDetails_buf);
   }
 
+  /**
+   * Return location info for the current host.  Returns the approximate
+   * age of the data, in seconds, or -1 if no data is available.
+   * It takes a few seconds to initialize access to the relay network.  If
+   * you call this very soon after calling InitRelayNetworkAccess,
+   * the data may not be available yet.
+   * This always return the most up-to-date information we have available
+   * right now, even if we are in the middle of re-calculating ping times.
+   */
   getLocalPingLocation(): SteamNetworkPingLocation_t {
     const result_buf = new Uint8Array(SteamNetworkPingLocation_t_layout[PACK].size);
     this.s.SteamAPI_ISteamNetworkingUtils_GetLocalPingLocation(this.self, result_buf);
     return decodeSteamNetworkPingLocation_t(result_buf);
   }
 
+  /**
+   * Estimate the round-trip latency between two arbitrary locations, in
+   * milliseconds.  This is a conservative estimate, based on routing through
+   * the relay network.  For most basic relayed connections, this ping time
+   * will be pretty accurate, since it will be based on the route likely to
+   * be actually used.
+   * If a direct IP route is used (perhaps via NAT traversal), then the route
+   * will be different, and the ping time might be better.  Or it might actually
+   * be a bit worse!  Standard IP routing is frequently suboptimal!
+   * But even in this case, the estimate obtained using this method is a
+   * reasonable upper bound on the ping time.  (Also it has the advantage
+   * of returning immediately and not sending any packets.)
+   * In a few cases we might not able to estimate the route.  In this case
+   * a negative value is returned.  k_nSteamNetworkingPing_Failed means
+   * the reason was because of some networking difficulty.  (Failure to
+   * ping, etc)  k_nSteamNetworkingPing_Unknown is returned if we cannot
+   * currently answer the question for some other reason.
+   * Do you need to be able to do this from a backend/matchmaking server?
+   * You are looking for the "game coordinator" library.
+   */
   estimatePingTimeBetweenTwoLocations(
     location1: SteamNetworkPingLocation_t,
     location2: SteamNetworkPingLocation_t,
@@ -235,6 +295,15 @@ export class ISteamNetworkingUtils {
     );
   }
 
+  /**
+   * Same as EstimatePingTime, but assumes that one location is the local host.
+   * This is a bit faster, especially if you need to calculate a bunch of
+   * these in a loop to find the fastest one.
+   * In rare cases this might return a slightly different estimate than combining
+   * GetLocalPingLocation with EstimatePingTimeBetweenTwoLocations.  That's because
+   * this function uses a slightly more complete set of information about what
+   * route would be taken.
+   */
   estimatePingTimeFromLocalHost(remoteLocation: SteamNetworkPingLocation_t): number {
     return this.s.SteamAPI_ISteamNetworkingUtils_EstimatePingTimeFromLocalHost(
       this.self,
@@ -242,6 +311,12 @@ export class ISteamNetworkingUtils {
     );
   }
 
+  /**
+   * Convert a ping location into a text format suitable for sending over the wire.
+   * The format is a compact and human readable.  However, it is subject to change
+   * so please do not parse it yourself.  Your buffer must be at least
+   * k_cchMaxSteamNetworkingPingLocationString bytes.
+   */
   convertPingLocationToString(
     location: SteamNetworkPingLocation_t,
     cchBufSize = 256,
@@ -256,6 +331,10 @@ export class ISteamNetworkingUtils {
     return { pszBuf: readOutString(pszBuf_buf) };
   }
 
+  /**
+   * Parse back SteamNetworkPingLocation_t string.  Returns false if we couldn't understand
+   * the string.
+   */
   parsePingLocationString(pszString: string): SteamNetworkPingLocation_t | null {
     const result_buf = new Uint8Array(SteamNetworkPingLocation_t_layout[PACK].size);
     if (
@@ -268,10 +347,30 @@ export class ISteamNetworkingUtils {
     return decodeSteamNetworkPingLocation_t(result_buf);
   }
 
+  /**
+   * Check if the ping data of sufficient recency is available, and if
+   * it's too old, start refreshing it.
+   * Please only call this function when you *really* do need to force an
+   * immediate refresh of the data.  (For example, in response to a specific
+   * user input to refresh this information.)  Don't call it "just in case",
+   * before every connection, etc.  That will cause extra traffic to be sent
+   * for no benefit. The library will automatically refresh the information
+   * as needed.
+   * Returns true if sufficiently recent data is already available.
+   * Returns false if sufficiently recent data is not available.  In this
+   * case, ping measurement is initiated, if it is not already active.
+   * (You cannot restart a measurement already in progress.)
+   * You can use GetRelayNetworkStatus or listen for SteamRelayNetworkStatus_t
+   * to know when ping measurement completes.
+   */
   checkPingDataUpToDate(flMaxAgeSeconds: number): boolean {
     return this.s.SteamAPI_ISteamNetworkingUtils_CheckPingDataUpToDate(this.self, flMaxAgeSeconds);
   }
 
+  /**
+   * Fetch ping time of best available relayed route from this host to
+   * the specified data center.
+   */
   getPingToDataCenter(popID: number): { result: number; pViaRelayPoP: number } {
     const pViaRelayPoP_buf = scalarOut("u32");
     const result = this.s.SteamAPI_ISteamNetworkingUtils_GetPingToDataCenter(
@@ -282,24 +381,67 @@ export class ISteamNetworkingUtils {
     return { result, pViaRelayPoP: readScalar(pViaRelayPoP_buf, "u32") as number };
   }
 
+  /** Get *direct* ping time to the relays at the data center. */
   getDirectPingToPOP(popID: number): number {
     return this.s.SteamAPI_ISteamNetworkingUtils_GetDirectPingToPOP(this.self, popID);
   }
 
+  /** Get number of network points of presence in the config */
   getPOPCount(): number {
     return this.s.SteamAPI_ISteamNetworkingUtils_GetPOPCount(this.self);
   }
 
+  /**
+   * Get list of all POP IDs.  Returns the number of entries that were filled into
+   * your list.
+   */
   getPOPList(nListSz: number): { result: number; list: number } {
     const list_buf = scalarOut("u32");
     const result = this.s.SteamAPI_ISteamNetworkingUtils_GetPOPList(this.self, list_buf, nListSz);
     return { result, list: readScalar(list_buf, "u32") as number };
   }
 
+  /**
+   * Fetch current timestamp.  This timer has the following properties:
+   * - Monotonicity is guaranteed.
+   * - The initial value will be at least 24*3600*30*1e6, i.e. about
+   * 30 days worth of microseconds.  In this way, the timestamp value of
+   * 0 will always be at least "30 days ago".  Also, negative numbers
+   * will never be returned.
+   * - Wraparound / overflow is not a practical concern.
+   * If you are running under the debugger and stop the process, the clock
+   * might not advance the full wall clock time that has elapsed between
+   * calls.  If the process is not blocked from normal operation, the
+   * timestamp values will track wall clock time, even if you don't call
+   * the function frequently.
+   * The value is only meaningful for this run of the process.  Don't compare
+   * it to values obtained on another computer, or other runs of the same process.
+   */
   getLocalTimestamp(): bigint {
     return this.s.SteamAPI_ISteamNetworkingUtils_GetLocalTimestamp(this.self);
   }
 
+  /**
+   * Set a function to receive network-related information that is useful for debugging.
+   * This can be very useful during development, but it can also be useful for troubleshooting
+   * problems with tech savvy end users.  If you have a console or other log that customers
+   * can examine, these log messages can often be helpful to troubleshoot network issues.
+   * (Especially any warning/error messages.)
+   * The detail level indicates what message to invoke your callback on.  Lower numeric
+   * value means more important, and the value you pass is the lowest priority (highest
+   * numeric value) you wish to receive callbacks for.
+   * The value here controls the detail level for most messages.  You can control the
+   * detail level for various subsystems (perhaps only for certain connections) by
+   * adjusting the configuration values k_ESteamNetworkingConfig_LogLevel_Xxxxx.
+   * Except when debugging, you should only use k_ESteamNetworkingSocketsDebugOutputType_Msg
+   * or k_ESteamNetworkingSocketsDebugOutputType_Warning.  For best performance, do NOT
+   * request a high detail level and then filter out messages in your callback.  This incurs
+   * all of the expense of formatting the messages, which are then discarded.  Setting a high
+   * priority value (low numeric value) here allows the library to avoid doing this work.
+   * IMPORTANT: This may be called from a service thread, while we own a mutex, etc.
+   * Your output function must be threadsafe and fast!  Do not make any other
+   * Steamworks calls from within the handler.
+   */
   setDebugOutputFunction(
     eDetailLevel: ESteamNetworkingSocketsDebugOutputType,
     pfnFunc: Deno.PointerValue,
@@ -318,6 +460,18 @@ export class ISteamNetworkingUtils {
     ) as ESteamNetworkingFakeIPType;
   }
 
+  /**
+   * Get the real identity associated with a given FakeIP.
+   * On failure, returns:
+   * - k_EResultInvalidParam: the IP is not a FakeIP.
+   * - k_EResultNoMatch: we don't recognize that FakeIP and don't know the corresponding identity.
+   * FakeIP's used by active connections, or the FakeIPs assigned to local identities,
+   * will always work.  FakeIPs for recently destroyed connections will continue to
+   * return results for a little while, but not forever.  At some point, we will forget
+   * FakeIPs to save space.  It's reasonably safe to assume that you can read back the
+   * real identity of a connection very soon after it is destroyed.  But do not wait
+   * indefinitely.
+   */
   getRealIdentityForFakeIP(fakeIP: SteamNetworkingIPAddr): SteamNetworkingIdentity {
     const pOutRealIdentity_buf = new Uint8Array(SteamNetworkingIdentity_layout[PACK].size);
     this.s.SteamAPI_ISteamNetworkingUtils_GetRealIdentityForFakeIP(
@@ -430,6 +584,18 @@ export class ISteamNetworkingUtils {
     );
   }
 
+  /**
+   * Set a configuration value.
+   * - eValue: which value is being set
+   * - eScope: Onto what type of object are you applying the setting?
+   * - scopeArg: Which object you want to change?  (Ignored for global scope).  E.g. connection handle, listen socket handle, interface pointer, etc.
+   * - eDataType: What type of data is in the buffer at pValue?  This must match the type of the variable exactly!
+   * - pArg: Value to set it to.  You can pass NULL to remove a non-global setting at this scope,
+   * causing the value for that object to use global defaults.  Or at global scope, passing NULL
+   * will reset any custom value and restore it to the system default.
+   * NOTE: When setting pointers (e.g. callback functions), do not pass the function pointer directly.
+   * Your argument should be a pointer to a function pointer.
+   */
   setConfigValue(
     eValue: ESteamNetworkingConfigValue,
     eScopeType: ESteamNetworkingConfigScope,
@@ -460,6 +626,15 @@ export class ISteamNetworkingUtils {
     );
   }
 
+  /**
+   * Get a configuration value.
+   * - eValue: which value to fetch
+   * - eScopeType: query setting on what type of object
+   * - eScopeArg: the object to query the setting for
+   * - pOutDataType: If non-NULL, the data type of the value is returned.
+   * - pResult: Where to put the result.  Pass NULL to query the required buffer size.  (k_ESteamNetworkingGetConfigValue_BufferTooSmall will be returned.)
+   * - cbResult: IN: the size of your buffer.  OUT: the number of bytes filled in or required.
+   */
   getConfigValue(
     eValue: ESteamNetworkingConfigValue,
     eScopeType: ESteamNetworkingConfigScope,
@@ -488,6 +663,11 @@ export class ISteamNetworkingUtils {
     };
   }
 
+  /**
+   * Get info about a configuration value.  Returns the name of the value,
+   * or NULL if the value doesn't exist.  Other output parameters can be NULL
+   * if you do not need them.
+   */
   getConfigValueInfo(
     eValue: ESteamNetworkingConfigValue,
   ): {
@@ -512,6 +692,15 @@ export class ISteamNetworkingUtils {
     };
   }
 
+  /**
+   * Iterate the list of all configuration values in the current environment that it might
+   * be possible to display or edit using a generic UI.  To get the first iterable value,
+   * pass k_ESteamNetworkingConfig_Invalid.  Returns k_ESteamNetworkingConfig_Invalid
+   * to signal end of list.
+   * The bEnumerateDevVars argument can be used to include "dev" vars.  These are vars that
+   * are recommended to only be editable in "debug" or "dev" mode and typically should not be
+   * shown in a retail environment where a malicious local user might use this to cheat.
+   */
   iterateGenericEditableConfigValues(
     eCurrent: ESteamNetworkingConfigValue,
     bEnumerateDevVars: boolean,
@@ -523,6 +712,10 @@ export class ISteamNetworkingUtils {
     ) as ESteamNetworkingConfigValue;
   }
 
+  /**
+   * String conversions.  You'll usually access these using the respective
+   * inline methods.
+   */
   steamNetworkingIPAddr_ToString(
     addr: SteamNetworkingIPAddr,
     cbBuf = 256,

@@ -6,6 +6,8 @@ import type { Interface, Method } from "../schema.ts";
 import { type MappedType, mapType, type TypeContext } from "../types.ts";
 import type { LayoutResolver } from "../layout.ts";
 import { type ClassifiedMethod, type ClassifiedParam, classify } from "../params.ts";
+import type { DocIndex } from "../docscan.ts";
+import { jsdoc } from "./jsdoc.ts";
 
 const lcFirst = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
 
@@ -313,6 +315,7 @@ export function emitInterface(
   iface: Interface,
   ctx: TypeContext,
   resolver: LayoutResolver,
+  docs?: DocIndex,
 ): string {
   const accessor = iface.accessors?.find((a) => a.kind === "user") ?? iface.accessors?.[0];
 
@@ -354,18 +357,34 @@ export function emitInterface(
   if (fromStructs.length) out += `import { ${fromStructs.join(", ")} } from "../structs.ts";\n`;
   if (fromEnums.length) out += `import type { ${fromEnums.join(", ")} } from "../enums.ts";\n`;
 
-  out += `\nexport const ${iface.classname}_symbols = {\n${symbols.join("\n")}\n` +
+  out += "\n" + jsdoc(
+    `Deno FFI symbol table for \`${iface.classname}\`: every flat method, plus the versioned\n` +
+      `accessor Steam uses to hand out the interface.`,
+  );
+  out += `export const ${iface.classname}_symbols = {\n${symbols.join("\n")}\n` +
     `} as const satisfies Deno.ForeignLibraryInterface;\n\n`;
 
+  const classDoc = docs?.methods.get(`${iface.classname}.__class__`) ??
+    `Steam's \`${iface.classname}\` interface. Reach it from \`SteamClient\`; the constructor is\n` +
+      `for the client to call.`;
+  out += jsdoc(classDoc);
   out += `export class ${iface.classname} {\n`;
-  if (accessor) out += `  static readonly accessor = "${accessor.name_flat}";\n\n`;
+  if (accessor) {
+    out += jsdoc(
+      `The versioned export Steam uses to hand out this interface, for SDK ${"$"}{version}.`
+        .replace("${version}", "1.65"),
+      "  ",
+    );
+    out += `  static readonly accessor = "${accessor.name_flat}";\n\n`;
+  }
   out += `  constructor(\n` +
     `    private readonly s: Deno.DynamicLibrary<typeof ${iface.classname}_symbols>["symbols"],\n` +
     `    private readonly self: Deno.PointerValue,\n` +
     `    private readonly host: CallResultHost,\n` +
     `  ) {}\n`;
   for (const e of emitted) {
-    out += `\n  ${e.out.signature} {\n${e.out.body}\n  }\n`;
+    const doc = docs?.methods.get(`${iface.classname}.${e.cm.method.methodname}`);
+    out += `\n${jsdoc(doc, "  ")}  ${e.out.signature} {\n${e.out.body}\n  }\n`;
   }
   out += `}\n`;
   return out;

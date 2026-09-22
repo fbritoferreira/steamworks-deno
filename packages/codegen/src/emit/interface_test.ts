@@ -109,3 +109,23 @@ Deno.test("every fixture interface compiles against the runtime", async () => {
   }).output();
   assertEquals(check.success, true, new TextDecoder().decode(check.stderr));
 });
+
+Deno.test({
+  name: "generated methods carry the documentation from the SDK headers",
+  ignore: !Deno.env.get("STEAMWORKS_SDK_PATH"),
+  async fn() {
+    const { scanDocs } = await import("../docscan.ts");
+    const dir = `${Deno.env.get("STEAMWORKS_SDK_PATH")}/public/steam`;
+    const headers: { name: string; text: string }[] = [];
+    for await (const entry of Deno.readDir(dir)) {
+      if (entry.isFile && entry.name.endsWith(".h")) {
+        headers.push({ name: entry.name, text: await Deno.readTextFile(`${dir}/${entry.name}`) });
+      }
+    }
+    const docs = scanDocs(headers);
+    const out = emitInterface(iface("ISteamUserStats"), ctx, resolver, docs);
+    // isteamuserstats.h documents this one, and the text must survive into JSDoc.
+    assertStringIncludes(out, "Get the achievement status, and the time it was unlocked");
+    assertStringIncludes(out, "  /**");
+  },
+});

@@ -11,6 +11,10 @@ import {
 } from "../structs.ts";
 import type { ESteamDeviceFormFactor } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamRemotePlay`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamRemotePlay_symbols = {
   SteamAPI_ISteamRemotePlay_GetSessionCount: { parameters: ["pointer"], result: "u32" },
   SteamAPI_ISteamRemotePlay_GetSessionID: { parameters: ["pointer", "i32"], result: "u32" },
@@ -77,7 +81,12 @@ export const ISteamRemotePlay_symbols = {
   SteamAPI_SteamRemotePlay_v004: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamRemotePlay` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamRemotePlay {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamRemotePlay_v004";
 
   constructor(
@@ -86,44 +95,69 @@ export class ISteamRemotePlay {
     private readonly host: CallResultHost,
   ) {}
 
+  /** Get the number of currently connected Steam Remote Play sessions */
   getSessionCount(): number {
     return this.s.SteamAPI_ISteamRemotePlay_GetSessionCount(this.self);
   }
 
+  /** Get the currently connected Steam Remote Play session ID at the specified index. Returns zero if index is out of bounds. */
   getSessionID(iSessionIndex: number): number {
     return this.s.SteamAPI_ISteamRemotePlay_GetSessionID(this.self, iSessionIndex);
   }
 
+  /** Return true if the session has joined using a Remote Play Together invitation */
   bSessionRemotePlayTogether(unSessionID: number): boolean {
     return this.s.SteamAPI_ISteamRemotePlay_BSessionRemotePlayTogether(this.self, unSessionID);
   }
 
+  /** Get the SteamID of the connected user */
   getSessionSteamID(unSessionID: number): bigint {
     return this.s.SteamAPI_ISteamRemotePlay_GetSessionSteamID(this.self, unSessionID);
   }
 
+  /**
+   * Get the guest ID of the connected user if they are a Remote Play Together guest
+   * This returns 0 if the sessionID isn't valid or the session isn't a Remote Play Together guest
+   */
   getSessionGuestID(unSessionID: number): number {
     return this.s.SteamAPI_ISteamRemotePlay_GetSessionGuestID(this.self, unSessionID);
   }
 
+  /**
+   * gets the small (32x32) avatar of the connected user, which is a handle to be used in ISteamUtils::GetImageRGBA(), or 0 if the sessionID isn't valid
+   * returns -1 if this image has yet to be loaded, in this case wait for a SteamRemotePlaySessionAvatarLoaded_t callback and then call this again
+   */
   getSmallSessionAvatar(unSessionID: number): number {
     return this.s.SteamAPI_ISteamRemotePlay_GetSmallSessionAvatar(this.self, unSessionID);
   }
 
+  /**
+   * gets the medium (64x64) avatar of the connected user, which is a handle to be used in ISteamUtils::GetImageRGBA(), or 0 if the sessionID isn't valid
+   * returns -1 if this image has yet to be loaded, in this case wait for a SteamRemotePlaySessionAvatarLoaded_t callback and then call this again
+   */
   getMediumSessionAvatar(unSessionID: number): number {
     return this.s.SteamAPI_ISteamRemotePlay_GetMediumSessionAvatar(this.self, unSessionID);
   }
 
+  /**
+   * gets the large (184x184) avatar of the connected user, which is a handle to be used in ISteamUtils::GetImageRGBA(), or 0 if the sessionID isn't valid
+   * returns -1 if this image has yet to be loaded, in this case wait for a SteamRemotePlaySessionAvatarLoaded_t callback and then call this again
+   */
   getLargeSessionAvatar(unSessionID: number): number {
     return this.s.SteamAPI_ISteamRemotePlay_GetLargeSessionAvatar(this.self, unSessionID);
   }
 
+  /**
+   * Get the name of the session client device
+   * This returns NULL if the sessionID is not valid
+   */
   getSessionClientName(unSessionID: number): string {
     return readCString(
       this.s.SteamAPI_ISteamRemotePlay_GetSessionClientName(this.self, unSessionID),
     );
   }
 
+  /** Get the form factor of the session client device */
   getSessionClientFormFactor(unSessionID: number): ESteamDeviceFormFactor {
     return this.s.SteamAPI_ISteamRemotePlay_GetSessionClientFormFactor(
       this.self,
@@ -131,6 +165,10 @@ export class ISteamRemotePlay {
     ) as ESteamDeviceFormFactor;
   }
 
+  /**
+   * Get the resolution, in pixels, of the session client device
+   * This is set to 0x0 if the resolution is not available
+   */
   bGetSessionClientResolution(
     unSessionID: number,
   ): { ok: boolean; pnResolutionX: number; pnResolutionY: number } {
@@ -149,32 +187,58 @@ export class ISteamRemotePlay {
     };
   }
 
+  /**
+   * Show the Remote Play Together UI in the game overlay
+   * This returns false if your game is not configured for Remote Play Together
+   */
   showRemotePlayTogetherUI(): boolean {
     return this.s.SteamAPI_ISteamRemotePlay_ShowRemotePlayTogetherUI(this.self);
   }
 
+  /**
+   * Invite a friend to Remote Play Together, or create a guest invite if steamIDFriend is CSteamID()
+   * This returns false if the invite can't be sent or your game is not configured for Remote Play Together
+   */
   bSendRemotePlayTogetherInvite(steamIDFriend: bigint): boolean {
     return this.s.SteamAPI_ISteamRemotePlay_BSendRemotePlayTogetherInvite(this.self, steamIDFriend);
   }
 
+  /** Make mouse and keyboard input for Remote Play Together sessions available via GetInput() instead of being merged with local input */
   bEnableRemotePlayTogetherDirectInput(): boolean {
     return this.s.SteamAPI_ISteamRemotePlay_BEnableRemotePlayTogetherDirectInput(this.self);
   }
 
+  /** Merge Remote Play Together mouse and keyboard input with local input */
   disableRemotePlayTogetherDirectInput(): void {
     this.s.SteamAPI_ISteamRemotePlay_DisableRemotePlayTogetherDirectInput(this.self);
   }
 
+  /**
+   * Get input events from Remote Play Together sessions
+   * This is available after calling BEnableRemotePlayTogetherDirectInput()
+   * pInput is an array of input events that will be filled in by this function, up to unMaxEvents.
+   * This returns the number of events copied to pInput, or the number of events available if pInput is nullptr.
+   */
   getInput(unMaxEvents: number): RemotePlayInput_t {
     const pInput_buf = new Uint8Array(RemotePlayInput_t_layout[PACK].size);
     this.s.SteamAPI_ISteamRemotePlay_GetInput(this.self, pInput_buf, unMaxEvents);
     return decodeRemotePlayInput_t(pInput_buf);
   }
 
+  /**
+   * Set the mouse cursor visibility for a remote player
+   * This is available after calling BEnableRemotePlayTogetherDirectInput()
+   */
   setMouseVisibility(unSessionID: number, bVisible: boolean): void {
     this.s.SteamAPI_ISteamRemotePlay_SetMouseVisibility(this.self, unSessionID, bVisible);
   }
 
+  /**
+   * Set the mouse cursor position for a remote player
+   * This is available after calling BEnableRemotePlayTogetherDirectInput()
+   * This is used to warp the cursor to a specific location and isn't needed during normal event processing.
+   * The position is normalized relative to the window, where 0,0 is the upper left, and 1,1 is the lower right.
+   */
   setMousePosition(unSessionID: number, flNormalizedX: number, flNormalizedY: number): void {
     this.s.SteamAPI_ISteamRemotePlay_SetMousePosition(
       this.self,
@@ -184,6 +248,17 @@ export class ISteamRemotePlay {
     );
   }
 
+  /**
+   * Create a cursor that can be used with SetMouseCursor()
+   * This is available after calling BEnableRemotePlayTogetherDirectInput()
+   * Parameters:
+   * nWidth - The width of the cursor, in pixels
+   * nHeight - The height of the cursor, in pixels
+   * nHotX - The X coordinate of the cursor hot spot in pixels, offset from the left of the cursor
+   * nHotY - The Y coordinate of the cursor hot spot in pixels, offset from the top of the cursor
+   * pBGRA - A pointer to the cursor pixels, with 8-bit color channels in red, green, blue, alpha order
+   * nPitch - The distance between pixel rows in bytes, defaults to nWidth * 4
+   */
   createMouseCursor(
     nWidth: number,
     nHeight: number,
@@ -203,6 +278,11 @@ export class ISteamRemotePlay {
     );
   }
 
+  /**
+   * Set the mouse cursor for a remote player
+   * This is available after calling BEnableRemotePlayTogetherDirectInput()
+   * The cursor ID is a value returned by CreateMouseCursor()
+   */
   setMouseCursor(unSessionID: number, unCursorID: number): void {
     this.s.SteamAPI_ISteamRemotePlay_SetMouseCursor(this.self, unSessionID, unCursorID);
   }

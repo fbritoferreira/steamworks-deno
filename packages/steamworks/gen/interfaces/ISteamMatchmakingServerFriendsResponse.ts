@@ -3,6 +3,10 @@
 import type { CallResultHost } from "../../src/marshal.ts";
 import { cstrArg } from "../../src/marshal.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamMatchmakingServerFriendsResponse`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamMatchmakingServerFriendsResponse_symbols = {
   SteamAPI_ISteamMatchmakingServerFriendsResponse_AddFriendToList: {
     parameters: ["pointer", "u64", "buffer", "bool"],
@@ -18,6 +22,10 @@ export const ISteamMatchmakingServerFriendsResponse_symbols = {
   },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamMatchmakingServerFriendsResponse` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamMatchmakingServerFriendsResponse {
   constructor(
     private readonly s: Deno.DynamicLibrary<
@@ -27,6 +35,10 @@ export class ISteamMatchmakingServerFriendsResponse {
     private readonly host: CallResultHost,
   ) {}
 
+  /**
+   * Got data on a friend who has played on the server -- you'll get this callback once per player
+   * on the server which you have requested player data on.
+   */
   addFriendToList(steamID: bigint, pchName: string, bCurrentlyConnected: boolean): void {
     this.s.SteamAPI_ISteamMatchmakingServerFriendsResponse_AddFriendToList(
       this.self,
@@ -36,10 +48,15 @@ export class ISteamMatchmakingServerFriendsResponse {
     );
   }
 
+  /** The server failed to respond to the request for player details */
   friendsFailedToRespond(): void {
     this.s.SteamAPI_ISteamMatchmakingServerFriendsResponse_FriendsFailedToRespond(this.self);
   }
 
+  /**
+   * The server has finished responding to the player details request
+   * (ie, you won't get anymore AddPlayerToList callbacks)
+   */
   friendsRefreshComplete(): void {
     this.s.SteamAPI_ISteamMatchmakingServerFriendsResponse_FriendsRefreshComplete(this.self);
   }

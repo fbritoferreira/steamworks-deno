@@ -3,6 +3,10 @@
 import type { CallResultHost } from "../../src/marshal.ts";
 import { writeScalarArray } from "../../src/marshal.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamMatchmakingServers`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamMatchmakingServers_symbols = {
   SteamAPI_ISteamMatchmakingServers_RequestInternetServerList: {
     parameters: ["pointer", "u32", "buffer", "u32", "pointer"],
@@ -79,7 +83,12 @@ export const ISteamMatchmakingServers_symbols = {
   SteamAPI_SteamMatchmakingServers_v003: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamMatchmakingServers` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamMatchmakingServers {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamMatchmakingServers_v003";
 
   constructor(
@@ -88,6 +97,11 @@ export class ISteamMatchmakingServers {
     private readonly host: CallResultHost,
   ) {}
 
+  /**
+   * Request a new list of servers of a particular type.  These calls each correspond to one of the EMatchMakingType values.
+   * Each call allocates a new asynchronous request object.
+   * Request object must be released by calling ReleaseRequest( hServerListRequest )
+   */
   requestInternetServerList(
     iApp: number,
     ppchFilters: Deno.PointerValue[],
@@ -174,34 +188,62 @@ export class ISteamMatchmakingServers {
     );
   }
 
+  /**
+   * Releases the asynchronous request object and cancels any pending query on it if there's a pending query in progress.
+   * RefreshComplete callback is not posted when request is released.
+   */
   releaseRequest(hServerListRequest: Deno.PointerValue): void {
     this.s.SteamAPI_ISteamMatchmakingServers_ReleaseRequest(this.self, hServerListRequest);
   }
 
+  /**
+   * Get details on a given server in the list, you can get the valid range of index
+   * values by calling GetServerCount().  You will also receive index values in
+   * ISteamMatchmakingServerListResponse::ServerResponded() callbacks
+   */
   getServerDetails(hRequest: Deno.PointerValue, iServer: number): Deno.PointerValue {
     return this.s.SteamAPI_ISteamMatchmakingServers_GetServerDetails(this.self, hRequest, iServer);
   }
 
+  /**
+   * Cancel an request which is operation on the given list type.  You should call this to cancel
+   * any in-progress requests before destructing a callback object that may have been passed
+   * to one of the above list request calls.  Not doing so may result in a crash when a callback
+   * occurs on the destructed object.
+   * Canceling a query does not release the allocated request handle.
+   * The request handle must be released using ReleaseRequest( hRequest )
+   */
   cancelQuery(hRequest: Deno.PointerValue): void {
     this.s.SteamAPI_ISteamMatchmakingServers_CancelQuery(this.self, hRequest);
   }
 
+  /**
+   * Ping every server in your list again but don't update the list of servers
+   * Query callback installed when the server list was requested will be used
+   * again to post notifications and RefreshComplete, so the callback must remain
+   * valid until another RefreshComplete is called on it or the request
+   * is released with ReleaseRequest( hRequest )
+   */
   refreshQuery(hRequest: Deno.PointerValue): void {
     this.s.SteamAPI_ISteamMatchmakingServers_RefreshQuery(this.self, hRequest);
   }
 
+  /** Returns true if the list is currently refreshing its server list */
   isRefreshing(hRequest: Deno.PointerValue): boolean {
     return this.s.SteamAPI_ISteamMatchmakingServers_IsRefreshing(this.self, hRequest);
   }
 
+  /** How many servers in the given list, GetServerDetails above takes 0... GetServerCount() - 1 */
   getServerCount(hRequest: Deno.PointerValue): number {
     return this.s.SteamAPI_ISteamMatchmakingServers_GetServerCount(this.self, hRequest);
   }
 
+  /** Refresh a single server inside of a query (rather than all the servers ) */
   refreshServer(hRequest: Deno.PointerValue, iServer: number): void {
     this.s.SteamAPI_ISteamMatchmakingServers_RefreshServer(this.self, hRequest, iServer);
   }
 
+  /** Request updated ping time and other details from a single server */
   pingServer(unIP: number, usPort: number, pRequestServersResponse: Deno.PointerValue): number {
     return this.s.SteamAPI_ISteamMatchmakingServers_PingServer(
       this.self,
@@ -211,6 +253,7 @@ export class ISteamMatchmakingServers {
     );
   }
 
+  /** Request the list of players currently playing on a server */
   playerDetails(unIP: number, usPort: number, pRequestServersResponse: Deno.PointerValue): number {
     return this.s.SteamAPI_ISteamMatchmakingServers_PlayerDetails(
       this.self,
@@ -220,6 +263,7 @@ export class ISteamMatchmakingServers {
     );
   }
 
+  /** Request the list of rules that the server is running (See ISteamGameServer::SetKeyValue() to set the rules server side) */
   serverRules(unIP: number, usPort: number, pRequestServersResponse: Deno.PointerValue): number {
     return this.s.SteamAPI_ISteamMatchmakingServers_ServerRules(
       this.self,
@@ -229,6 +273,7 @@ export class ISteamMatchmakingServers {
     );
   }
 
+  /** Request the list of friends that have played on this server */
   serverFriends(unIP: number, usPort: number, pRequestServersResponse: Deno.PointerValue): number {
     return this.s.SteamAPI_ISteamMatchmakingServers_ServerFriends(
       this.self,
@@ -238,6 +283,11 @@ export class ISteamMatchmakingServers {
     );
   }
 
+  /**
+   * Cancel an outstanding Ping/Players/Rules query from above.  You should call this to cancel
+   * any in-progress requests before destructing a callback object that may have been passed
+   * to one of the above calls to avoid crashing when callbacks occur.
+   */
   cancelServerQuery(hServerQuery: number): void {
     this.s.SteamAPI_ISteamMatchmakingServers_CancelServerQuery(this.self, hServerQuery);
   }

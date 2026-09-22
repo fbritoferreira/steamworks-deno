@@ -3,6 +3,10 @@
 import type { CallResultHost } from "../../src/marshal.ts";
 import type { EMatchMakingServerResponse } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamMatchmakingServerListResponse`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamMatchmakingServerListResponse_symbols = {
   SteamAPI_ISteamMatchmakingServerListResponse_ServerResponded: {
     parameters: ["pointer", "pointer", "i32"],
@@ -18,6 +22,10 @@ export const ISteamMatchmakingServerListResponse_symbols = {
   },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamMatchmakingServerListResponse` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamMatchmakingServerListResponse {
   constructor(
     private readonly s: Deno.DynamicLibrary<
@@ -27,6 +35,7 @@ export class ISteamMatchmakingServerListResponse {
     private readonly host: CallResultHost,
   ) {}
 
+  /** Server has responded ok with updated data */
   serverResponded(hRequest: Deno.PointerValue, iServer: number): void {
     this.s.SteamAPI_ISteamMatchmakingServerListResponse_ServerResponded(
       this.self,
@@ -35,6 +44,7 @@ export class ISteamMatchmakingServerListResponse {
     );
   }
 
+  /** Server has failed to respond */
   serverFailedToRespond(hRequest: Deno.PointerValue, iServer: number): void {
     this.s.SteamAPI_ISteamMatchmakingServerListResponse_ServerFailedToRespond(
       this.self,
@@ -43,6 +53,7 @@ export class ISteamMatchmakingServerListResponse {
     );
   }
 
+  /** A list refresh you had initiated is now 100% completed */
   refreshComplete(hRequest: Deno.PointerValue, response: EMatchMakingServerResponse): void {
     this.s.SteamAPI_ISteamMatchmakingServerListResponse_RefreshComplete(
       this.self,

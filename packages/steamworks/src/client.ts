@@ -18,6 +18,7 @@ import * as G from "../gen/mod.ts";
 import { ALL_INTERFACE_SYMBOLS } from "../gen/all_symbols.ts";
 import { SteamInterfaces } from "../gen/client_base.ts";
 
+/** How to start Steam: which app, and where the library is. */
 export interface SteamClientOptions extends ResolveLibraryOptions {
   /** Your Steam AppID. Use 480, Valve's Spacewar test app, while developing. */
   appId: number;

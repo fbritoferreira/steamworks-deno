@@ -55,6 +55,10 @@ import type {
   EWorkshopVideoProvider,
 } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamRemoteStorage`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamRemoteStorage_symbols = {
   SteamAPI_ISteamRemoteStorage_FileWrite: {
     parameters: ["pointer", "buffer", "buffer", "i32"],
@@ -270,7 +274,12 @@ export const ISteamRemoteStorage_symbols = {
   SteamAPI_SteamRemoteStorage_v016: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamRemoteStorage` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamRemoteStorage {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamRemoteStorage_v016";
 
   constructor(
@@ -279,6 +288,7 @@ export class ISteamRemoteStorage {
     private readonly host: CallResultHost,
   ) {}
 
+  /** file operations */
   fileWrite(pchFile: string, pvData: Uint8Array, cubData: number): boolean {
     return this.s.SteamAPI_ISteamRemoteStorage_FileWrite(
       this.self,
@@ -355,6 +365,7 @@ export class ISteamRemoteStorage {
     );
   }
 
+  /** file operations that cause network IO */
   fileWriteStreamOpen(pchFile: string): bigint {
     return this.s.SteamAPI_ISteamRemoteStorage_FileWriteStreamOpen(this.self, cstrArg(pchFile));
   }
@@ -376,6 +387,7 @@ export class ISteamRemoteStorage {
     return this.s.SteamAPI_ISteamRemoteStorage_FileWriteStreamCancel(this.self, writeHandle);
   }
 
+  /** file information */
   fileExists(pchFile: string): boolean {
     return this.s.SteamAPI_ISteamRemoteStorage_FileExists(this.self, cstrArg(pchFile));
   }
@@ -399,6 +411,7 @@ export class ISteamRemoteStorage {
     ) as ERemoteStoragePlatform;
   }
 
+  /** iteration */
   getFileCount(): number {
     return this.s.SteamAPI_ISteamRemoteStorage_GetFileCount(this.self);
   }
@@ -415,6 +428,7 @@ export class ISteamRemoteStorage {
     return { result, pnFileSizeInBytes: readScalar(pnFileSizeInBytes_buf, "i32") as number };
   }
 
+  /** configuration management */
   getQuota(): { ok: boolean; pnTotalBytes: bigint; puAvailableBytes: bigint } {
     const pnTotalBytes_buf = scalarOut("u64");
     const puAvailableBytes_buf = scalarOut("u64");
@@ -442,11 +456,20 @@ export class ISteamRemoteStorage {
     this.s.SteamAPI_ISteamRemoteStorage_SetCloudEnabledForApp(this.self, bEnabled);
   }
 
+  /**
+   * Downloads a UGC file.  A priority value of 0 will download the file immediately,
+   * otherwise it will wait to download the file until all downloads with a lower priority
+   * value are completed.  Downloads with equal priority will occur simultaneously.
+   */
   uGCDownload(hContent: bigint, unPriority: number): Promise<RemoteStorageDownloadUGCResult_t> {
     const call = this.s.SteamAPI_ISteamRemoteStorage_UGCDownload(this.self, hContent, unPriority);
     return this.host.callResult(call, 1317, decodeRemoteStorageDownloadUGCResult_t);
   }
 
+  /**
+   * Gets the amount of data downloaded so far for a piece of content. pnBytesExpected can be 0 if function returns false
+   * or if the transfer hasn't started yet, so be careful to check for that before dividing to get a percentage
+   */
   getUGCDownloadProgress(
     hContent: bigint,
   ): { ok: boolean; pnBytesDownloaded: number; pnBytesExpected: number } {
@@ -465,6 +488,7 @@ export class ISteamRemoteStorage {
     };
   }
 
+  /** Gets metadata for a file after it has been downloaded. This is the same metadata given in the RemoteStorageDownloadUGCResult_t call result */
   getUGCDetails(
     hContent: bigint,
     ppchName: Deno.PointerValue,
@@ -488,6 +512,14 @@ export class ISteamRemoteStorage {
     };
   }
 
+  /**
+   * After download, gets the content of the file.
+   * Small files can be read all at once by calling this function with an offset of 0 and cubDataToRead equal to the size of the file.
+   * Larger files can be read in chunks to reduce memory usage (since both sides of the IPC client and the game itself must allocate
+   * enough memory for each chunk).  Once the last byte is read, the file is implicitly closed and further calls to UGCRead will fail
+   * unless UGCDownload is called again.
+   * For especially large files (anything over 100MB) it is a requirement that the file is read in chunks.
+   */
   uGCRead(
     hContent: bigint,
     pvData: Uint8Array,
@@ -505,6 +537,7 @@ export class ISteamRemoteStorage {
     );
   }
 
+  /** Functions to iterate through UGC that has finished downloading but has not yet been read via UGCRead() */
   getCachedUGCCount(): number {
     return this.s.SteamAPI_ISteamRemoteStorage_GetCachedUGCCount(this.self);
   }
@@ -513,6 +546,7 @@ export class ISteamRemoteStorage {
     return this.s.SteamAPI_ISteamRemoteStorage_GetCachedUGCHandle(this.self, iCachedContent);
   }
 
+  /** publishing UGC */
   publishWorkshopFile(
     pchFile: string,
     pchPreviewFile: string,
@@ -609,6 +643,11 @@ export class ISteamRemoteStorage {
     return this.host.callResult(call, 1316, decodeRemoteStorageUpdatePublishedFileResult_t);
   }
 
+  /**
+   * Gets published file details for the given publishedfileid.  If unMaxSecondsOld is greater than 0,
+   * cached data may be returned, depending on how long ago it was cached.  A value of 0 will force a refresh.
+   * A value of k_WorkshopForceLoadPublishedFileDetailsFromCache will use cached data if it exists, no matter how old it is.
+   */
   getPublishedFileDetails(
     unPublishedFileId: bigint,
     unMaxSecondsOld: number,
@@ -631,6 +670,7 @@ export class ISteamRemoteStorage {
     return this.host.callResult(call, 1311, decodeRemoteStorageDeletePublishedFileResult_t);
   }
 
+  /** enumerate the files that the current user published with this app */
   enumerateUserPublishedFiles(
     unStartIndex: number,
   ): Promise<RemoteStorageEnumerateUserPublishedFilesResult_t> {
@@ -788,6 +828,7 @@ export class ISteamRemoteStorage {
     );
   }
 
+  /** this method enumerates the public view of workshop files */
   enumeratePublishedWorkshopFiles(
     eEnumerationType: EWorkshopEnumerationType,
     unStartIndex: number,
@@ -822,6 +863,7 @@ export class ISteamRemoteStorage {
     return this.host.callResult(call, 1317, decodeRemoteStorageDownloadUGCResult_t);
   }
 
+  /** Cloud dynamic state change notification */
   getLocalFileChangeCount(): number {
     return this.s.SteamAPI_ISteamRemoteStorage_GetLocalFileChangeCount(this.self);
   }
@@ -850,6 +892,10 @@ export class ISteamRemoteStorage {
     };
   }
 
+  /**
+   * Indicate to Steam the beginning / end of a set of local file
+   * operations - for example, writing a game save that requires updating two files.
+   */
   beginFileWriteBatch(): boolean {
     return this.s.SteamAPI_ISteamRemoteStorage_BeginFileWriteBatch(this.self);
   }

@@ -10,7 +10,8 @@
     "check": "deno check packages/steamworks/mod.ts packages/codegen/mod.ts examples/demo/main.ts",
     "lint": "deno lint && deno fmt --check",
     "gen": "deno run --allow-env --allow-read --allow-write --allow-run packages/codegen/cli.ts",
-    "gen:check": "deno task gen && git diff --exit-code -- packages/steamworks/gen"
+    "gen:check": "deno task gen && git diff --exit-code -- packages/steamworks/gen",
+    "verify": "deno run --allow-ffi --allow-env --allow-read --allow-write --allow-run packages/steamworks/verify.ts"
   },
   "fmt": {
     "lineWidth": 100

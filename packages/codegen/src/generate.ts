@@ -14,6 +14,7 @@ import { emitHarnessC } from "./emit/harness_c.ts";
 import { emitAllSymbols } from "./emit/all_symbols.ts";
 import { emitClientBase } from "./emit/client_base.ts";
 import { scanPacking } from "./packscan.ts";
+import { scanDocs } from "./docscan.ts";
 
 export interface GenerateOptions {
   /** Root of an unzipped Steamworks SDK: the folder holding `public/` and `redistributable_bin/`. */
@@ -68,14 +69,16 @@ export async function generate(opts: GenerateOptions): Promise<string[]> {
   const schema = await loadSchema(join(opts.sdkPath, "public", "steam", "steam_api.json"));
   const version = await detectVersion(opts.sdkPath, opts.sdkVersion);
   const ctx = buildContext(schema);
-  const packing = scanPacking(await readHeaders(join(opts.sdkPath, "public", "steam")));
+  const headers = await readHeaders(join(opts.sdkPath, "public", "steam"));
+  const packing = scanPacking(headers);
+  const docs = scanDocs(headers);
   const resolver = new LayoutResolver(schema, ctx, packing);
   const h = header(version);
 
   const files = new Map<string, string>();
-  files.set("enums.ts", h + emitEnums(schema));
+  files.set("enums.ts", h + emitEnums(schema, docs));
   files.set("consts.ts", h + emitConsts(schema, ctx));
-  files.set("structs.ts", h + emitStructs(schema, ctx, resolver));
+  files.set("structs.ts", h + emitStructs(schema, ctx, resolver, docs));
   files.set("callback_ids.ts", h + emitCallbackIds(schema));
   files.set("layout.json", emitLayoutJson(schema, resolver));
   files.set("layout_check.cpp", emitHarnessC(schema));
@@ -84,7 +87,7 @@ export async function generate(opts: GenerateOptions): Promise<string[]> {
 
   const names: string[] = [];
   for (const i of schema.interfaces) {
-    files.set(join("interfaces", `${i.classname}.ts`), h + emitInterface(i, ctx, resolver));
+    files.set(join("interfaces", `${i.classname}.ts`), h + emitInterface(i, ctx, resolver, docs));
     names.push(i.classname);
   }
   names.sort();

@@ -3,6 +3,10 @@
 import type { CallResultHost } from "../../src/marshal.ts";
 import type { AudioPlayback_Status } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamMusic`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamMusic_symbols = {
   SteamAPI_ISteamMusic_BIsEnabled: { parameters: ["pointer"], result: "bool" },
   SteamAPI_ISteamMusic_BIsPlaying: { parameters: ["pointer"], result: "bool" },
@@ -16,7 +20,12 @@ export const ISteamMusic_symbols = {
   SteamAPI_SteamMusic_v001: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamMusic` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamMusic {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamMusic_v001";
 
   constructor(
@@ -53,6 +62,7 @@ export class ISteamMusic {
     this.s.SteamAPI_ISteamMusic_PlayNext(this.self);
   }
 
+  /** volume is between 0.0 and 1.0 */
   setVolume(flVolume: number): void {
     this.s.SteamAPI_ISteamMusic_SetVolume(this.self, flVolume);
   }

@@ -3,6 +3,10 @@
 import type { CallResultHost } from "../../src/marshal.ts";
 import { cstrArg, readScalar, scalarOut } from "../../src/marshal.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamVideo`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamVideo_symbols = {
   SteamAPI_ISteamVideo_GetVideoURL: { parameters: ["pointer", "u32"], result: "void" },
   SteamAPI_ISteamVideo_IsBroadcasting: { parameters: ["pointer", "buffer"], result: "bool" },
@@ -14,7 +18,12 @@ export const ISteamVideo_symbols = {
   SteamAPI_SteamVideo_v007: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamVideo` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamVideo {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamVideo_v007";
 
   constructor(
@@ -23,16 +32,19 @@ export class ISteamVideo {
     private readonly host: CallResultHost,
   ) {}
 
+  /** Get a URL suitable for streaming the given Video app ID's video */
   getVideoURL(unVideoAppID: number): void {
     this.s.SteamAPI_ISteamVideo_GetVideoURL(this.self, unVideoAppID);
   }
 
+  /** returns true if user is uploading a live broadcast */
   isBroadcasting(): { ok: boolean; pnNumViewers: number } {
     const pnNumViewers_buf = scalarOut("i32");
     const ok = this.s.SteamAPI_ISteamVideo_IsBroadcasting(this.self, pnNumViewers_buf);
     return { ok, pnNumViewers: readScalar(pnNumViewers_buf, "i32") as number };
   }
 
+  /** Get the OPF Details for 360 Video Playback */
   getOPFSettings(unVideoAppID: number): void {
     this.s.SteamAPI_ISteamVideo_GetOPFSettings(this.self, unVideoAppID);
   }

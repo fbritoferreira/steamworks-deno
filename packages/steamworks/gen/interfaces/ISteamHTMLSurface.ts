@@ -5,6 +5,10 @@ import { cstrArg } from "../../src/marshal.ts";
 import { decodeHTML_BrowserReady_t, HTML_BrowserReady_t } from "../structs.ts";
 import type { EHTMLKeyModifiers, EHTMLMouseButton } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamHTMLSurface`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamHTMLSurface_symbols = {
   SteamAPI_ISteamHTMLSurface_Init: { parameters: ["pointer"], result: "bool" },
   SteamAPI_ISteamHTMLSurface_Shutdown: { parameters: ["pointer"], result: "bool" },
@@ -112,7 +116,12 @@ export const ISteamHTMLSurface_symbols = {
   SteamAPI_SteamHTMLSurface_v005: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamHTMLSurface` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamHTMLSurface {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamHTMLSurface_v005";
 
   constructor(
@@ -121,6 +130,7 @@ export class ISteamHTMLSurface {
     private readonly host: CallResultHost,
   ) {}
 
+  /** Must call init and shutdown when starting/ending use of the interface */
   init(): boolean {
     return this.s.SteamAPI_ISteamHTMLSurface_Init(this.self);
   }
@@ -129,6 +139,19 @@ export class ISteamHTMLSurface {
     return this.s.SteamAPI_ISteamHTMLSurface_Shutdown(this.self);
   }
 
+  /**
+   * Create a browser object for display of a html page, when creation is complete the call handle
+   * will return a HTML_BrowserReady_t callback for the HHTMLBrowser of your new browser.
+   * The user agent string is a substring to be added to the general user agent string so you can
+   * identify your client on web servers.
+   * The userCSS string lets you apply a CSS style sheet to every displayed page, leave null if
+   * you do not require this functionality.
+   * YOU MUST HAVE IMPLEMENTED HANDLERS FOR HTML_BrowserReady_t, HTML_StartRequest_t,
+   * HTML_JSAlert_t, HTML_JSConfirm_t, and HTML_FileOpenDialog_t! See the CALLBACKS
+   * section of this interface (AllowStartRequest, etc) for more details. If you do
+   * not implement these callback handlers, the browser may appear to hang instead of
+   * navigating to new pages or triggering javascript popups.
+   */
   createBrowser(pchUserAgent: string, pchUserCSS: string): Promise<HTML_BrowserReady_t> {
     const call = this.s.SteamAPI_ISteamHTMLSurface_CreateBrowser(
       this.self,
@@ -138,10 +161,12 @@ export class ISteamHTMLSurface {
     return this.host.callResult(call, 4501, decodeHTML_BrowserReady_t);
   }
 
+  /** Call this when you are done with a html surface, this lets us free the resources being used by it */
   removeBrowser(unBrowserHandle: number): void {
     this.s.SteamAPI_ISteamHTMLSurface_RemoveBrowser(this.self, unBrowserHandle);
   }
 
+  /** Navigate to this URL, results in a HTML_StartRequest_t as the request commences */
   loadURL(unBrowserHandle: number, pchURL: string, pchPostData: string): void {
     this.s.SteamAPI_ISteamHTMLSurface_LoadURL(
       this.self,
@@ -151,26 +176,32 @@ export class ISteamHTMLSurface {
     );
   }
 
+  /** Tells the surface the size in pixels to display the surface */
   setSize(unBrowserHandle: number, unWidth: number, unHeight: number): void {
     this.s.SteamAPI_ISteamHTMLSurface_SetSize(this.self, unBrowserHandle, unWidth, unHeight);
   }
 
+  /** Stop the load of the current html page */
   stopLoad(unBrowserHandle: number): void {
     this.s.SteamAPI_ISteamHTMLSurface_StopLoad(this.self, unBrowserHandle);
   }
 
+  /** Reload (most likely from local cache) the current page */
   reload(unBrowserHandle: number): void {
     this.s.SteamAPI_ISteamHTMLSurface_Reload(this.self, unBrowserHandle);
   }
 
+  /** navigate back in the page history */
   goBack(unBrowserHandle: number): void {
     this.s.SteamAPI_ISteamHTMLSurface_GoBack(this.self, unBrowserHandle);
   }
 
+  /** navigate forward in the page history */
   goForward(unBrowserHandle: number): void {
     this.s.SteamAPI_ISteamHTMLSurface_GoForward(this.self, unBrowserHandle);
   }
 
+  /** add this header to any url requests from this browser */
   addHeader(unBrowserHandle: number, pchKey: string, pchValue: string): void {
     this.s.SteamAPI_ISteamHTMLSurface_AddHeader(
       this.self,
@@ -180,6 +211,7 @@ export class ISteamHTMLSurface {
     );
   }
 
+  /** run this javascript script in the currently loaded page */
   executeJavascript(unBrowserHandle: number, pchScript: string): void {
     this.s.SteamAPI_ISteamHTMLSurface_ExecuteJavascript(
       this.self,
@@ -188,6 +220,7 @@ export class ISteamHTMLSurface {
     );
   }
 
+  /** Mouse click and mouse movement commands */
   mouseUp(unBrowserHandle: number, eMouseButton: EHTMLMouseButton): void {
     this.s.SteamAPI_ISteamHTMLSurface_MouseUp(this.self, unBrowserHandle, eMouseButton);
   }
@@ -200,14 +233,20 @@ export class ISteamHTMLSurface {
     this.s.SteamAPI_ISteamHTMLSurface_MouseDoubleClick(this.self, unBrowserHandle, eMouseButton);
   }
 
+  /** x and y are relative to the HTML bounds */
   mouseMove(unBrowserHandle: number, x: number, y: number): void {
     this.s.SteamAPI_ISteamHTMLSurface_MouseMove(this.self, unBrowserHandle, x, y);
   }
 
+  /** nDelta is pixels of scroll */
   mouseWheel(unBrowserHandle: number, nDelta: number): void {
     this.s.SteamAPI_ISteamHTMLSurface_MouseWheel(this.self, unBrowserHandle, nDelta);
   }
 
+  /**
+   * keyboard interactions, native keycode is the virtual key code value from your OS, system key flags the key to not
+   * be sent as a typed character as well as a key down
+   */
   keyDown(
     unBrowserHandle: number,
     nNativeKeyCode: number,
@@ -236,6 +275,7 @@ export class ISteamHTMLSurface {
     );
   }
 
+  /** cUnicodeChar is the unicode character point for this keypress (and potentially multiple chars per press) */
   keyChar(
     unBrowserHandle: number,
     cUnicodeChar: number,
@@ -249,6 +289,7 @@ export class ISteamHTMLSurface {
     );
   }
 
+  /** programmatically scroll this many pixels on the page */
   setHorizontalScroll(unBrowserHandle: number, nAbsolutePixelScroll: number): void {
     this.s.SteamAPI_ISteamHTMLSurface_SetHorizontalScroll(
       this.self,
@@ -265,22 +306,27 @@ export class ISteamHTMLSurface {
     );
   }
 
+  /** tell the html control if it has key focus currently, controls showing the I-beam cursor in text controls amongst other things */
   setKeyFocus(unBrowserHandle: number, bHasKeyFocus: boolean): void {
     this.s.SteamAPI_ISteamHTMLSurface_SetKeyFocus(this.self, unBrowserHandle, bHasKeyFocus);
   }
 
+  /** open the current pages html code in the local editor of choice, used for debugging */
   viewSource(unBrowserHandle: number): void {
     this.s.SteamAPI_ISteamHTMLSurface_ViewSource(this.self, unBrowserHandle);
   }
 
+  /** copy the currently selected text on the html page to the local clipboard */
   copyToClipboard(unBrowserHandle: number): void {
     this.s.SteamAPI_ISteamHTMLSurface_CopyToClipboard(this.self, unBrowserHandle);
   }
 
+  /** paste from the local clipboard to the current html page */
   pasteFromClipboard(unBrowserHandle: number): void {
     this.s.SteamAPI_ISteamHTMLSurface_PasteFromClipboard(this.self, unBrowserHandle);
   }
 
+  /** find this string in the browser, if bCurrentlyInFind is true then instead cycle to the next matching element */
   find(
     unBrowserHandle: number,
     pchSearchStr: string,
@@ -296,14 +342,17 @@ export class ISteamHTMLSurface {
     );
   }
 
+  /** cancel a currently running find */
   stopFind(unBrowserHandle: number): void {
     this.s.SteamAPI_ISteamHTMLSurface_StopFind(this.self, unBrowserHandle);
   }
 
+  /** return details about the link at position x,y on the current page */
   getLinkAtPosition(unBrowserHandle: number, x: number, y: number): void {
     this.s.SteamAPI_ISteamHTMLSurface_GetLinkAtPosition(this.self, unBrowserHandle, x, y);
   }
 
+  /** set a webcookie for the hostname in question */
   setCookie(
     pchHostname: string,
     pchKey: string,
@@ -325,6 +374,7 @@ export class ISteamHTMLSurface {
     );
   }
 
+  /** Zoom the current page by flZoom ( from 0.0 to 2.0, so to zoom to 120% use 1.2 ), zooming around point X,Y in the page (use 0,0 if you don't care) */
   setPageScaleFactor(
     unBrowserHandle: number,
     flZoom: number,
@@ -340,6 +390,12 @@ export class ISteamHTMLSurface {
     );
   }
 
+  /**
+   * Enable/disable low-resource background mode, where javascript and repaint timers are throttled, resources are
+   * more aggressively purged from memory, and audio/video elements are paused. When background mode is enabled,
+   * all HTML5 video and audio objects will execute ".pause()" and gain the property "._steam_background_paused = 1".
+   * When background mode is disabled, any video or audio objects with that property will resume with ".play()".
+   */
   setBackgroundMode(unBrowserHandle: number, bBackgroundMode: boolean): void {
     this.s.SteamAPI_ISteamHTMLSurface_SetBackgroundMode(
       this.self,
@@ -348,22 +404,38 @@ export class ISteamHTMLSurface {
     );
   }
 
+  /**
+   * Scale the output display space by this factor, this is useful when displaying content on high dpi devices.
+   * Specifies the ratio between physical and logical pixels.
+   */
   setDPIScalingFactor(unBrowserHandle: number, flDPIScaling: number): void {
     this.s.SteamAPI_ISteamHTMLSurface_SetDPIScalingFactor(this.self, unBrowserHandle, flDPIScaling);
   }
 
+  /** Open HTML/JS developer tools */
   openDeveloperTools(unBrowserHandle: number): void {
     this.s.SteamAPI_ISteamHTMLSurface_OpenDeveloperTools(this.self, unBrowserHandle);
   }
 
+  /**
+   * You MUST call this in response to a HTML_StartRequest_t callback
+   * Set bAllowed to true to allow this navigation, false to cancel it and stay
+   * on the current page. You can use this feature to limit the valid pages
+   * allowed in your HTML surface.
+   */
   allowStartRequest(unBrowserHandle: number, bAllowed: boolean): void {
     this.s.SteamAPI_ISteamHTMLSurface_AllowStartRequest(this.self, unBrowserHandle, bAllowed);
   }
 
+  /**
+   * You MUST call this in response to a HTML_JSAlert_t or HTML_JSConfirm_t callback
+   * Set bResult to true for the OK option of a confirm, use false otherwise
+   */
   jSDialogResponse(unBrowserHandle: number, bResult: boolean): void {
     this.s.SteamAPI_ISteamHTMLSurface_JSDialogResponse(this.self, unBrowserHandle, bResult);
   }
 
+  /** You MUST call this in response to a HTML_FileOpenDialog_t callback */
   fileLoadDialogResponse(unBrowserHandle: number, pchSelectedFiles: Deno.PointerValue): void {
     this.s.SteamAPI_ISteamHTMLSurface_FileLoadDialogResponse(
       this.self,

@@ -31,16 +31,23 @@ import type {
   EWorkshopVote,
 } from "./enums.ts";
 
+/** Steam's `SteamIPAddress_t` struct. */
 export interface SteamIPAddress_t {
+  /** Network order! Same as inaddr_in6.  (0011:2233:4455:6677:8899:aabb:ccdd:eeff) */
   m_rgubIPv6: string;
   m_eType: ESteamIPType;
 }
 
+/**
+ * Field offsets and total size of `SteamIPAddress_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamIPAddress_t_layout = {
   4: { size: 20, m_rgubIPv6: 0, m_eType: 16 },
   8: { size: 20, m_rgubIPv6: 0, m_eType: 16 },
 } as const;
 
+/** Read a `SteamIPAddress_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamIPAddress_t(bytes: Uint8Array): SteamIPAddress_t {
   const L = SteamIPAddress_t_layout[PACK];
   return {
@@ -49,6 +56,7 @@ export function decodeSteamIPAddress_t(bytes: Uint8Array): SteamIPAddress_t {
   };
 }
 
+/** Write a `SteamIPAddress_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeSteamIPAddress_t(value: SteamIPAddress_t): Uint8Array {
   const out = new Uint8Array(SteamIPAddress_t_layout[PACK].size);
   const L = SteamIPAddress_t_layout[PACK];
@@ -57,6 +65,7 @@ export function encodeSteamIPAddress_t(value: SteamIPAddress_t): Uint8Array {
   return out;
 }
 
+/** Steam's `FriendGameInfo_t` struct. */
 export interface FriendGameInfo_t {
   m_gameID: bigint;
   m_unGameIP: number;
@@ -65,6 +74,10 @@ export interface FriendGameInfo_t {
   m_steamIDLobby: bigint;
 }
 
+/**
+ * Field offsets and total size of `FriendGameInfo_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const FriendGameInfo_t_layout = {
   4: {
     size: 24,
@@ -84,6 +97,7 @@ export const FriendGameInfo_t_layout = {
   },
 } as const;
 
+/** Read a `FriendGameInfo_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeFriendGameInfo_t(bytes: Uint8Array): FriendGameInfo_t {
   const L = FriendGameInfo_t_layout[PACK];
   return {
@@ -95,6 +109,7 @@ export function decodeFriendGameInfo_t(bytes: Uint8Array): FriendGameInfo_t {
   };
 }
 
+/** Write a `FriendGameInfo_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeFriendGameInfo_t(value: FriendGameInfo_t): Uint8Array {
   const out = new Uint8Array(FriendGameInfo_t_layout[PACK].size);
   const L = FriendGameInfo_t_layout[PACK];
@@ -106,16 +121,27 @@ export function encodeFriendGameInfo_t(value: FriendGameInfo_t): Uint8Array {
   return out;
 }
 
+/**
+ * Store key/value pair used in matchmaking queries.
+ * Actually, the name Key/Value is a bit misleading.  The "key" is better
+ * understood as "filter operation code" and the "value" is the operand to this
+ * filter operation.  The meaning of the operand depends upon the filter.
+ */
 export interface MatchMakingKeyValuePair_t {
   m_szKey: string;
   m_szValue: string;
 }
 
+/**
+ * Field offsets and total size of `MatchMakingKeyValuePair_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const MatchMakingKeyValuePair_t_layout = {
   4: { size: 512, m_szKey: 0, m_szValue: 256 },
   8: { size: 512, m_szKey: 0, m_szValue: 256 },
 } as const;
 
+/** Read a `MatchMakingKeyValuePair_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeMatchMakingKeyValuePair_t(bytes: Uint8Array): MatchMakingKeyValuePair_t {
   const L = MatchMakingKeyValuePair_t_layout[PACK];
   return {
@@ -124,6 +150,7 @@ export function decodeMatchMakingKeyValuePair_t(bytes: Uint8Array): MatchMakingK
   };
 }
 
+/** Write a `MatchMakingKeyValuePair_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeMatchMakingKeyValuePair_t(value: MatchMakingKeyValuePair_t): Uint8Array {
   const out = new Uint8Array(MatchMakingKeyValuePair_t_layout[PACK].size);
   const L = MatchMakingKeyValuePair_t_layout[PACK];
@@ -132,17 +159,23 @@ export function encodeMatchMakingKeyValuePair_t(value: MatchMakingKeyValuePair_t
   return out;
 }
 
+/** Steam's `servernetadr_t` struct. */
 export interface servernetadr_t {
   m_usConnectionPort: number;
   m_usQueryPort: number;
   m_unIP: number;
 }
 
+/**
+ * Field offsets and total size of `servernetadr_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const servernetadr_t_layout = {
   4: { size: 8, m_usConnectionPort: 0, m_usQueryPort: 2, m_unIP: 4 },
   8: { size: 8, m_usConnectionPort: 0, m_usQueryPort: 2, m_unIP: 4 },
 } as const;
 
+/** Read a `servernetadr_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeservernetadr_t(bytes: Uint8Array): servernetadr_t {
   const L = servernetadr_t_layout[PACK];
   return {
@@ -152,6 +185,7 @@ export function decodeservernetadr_t(bytes: Uint8Array): servernetadr_t {
   };
 }
 
+/** Write a `servernetadr_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeservernetadr_t(value: servernetadr_t): Uint8Array {
   const out = new Uint8Array(servernetadr_t_layout[PACK].size);
   const L = servernetadr_t_layout[PACK];
@@ -161,6 +195,7 @@ export function encodeservernetadr_t(value: servernetadr_t): Uint8Array {
   return out;
 }
 
+/** Steam's `gameserveritem_t` struct. */
 export interface gameserveritem_t {
   m_NetAdr: servernetadr_t;
   m_nPing: number;
@@ -184,6 +219,10 @@ export interface gameserveritem_t {
   m_nTotalFriendCount: number;
 }
 
+/**
+ * Field offsets and total size of `gameserveritem_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const gameserveritem_t_layout = {
   4: {
     size: 380,
@@ -233,6 +272,7 @@ export const gameserveritem_t_layout = {
   },
 } as const;
 
+/** Read a `gameserveritem_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodegameserveritem_t(bytes: Uint8Array): gameserveritem_t {
   const L = gameserveritem_t_layout[PACK];
   return {
@@ -261,6 +301,7 @@ export function decodegameserveritem_t(bytes: Uint8Array): gameserveritem_t {
   };
 }
 
+/** Write a `gameserveritem_t` into the bytes Steam expects, using this platform's layout. */
 export function encodegameserveritem_t(value: gameserveritem_t): Uint8Array {
   const out = new Uint8Array(gameserveritem_t_layout[PACK].size);
   const L = gameserveritem_t_layout[PACK];
@@ -287,16 +328,22 @@ export function encodegameserveritem_t(value: gameserveritem_t): Uint8Array {
   return out;
 }
 
+/** Steam's `SteamPartyBeaconLocation_t` struct. */
 export interface SteamPartyBeaconLocation_t {
   m_eType: ESteamPartyBeaconLocationType;
   m_ulLocationID: bigint;
 }
 
+/**
+ * Field offsets and total size of `SteamPartyBeaconLocation_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamPartyBeaconLocation_t_layout = {
   4: { size: 12, m_eType: 0, m_ulLocationID: 4 },
   8: { size: 16, m_eType: 0, m_ulLocationID: 8 },
 } as const;
 
+/** Read a `SteamPartyBeaconLocation_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamPartyBeaconLocation_t(bytes: Uint8Array): SteamPartyBeaconLocation_t {
   const L = SteamPartyBeaconLocation_t_layout[PACK];
   return {
@@ -305,6 +352,7 @@ export function decodeSteamPartyBeaconLocation_t(bytes: Uint8Array): SteamPartyB
   };
 }
 
+/** Write a `SteamPartyBeaconLocation_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeSteamPartyBeaconLocation_t(value: SteamPartyBeaconLocation_t): Uint8Array {
   const out = new Uint8Array(SteamPartyBeaconLocation_t_layout[PACK].size);
   const L = SteamPartyBeaconLocation_t_layout[PACK];
@@ -313,16 +361,22 @@ export function encodeSteamPartyBeaconLocation_t(value: SteamPartyBeaconLocation
   return out;
 }
 
+/** Steam's `SteamParamStringArray_t` struct. */
 export interface SteamParamStringArray_t {
   m_ppStrings: Deno.PointerValue;
   m_nNumStrings: number;
 }
 
+/**
+ * Field offsets and total size of `SteamParamStringArray_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamParamStringArray_t_layout = {
   4: { size: 12, m_ppStrings: 0, m_nNumStrings: 8 },
   8: { size: 16, m_ppStrings: 0, m_nNumStrings: 8 },
 } as const;
 
+/** Read a `SteamParamStringArray_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamParamStringArray_t(bytes: Uint8Array): SteamParamStringArray_t {
   const L = SteamParamStringArray_t_layout[PACK];
   return {
@@ -331,6 +385,7 @@ export function decodeSteamParamStringArray_t(bytes: Uint8Array): SteamParamStri
   };
 }
 
+/** Write a `SteamParamStringArray_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeSteamParamStringArray_t(value: SteamParamStringArray_t): Uint8Array {
   const out = new Uint8Array(SteamParamStringArray_t_layout[PACK].size);
   const L = SteamParamStringArray_t_layout[PACK];
@@ -339,19 +394,30 @@ export function encodeSteamParamStringArray_t(value: SteamParamStringArray_t): U
   return out;
 }
 
+/** Steam's `LeaderboardEntry_t` struct. */
 export interface LeaderboardEntry_t {
+  /** user with the entry - use SteamFriends()->GetFriendPersonaName() & SteamFriends()->GetFriendAvatar() to get more info */
   m_steamIDUser: bigint;
+  /** [1..N], where N is the number of users with an entry in the leaderboard */
   m_nGlobalRank: number;
+  /** score as set in the leaderboard */
   m_nScore: number;
+  /** number of int32 details available for this entry */
   m_cDetails: number;
+  /** handle for UGC attached to the entry */
   m_hUGC: bigint;
 }
 
+/**
+ * Field offsets and total size of `LeaderboardEntry_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const LeaderboardEntry_t_layout = {
   4: { size: 28, m_steamIDUser: 0, m_nGlobalRank: 8, m_nScore: 12, m_cDetails: 16, m_hUGC: 20 },
   8: { size: 32, m_steamIDUser: 0, m_nGlobalRank: 8, m_nScore: 12, m_cDetails: 16, m_hUGC: 24 },
 } as const;
 
+/** Read a `LeaderboardEntry_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeLeaderboardEntry_t(bytes: Uint8Array): LeaderboardEntry_t {
   const L = LeaderboardEntry_t_layout[PACK];
   return {
@@ -363,6 +429,7 @@ export function decodeLeaderboardEntry_t(bytes: Uint8Array): LeaderboardEntry_t 
   };
 }
 
+/** Write a `LeaderboardEntry_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeLeaderboardEntry_t(value: LeaderboardEntry_t): Uint8Array {
   const out = new Uint8Array(LeaderboardEntry_t_layout[PACK].size);
   const L = LeaderboardEntry_t_layout[PACK];
@@ -374,17 +441,28 @@ export function encodeLeaderboardEntry_t(value: LeaderboardEntry_t): Uint8Array 
   return out;
 }
 
+/** Steam's `P2PSessionState_t` struct. */
 export interface P2PSessionState_t {
+  /** true if we've got an active open connection */
   m_bConnectionActive: number;
+  /** true if we're currently trying to establish a connection */
   m_bConnecting: number;
+  /** last error recorded (see enum above) */
   m_eP2PSessionError: number;
+  /** true if it's going through a relay server (TURN) */
   m_bUsingRelay: number;
   m_nBytesQueuedForSend: number;
   m_nPacketsQueuedForSend: number;
+  /** potential IP:Port of remote host. Could be TURN server. */
   m_nRemoteIP: number;
+  /** Only exists for compatibility with older authentication api's */
   m_nRemotePort: number;
 }
 
+/**
+ * Field offsets and total size of `P2PSessionState_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const P2PSessionState_t_layout = {
   4: {
     size: 20,
@@ -410,6 +488,7 @@ export const P2PSessionState_t_layout = {
   },
 } as const;
 
+/** Read a `P2PSessionState_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeP2PSessionState_t(bytes: Uint8Array): P2PSessionState_t {
   const L = P2PSessionState_t_layout[PACK];
   return {
@@ -424,6 +503,7 @@ export function decodeP2PSessionState_t(bytes: Uint8Array): P2PSessionState_t {
   };
 }
 
+/** Write a `P2PSessionState_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeP2PSessionState_t(value: P2PSessionState_t): Uint8Array {
   const out = new Uint8Array(P2PSessionState_t_layout[PACK].size);
   const L = P2PSessionState_t_layout[PACK];
@@ -438,6 +518,7 @@ export function encodeP2PSessionState_t(value: P2PSessionState_t): Uint8Array {
   return out;
 }
 
+/** Steam's `InputAnalogActionData_t` struct. */
 export interface InputAnalogActionData_t {
   eMode: EInputSourceMode;
   x: number;
@@ -445,11 +526,16 @@ export interface InputAnalogActionData_t {
   bActive: boolean;
 }
 
+/**
+ * Field offsets and total size of `InputAnalogActionData_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const InputAnalogActionData_t_layout = {
   4: { size: 13, eMode: 0, x: 4, y: 8, bActive: 12 },
   8: { size: 13, eMode: 0, x: 4, y: 8, bActive: 12 },
 } as const;
 
+/** Read a `InputAnalogActionData_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeInputAnalogActionData_t(bytes: Uint8Array): InputAnalogActionData_t {
   const L = InputAnalogActionData_t_layout[PACK];
   return {
@@ -460,6 +546,7 @@ export function decodeInputAnalogActionData_t(bytes: Uint8Array): InputAnalogAct
   };
 }
 
+/** Write a `InputAnalogActionData_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeInputAnalogActionData_t(value: InputAnalogActionData_t): Uint8Array {
   const out = new Uint8Array(InputAnalogActionData_t_layout[PACK].size);
   const L = InputAnalogActionData_t_layout[PACK];
@@ -470,16 +557,22 @@ export function encodeInputAnalogActionData_t(value: InputAnalogActionData_t): U
   return out;
 }
 
+/** Steam's `InputDigitalActionData_t` struct. */
 export interface InputDigitalActionData_t {
   bState: boolean;
   bActive: boolean;
 }
 
+/**
+ * Field offsets and total size of `InputDigitalActionData_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const InputDigitalActionData_t_layout = {
   4: { size: 2, bState: 0, bActive: 1 },
   8: { size: 2, bState: 0, bActive: 1 },
 } as const;
 
+/** Read a `InputDigitalActionData_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeInputDigitalActionData_t(bytes: Uint8Array): InputDigitalActionData_t {
   const L = InputDigitalActionData_t_layout[PACK];
   return {
@@ -488,6 +581,7 @@ export function decodeInputDigitalActionData_t(bytes: Uint8Array): InputDigitalA
   };
 }
 
+/** Write a `InputDigitalActionData_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeInputDigitalActionData_t(value: InputDigitalActionData_t): Uint8Array {
   const out = new Uint8Array(InputDigitalActionData_t_layout[PACK].size);
   const L = InputDigitalActionData_t_layout[PACK];
@@ -496,19 +590,30 @@ export function encodeInputDigitalActionData_t(value: InputDigitalActionData_t):
   return out;
 }
 
+/** Steam's `InputMotionData_t` struct. */
 export interface InputMotionData_t {
   rotQuatX: number;
   rotQuatY: number;
   rotQuatZ: number;
   rotQuatW: number;
+  /** +tive when controller's Right hand side is pointed toward the sky. */
   posAccelX: number;
+  /** +tive when controller's charging port (forward side of controller) is pointed toward the sky. */
   posAccelY: number;
+  /** +tive when controller's sticks point toward the sky. */
   posAccelZ: number;
+  /** Local Pitch */
   rotVelX: number;
+  /** Local Roll */
   rotVelY: number;
+  /** Local Yaw */
   rotVelZ: number;
 }
 
+/**
+ * Field offsets and total size of `InputMotionData_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const InputMotionData_t_layout = {
   4: {
     size: 40,
@@ -538,6 +643,7 @@ export const InputMotionData_t_layout = {
   },
 } as const;
 
+/** Read a `InputMotionData_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeInputMotionData_t(bytes: Uint8Array): InputMotionData_t {
   const L = InputMotionData_t_layout[PACK];
   return {
@@ -554,6 +660,7 @@ export function decodeInputMotionData_t(bytes: Uint8Array): InputMotionData_t {
   };
 }
 
+/** Write a `InputMotionData_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeInputMotionData_t(value: InputMotionData_t): Uint8Array {
   const out = new Uint8Array(InputMotionData_t_layout[PACK].size);
   const L = InputMotionData_t_layout[PACK];
@@ -570,17 +677,26 @@ export function encodeInputMotionData_t(value: InputMotionData_t): Uint8Array {
   return out;
 }
 
+/**
+ * Purpose: when callbacks are enabled this fires each time a controller action
+ * state changes
+ */
 export interface SteamInputActionEvent_t {
   controllerHandle: bigint;
   eEventType: ESteamInputActionEventType;
   analogAction: AnalogAction_t;
 }
 
+/**
+ * Field offsets and total size of `SteamInputActionEvent_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamInputActionEvent_t_layout = {
   4: { size: 33, controllerHandle: 0, eEventType: 8, analogAction: 12 },
   8: { size: 33, controllerHandle: 0, eEventType: 8, analogAction: 12 },
 } as const;
 
+/** Read a `SteamInputActionEvent_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamInputActionEvent_t(bytes: Uint8Array): SteamInputActionEvent_t {
   const L = SteamInputActionEvent_t_layout[PACK];
   return {
@@ -592,6 +708,7 @@ export function decodeSteamInputActionEvent_t(bytes: Uint8Array): SteamInputActi
   };
 }
 
+/** Write a `SteamInputActionEvent_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeSteamInputActionEvent_t(value: SteamInputActionEvent_t): Uint8Array {
   const out = new Uint8Array(SteamInputActionEvent_t_layout[PACK].size);
   const L = SteamInputActionEvent_t_layout[PACK];
@@ -601,36 +718,66 @@ export function encodeSteamInputActionEvent_t(value: SteamInputActionEvent_t): U
   return out;
 }
 
+/** Details for a single published file/UGC */
 export interface SteamUGCDetails_t {
   m_nPublishedFileId: bigint;
+  /** The result of the operation. */
   m_eResult: EResult;
+  /** Type of the file */
   m_eFileType: EWorkshopFileType;
+  /** ID of the app that created this file. */
   m_nCreatorAppID: number;
+  /** ID of the app that will consume this file. */
   m_nConsumerAppID: number;
+  /** title of document */
   m_rgchTitle: string;
+  /** description of document */
   m_rgchDescription: string;
+  /** Steam ID of the user who created this content. */
   m_ulSteamIDOwner: bigint;
+  /** time when the published file was created */
   m_rtimeCreated: number;
+  /** time when the published file was last updated */
   m_rtimeUpdated: number;
+  /** time when the user added the published file to their list (not always applicable) */
   m_rtimeAddedToUserList: number;
+  /** visibility */
   m_eVisibility: ERemoteStoragePublishedFileVisibility;
+  /** whether the file was banned */
   m_bBanned: boolean;
+  /** developer has specifically flagged this item as accepted in the Workshop */
   m_bAcceptedForUse: boolean;
+  /** whether the list of tags was too long to be returned in the provided buffer */
   m_bTagsTruncated: boolean;
+  /** comma separated list of all tags associated with this file */
   m_rgchTags: string;
+  /** The handle of the primary file */
   m_hFile: bigint;
+  /** The handle of the preview file */
   m_hPreviewFile: bigint;
+  /** The cloud filename of the primary file */
   m_pchFileName: string;
+  /** Size of the primary file (for legacy items which only support one file). This may not be accurate for non-legacy items which can be greater than 4gb in size. */
   m_nFileSize: number;
+  /** Size of the preview file */
   m_nPreviewFileSize: number;
+  /** URL (for a video or a website) */
   m_rgchURL: string;
+  /** number of votes up */
   m_unVotesUp: number;
+  /** number of votes down */
   m_unVotesDown: number;
+  /** calculated score */
   m_flScore: number;
   m_unNumChildren: number;
+  /** Total size of all files (non-legacy), excluding the preview file */
   m_ulTotalFilesSize: bigint;
 }
 
+/**
+ * Field offsets and total size of `SteamUGCDetails_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamUGCDetails_t_layout = {
   4: {
     size: 9772,
@@ -694,6 +841,7 @@ export const SteamUGCDetails_t_layout = {
   },
 } as const;
 
+/** Read a `SteamUGCDetails_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamUGCDetails_t(bytes: Uint8Array): SteamUGCDetails_t {
   const L = SteamUGCDetails_t_layout[PACK];
   return {
@@ -727,6 +875,7 @@ export function decodeSteamUGCDetails_t(bytes: Uint8Array): SteamUGCDetails_t {
   };
 }
 
+/** Write a `SteamUGCDetails_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeSteamUGCDetails_t(value: SteamUGCDetails_t): Uint8Array {
   const out = new Uint8Array(SteamUGCDetails_t_layout[PACK].size);
   const L = SteamUGCDetails_t_layout[PACK];
@@ -760,18 +909,25 @@ export function encodeSteamUGCDetails_t(value: SteamUGCDetails_t): Uint8Array {
   return out;
 }
 
+/** Steam's `SteamItemDetails_t` struct. */
 export interface SteamItemDetails_t {
   m_itemId: bigint;
   m_iDefinition: number;
   m_unQuantity: number;
+  /** see ESteamItemFlags */
   m_unFlags: number;
 }
 
+/**
+ * Field offsets and total size of `SteamItemDetails_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamItemDetails_t_layout = {
   4: { size: 16, m_itemId: 0, m_iDefinition: 8, m_unQuantity: 12, m_unFlags: 14 },
   8: { size: 16, m_itemId: 0, m_iDefinition: 8, m_unQuantity: 12, m_unFlags: 14 },
 } as const;
 
+/** Read a `SteamItemDetails_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamItemDetails_t(bytes: Uint8Array): SteamItemDetails_t {
   const L = SteamItemDetails_t_layout[PACK];
   return {
@@ -782,6 +938,7 @@ export function decodeSteamItemDetails_t(bytes: Uint8Array): SteamItemDetails_t 
   };
 }
 
+/** Write a `SteamItemDetails_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeSteamItemDetails_t(value: SteamItemDetails_t): Uint8Array {
   const out = new Uint8Array(SteamItemDetails_t_layout[PACK].size);
   const L = SteamItemDetails_t_layout[PACK];
@@ -792,14 +949,24 @@ export function encodeSteamItemDetails_t(value: SteamItemDetails_t): Uint8Array 
   return out;
 }
 
+/** Mouse motion event data, valid when m_eType is k_ERemotePlayInputMouseMotion */
 export interface RemotePlayInputMouseMotion_t {
+  /** True if this is absolute mouse motion and m_flNormalizedX and m_flNormalizedY are valid */
   m_bAbsolute: boolean;
+  /** The absolute X position of the mouse, normalized to the display, if m_bAbsolute is true */
   m_flNormalizedX: number;
+  /** The absolute Y position of the mouse, normalized to the display, if m_bAbsolute is true */
   m_flNormalizedY: number;
+  /** Relative mouse motion in the X direction */
   m_nDeltaX: number;
+  /** Relative mouse motion in the Y direction */
   m_nDeltaY: number;
 }
 
+/**
+ * Field offsets and total size of `RemotePlayInputMouseMotion_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemotePlayInputMouseMotion_t_layout = {
   4: {
     size: 20,
@@ -819,6 +986,7 @@ export const RemotePlayInputMouseMotion_t_layout = {
   },
 } as const;
 
+/** Read a `RemotePlayInputMouseMotion_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemotePlayInputMouseMotion_t(
   bytes: Uint8Array,
 ): RemotePlayInputMouseMotion_t {
@@ -832,6 +1000,7 @@ export function decodeRemotePlayInputMouseMotion_t(
   };
 }
 
+/** Write a `RemotePlayInputMouseMotion_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeRemotePlayInputMouseMotion_t(
   value: RemotePlayInputMouseMotion_t,
 ): Uint8Array {
@@ -845,16 +1014,23 @@ export function encodeRemotePlayInputMouseMotion_t(
   return out;
 }
 
+/** Mouse wheel event data, valid when m_eType is k_ERemotePlayInputMouseWheel */
 export interface RemotePlayInputMouseWheel_t {
   m_eDirection: ERemotePlayMouseWheelDirection;
+  /** 1.0f is a single click of the wheel, 120 units on Windows */
   m_flAmount: number;
 }
 
+/**
+ * Field offsets and total size of `RemotePlayInputMouseWheel_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemotePlayInputMouseWheel_t_layout = {
   4: { size: 8, m_eDirection: 0, m_flAmount: 4 },
   8: { size: 8, m_eDirection: 0, m_flAmount: 4 },
 } as const;
 
+/** Read a `RemotePlayInputMouseWheel_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemotePlayInputMouseWheel_t(bytes: Uint8Array): RemotePlayInputMouseWheel_t {
   const L = RemotePlayInputMouseWheel_t_layout[PACK];
   return {
@@ -863,6 +1039,7 @@ export function decodeRemotePlayInputMouseWheel_t(bytes: Uint8Array): RemotePlay
   };
 }
 
+/** Write a `RemotePlayInputMouseWheel_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeRemotePlayInputMouseWheel_t(value: RemotePlayInputMouseWheel_t): Uint8Array {
   const out = new Uint8Array(RemotePlayInputMouseWheel_t_layout[PACK].size);
   const L = RemotePlayInputMouseWheel_t_layout[PACK];
@@ -871,17 +1048,26 @@ export function encodeRemotePlayInputMouseWheel_t(value: RemotePlayInputMouseWhe
   return out;
 }
 
+/** Key event data, valid when m_eType is k_ERemotePlayInputKeyDown or k_ERemotePlayInputKeyUp */
 export interface RemotePlayInputKey_t {
+  /** Keyboard scancode, common values are defined in ERemotePlayScancode */
   m_eScancode: number;
+  /** Mask of ERemotePlayKeyModifier active for this key event */
   m_unModifiers: number;
+  /** UCS-4 character generated by the keypress, or 0 if it wasn't a character key, e.g. Delete or Left Arrow */
   m_unKeycode: number;
 }
 
+/**
+ * Field offsets and total size of `RemotePlayInputKey_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemotePlayInputKey_t_layout = {
   4: { size: 12, m_eScancode: 0, m_unModifiers: 4, m_unKeycode: 8 },
   8: { size: 12, m_eScancode: 0, m_unModifiers: 4, m_unKeycode: 8 },
 } as const;
 
+/** Read a `RemotePlayInputKey_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemotePlayInputKey_t(bytes: Uint8Array): RemotePlayInputKey_t {
   const L = RemotePlayInputKey_t_layout[PACK];
   return {
@@ -891,6 +1077,7 @@ export function decodeRemotePlayInputKey_t(bytes: Uint8Array): RemotePlayInputKe
   };
 }
 
+/** Write a `RemotePlayInputKey_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeRemotePlayInputKey_t(value: RemotePlayInputKey_t): Uint8Array {
   const out = new Uint8Array(RemotePlayInputKey_t_layout[PACK].size);
   const L = RemotePlayInputKey_t_layout[PACK];
@@ -900,17 +1087,23 @@ export function encodeRemotePlayInputKey_t(value: RemotePlayInputKey_t): Uint8Ar
   return out;
 }
 
+/** Steam's `RemotePlayInput_t` struct. */
 export interface RemotePlayInput_t {
   m_unSessionID: number;
   m_eType: ERemotePlayInputType;
   padding: string;
 }
 
+/**
+ * Field offsets and total size of `RemotePlayInput_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemotePlayInput_t_layout = {
   4: { size: 64, m_unSessionID: 0, m_eType: 4, padding: 8 },
   8: { size: 64, m_unSessionID: 0, m_eType: 4, padding: 8 },
 } as const;
 
+/** Read a `RemotePlayInput_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemotePlayInput_t(bytes: Uint8Array): RemotePlayInput_t {
   const L = RemotePlayInput_t_layout[PACK];
   return {
@@ -920,6 +1113,7 @@ export function decodeRemotePlayInput_t(bytes: Uint8Array): RemotePlayInput_t {
   };
 }
 
+/** Write a `RemotePlayInput_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeRemotePlayInput_t(value: RemotePlayInput_t): Uint8Array {
   const out = new Uint8Array(RemotePlayInput_t_layout[PACK].size);
   const L = RemotePlayInput_t_layout[PACK];
@@ -929,16 +1123,26 @@ export function encodeRemotePlayInput_t(value: RemotePlayInput_t): Uint8Array {
   return out;
 }
 
+/**
+ * Store an IP and port.  IPv6 is always used; IPv4 is represented using
+ * "IPv4-mapped" addresses: IPv4 aa.bb.cc.dd => IPv6 ::ffff:aabb:ccdd
+ * (RFC 4291 section 2.5.5.2.)
+ */
 export interface SteamNetworkingIPAddr {
   m_ipv6: string;
   m_port: number;
 }
 
+/**
+ * Field offsets and total size of `SteamNetworkingIPAddr`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamNetworkingIPAddr_layout = {
   4: { size: 18, m_ipv6: 0, m_port: 16 },
   8: { size: 18, m_ipv6: 0, m_port: 16 },
 } as const;
 
+/** Read a `SteamNetworkingIPAddr` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamNetworkingIPAddr(bytes: Uint8Array): SteamNetworkingIPAddr {
   const L = SteamNetworkingIPAddr_layout[PACK];
   return {
@@ -947,6 +1151,7 @@ export function decodeSteamNetworkingIPAddr(bytes: Uint8Array): SteamNetworkingI
   };
 }
 
+/** Write a `SteamNetworkingIPAddr` into the bytes Steam expects, using this platform's layout. */
 export function encodeSteamNetworkingIPAddr(value: SteamNetworkingIPAddr): Uint8Array {
   const out = new Uint8Array(SteamNetworkingIPAddr_layout[PACK].size);
   const L = SteamNetworkingIPAddr_layout[PACK];
@@ -955,17 +1160,29 @@ export function encodeSteamNetworkingIPAddr(value: SteamNetworkingIPAddr): Uint8
   return out;
 }
 
+/**
+ * An abstract way to represent the identity of a network host.  All identities can
+ * be represented as simple string.  Furthermore, this string representation is actually
+ * used on the wire in several places, even though it is less efficient, in order to
+ * facilitate forward compatibility.  (Old client code can handle an identity type that
+ * it doesn't understand.)
+ */
 export interface SteamNetworkingIdentity {
   m_eType: ESteamNetworkingIdentityType;
   m_cbSize: number;
   m_szUnknownRawString: string;
 }
 
+/**
+ * Field offsets and total size of `SteamNetworkingIdentity`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamNetworkingIdentity_layout = {
   4: { size: 136, m_eType: 0, m_cbSize: 4, m_szUnknownRawString: 8 },
   8: { size: 136, m_eType: 0, m_cbSize: 4, m_szUnknownRawString: 8 },
 } as const;
 
+/** Read a `SteamNetworkingIdentity` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamNetworkingIdentity(bytes: Uint8Array): SteamNetworkingIdentity {
   const L = SteamNetworkingIdentity_layout[PACK];
   return {
@@ -975,6 +1192,7 @@ export function decodeSteamNetworkingIdentity(bytes: Uint8Array): SteamNetworkin
   };
 }
 
+/** Write a `SteamNetworkingIdentity` into the bytes Steam expects, using this platform's layout. */
 export function encodeSteamNetworkingIdentity(value: SteamNetworkingIdentity): Uint8Array {
   const out = new Uint8Array(SteamNetworkingIdentity_layout[PACK].size);
   const L = SteamNetworkingIdentity_layout[PACK];
@@ -984,6 +1202,7 @@ export function encodeSteamNetworkingIdentity(value: SteamNetworkingIdentity): U
   return out;
 }
 
+/** Describe the state of a connection. */
 export interface SteamNetConnectionInfo_t {
   m_identityRemote: SteamNetworkingIdentity;
   m_nUserData: bigint;
@@ -1000,6 +1219,10 @@ export interface SteamNetConnectionInfo_t {
   reserved: number[];
 }
 
+/**
+ * Field offsets and total size of `SteamNetConnectionInfo_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamNetConnectionInfo_t_layout = {
   4: {
     size: 696,
@@ -1035,6 +1258,7 @@ export const SteamNetConnectionInfo_t_layout = {
   },
 } as const;
 
+/** Read a `SteamNetConnectionInfo_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamNetConnectionInfo_t(bytes: Uint8Array): SteamNetConnectionInfo_t {
   const L = SteamNetConnectionInfo_t_layout[PACK];
   return {
@@ -1061,6 +1285,7 @@ export function decodeSteamNetConnectionInfo_t(bytes: Uint8Array): SteamNetConne
   };
 }
 
+/** Write a `SteamNetConnectionInfo_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeSteamNetConnectionInfo_t(value: SteamNetConnectionInfo_t): Uint8Array {
   const out = new Uint8Array(SteamNetConnectionInfo_t_layout[PACK].size);
   const L = SteamNetConnectionInfo_t_layout[PACK];
@@ -1080,6 +1305,10 @@ export function encodeSteamNetConnectionInfo_t(value: SteamNetConnectionInfo_t):
   return out;
 }
 
+/**
+ * Quick connection state, pared down to something you could call
+ * more frequently without it being too big of a perf hit.
+ */
 export interface SteamNetConnectionRealTimeStatus_t {
   m_eState: ESteamNetworkingConnectionState;
   m_nPing: number;
@@ -1098,6 +1327,10 @@ export interface SteamNetConnectionRealTimeStatus_t {
   reserved: number[];
 }
 
+/**
+ * Field offsets and total size of `SteamNetConnectionRealTimeStatus_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamNetConnectionRealTimeStatus_t_layout = {
   4: {
     size: 120,
@@ -1137,6 +1370,7 @@ export const SteamNetConnectionRealTimeStatus_t_layout = {
   },
 } as const;
 
+/** Read a `SteamNetConnectionRealTimeStatus_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamNetConnectionRealTimeStatus_t(
   bytes: Uint8Array,
 ): SteamNetConnectionRealTimeStatus_t {
@@ -1160,6 +1394,7 @@ export function decodeSteamNetConnectionRealTimeStatus_t(
   };
 }
 
+/** Write a `SteamNetConnectionRealTimeStatus_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeSteamNetConnectionRealTimeStatus_t(
   value: SteamNetConnectionRealTimeStatus_t,
 ): Uint8Array {
@@ -1183,15 +1418,21 @@ export function encodeSteamNetConnectionRealTimeStatus_t(
   return out;
 }
 
+/** Quick status of a particular lane */
 export interface SteamNetConnectionRealTimeLaneStatus_t {
   m_cbPendingUnreliable: number;
   m_cbPendingReliable: number;
   m_cbSentUnackedReliable: number;
+  /** Reserved for future use */
   _reservePad1: number;
   m_usecQueueTime: bigint;
   reserved: number[];
 }
 
+/**
+ * Field offsets and total size of `SteamNetConnectionRealTimeLaneStatus_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamNetConnectionRealTimeLaneStatus_t_layout = {
   4: {
     size: 64,
@@ -1213,6 +1454,7 @@ export const SteamNetConnectionRealTimeLaneStatus_t_layout = {
   },
 } as const;
 
+/** Read a `SteamNetConnectionRealTimeLaneStatus_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamNetConnectionRealTimeLaneStatus_t(
   bytes: Uint8Array,
 ): SteamNetConnectionRealTimeLaneStatus_t {
@@ -1227,6 +1469,7 @@ export function decodeSteamNetConnectionRealTimeLaneStatus_t(
   };
 }
 
+/** Write a `SteamNetConnectionRealTimeLaneStatus_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeSteamNetConnectionRealTimeLaneStatus_t(
   value: SteamNetConnectionRealTimeLaneStatus_t,
 ): Uint8Array {
@@ -1241,6 +1484,7 @@ export function encodeSteamNetConnectionRealTimeLaneStatus_t(
   return out;
 }
 
+/** A message that has been received. */
 export interface SteamNetworkingMessage_t {
   m_pData: Deno.PointerValue;
   m_cbSize: number;
@@ -1258,6 +1502,10 @@ export interface SteamNetworkingMessage_t {
   _pad1__: number;
 }
 
+/**
+ * Field offsets and total size of `SteamNetworkingMessage_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamNetworkingMessage_t_layout = {
   4: {
     size: 216,
@@ -1295,6 +1543,7 @@ export const SteamNetworkingMessage_t_layout = {
   },
 } as const;
 
+/** Read a `SteamNetworkingMessage_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamNetworkingMessage_t(bytes: Uint8Array): SteamNetworkingMessage_t {
   const L = SteamNetworkingMessage_t_layout[PACK];
   return {
@@ -1320,6 +1569,7 @@ export function decodeSteamNetworkingMessage_t(bytes: Uint8Array): SteamNetworki
   };
 }
 
+/** Write a `SteamNetworkingMessage_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeSteamNetworkingMessage_t(value: SteamNetworkingMessage_t): Uint8Array {
   const out = new Uint8Array(SteamNetworkingMessage_t_layout[PACK].size);
   const L = SteamNetworkingMessage_t_layout[PACK];
@@ -1340,15 +1590,34 @@ export function encodeSteamNetworkingMessage_t(value: SteamNetworkingMessage_t):
   return out;
 }
 
+/**
+ * Object that describes a "location" on the Internet with sufficient
+ * detail that we can reasonably estimate an upper bound on the ping between
+ * the two hosts, even if a direct route between the hosts is not possible,
+ * and the connection must be routed through the Steam Datagram Relay network.
+ * This does not contain any information that identifies the host.  Indeed,
+ * if two hosts are in the same building or otherwise have nearly identical
+ * networking characteristics, then it's valid to use the same location
+ * object for both of them.
+ * NOTE: This object should only be used in the same process!  Do not serialize it,
+ * send it over the wire, or persist it in a file or database!  If you need
+ * to do that, convert it to a string representation using the methods in
+ * ISteamNetworkingUtils().
+ */
 export interface SteamNetworkPingLocation_t {
   m_data: string;
 }
 
+/**
+ * Field offsets and total size of `SteamNetworkPingLocation_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamNetworkPingLocation_t_layout = {
   4: { size: 512, m_data: 0 },
   8: { size: 512, m_data: 0 },
 } as const;
 
+/** Read a `SteamNetworkPingLocation_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamNetworkPingLocation_t(bytes: Uint8Array): SteamNetworkPingLocation_t {
   const L = SteamNetworkPingLocation_t_layout[PACK];
   return {
@@ -1356,6 +1625,7 @@ export function decodeSteamNetworkPingLocation_t(bytes: Uint8Array): SteamNetwor
   };
 }
 
+/** Write a `SteamNetworkPingLocation_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeSteamNetworkPingLocation_t(value: SteamNetworkPingLocation_t): Uint8Array {
   const out = new Uint8Array(SteamNetworkPingLocation_t_layout[PACK].size);
   const L = SteamNetworkPingLocation_t_layout[PACK];
@@ -1363,17 +1633,34 @@ export function encodeSteamNetworkPingLocation_t(value: SteamNetworkPingLocation
   return out;
 }
 
+/**
+ * In a few places we need to set configuration options on listen sockets and connections, and
+ * have them take effect *before* the listen socket or connection really starts doing anything.
+ * Creating the object and then setting the options "immediately" after creation doesn't work
+ * completely, because network packets could be received between the time the object is created and
+ * when the options are applied.  To set options at creation time in a reliable way, they must be
+ * passed to the creation function.  This structure is used to pass those options.
+ * For the meaning of these fields, see ISteamNetworkingUtils::SetConfigValue.  Basically
+ * when the object is created, we just iterate over the list of options and call
+ * ISteamNetworkingUtils::SetConfigValueStruct, where the scope arguments are supplied by the
+ * object being created.
+ */
 export interface SteamNetworkingConfigValue_t {
   m_eValue: ESteamNetworkingConfigValue;
   m_eDataType: ESteamNetworkingConfigDataType;
   m_int64: bigint;
 }
 
+/**
+ * Field offsets and total size of `SteamNetworkingConfigValue_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamNetworkingConfigValue_t_layout = {
   4: { size: 16, m_eValue: 0, m_eDataType: 4, m_int64: 8 },
   8: { size: 16, m_eValue: 0, m_eDataType: 4, m_int64: 8 },
 } as const;
 
+/** Read a `SteamNetworkingConfigValue_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamNetworkingConfigValue_t(
   bytes: Uint8Array,
 ): SteamNetworkingConfigValue_t {
@@ -1385,6 +1672,7 @@ export function decodeSteamNetworkingConfigValue_t(
   };
 }
 
+/** Write a `SteamNetworkingConfigValue_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeSteamNetworkingConfigValue_t(
   value: SteamNetworkingConfigValue_t,
 ): Uint8Array {
@@ -1396,16 +1684,22 @@ export function encodeSteamNetworkingConfigValue_t(
   return out;
 }
 
+/** Steam's `SteamDatagramHostedAddress` struct. */
 export interface SteamDatagramHostedAddress {
   m_cbSize: number;
   m_data: string;
 }
 
+/**
+ * Field offsets and total size of `SteamDatagramHostedAddress`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamDatagramHostedAddress_layout = {
   4: { size: 132, m_cbSize: 0, m_data: 4 },
   8: { size: 132, m_cbSize: 0, m_data: 4 },
 } as const;
 
+/** Read a `SteamDatagramHostedAddress` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamDatagramHostedAddress(bytes: Uint8Array): SteamDatagramHostedAddress {
   const L = SteamDatagramHostedAddress_layout[PACK];
   return {
@@ -1414,6 +1708,7 @@ export function decodeSteamDatagramHostedAddress(bytes: Uint8Array): SteamDatagr
   };
 }
 
+/** Write a `SteamDatagramHostedAddress` into the bytes Steam expects, using this platform's layout. */
 export function encodeSteamDatagramHostedAddress(value: SteamDatagramHostedAddress): Uint8Array {
   const out = new Uint8Array(SteamDatagramHostedAddress_layout[PACK].size);
   const L = SteamDatagramHostedAddress_layout[PACK];
@@ -1422,6 +1717,7 @@ export function encodeSteamDatagramHostedAddress(value: SteamDatagramHostedAddre
   return out;
 }
 
+/** Steam's `SteamDatagramGameCoordinatorServerLogin` struct. */
 export interface SteamDatagramGameCoordinatorServerLogin {
   m_identity: SteamNetworkingIdentity;
   m_routing: SteamDatagramHostedAddress;
@@ -1431,6 +1727,10 @@ export interface SteamDatagramGameCoordinatorServerLogin {
   m_appData: string;
 }
 
+/**
+ * Field offsets and total size of `SteamDatagramGameCoordinatorServerLogin`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamDatagramGameCoordinatorServerLogin_layout = {
   4: {
     size: 2328,
@@ -1452,6 +1752,7 @@ export const SteamDatagramGameCoordinatorServerLogin_layout = {
   },
 } as const;
 
+/** Read a `SteamDatagramGameCoordinatorServerLogin` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamDatagramGameCoordinatorServerLogin(
   bytes: Uint8Array,
 ): SteamDatagramGameCoordinatorServerLogin {
@@ -1470,6 +1771,7 @@ export function decodeSteamDatagramGameCoordinatorServerLogin(
   };
 }
 
+/** Write a `SteamDatagramGameCoordinatorServerLogin` into the bytes Steam expects, using this platform's layout. */
 export function encodeSteamDatagramGameCoordinatorServerLogin(
   value: SteamDatagramGameCoordinatorServerLogin,
 ): Uint8Array {
@@ -1484,18 +1786,28 @@ export function encodeSteamDatagramGameCoordinatorServerLogin(
   return out;
 }
 
+/** Internal structure used in manual callback dispatch */
 export interface CallbackMsg_t {
+  /** Specific user to whom this callback applies. */
   m_hSteamUser: number;
+  /** Callback identifier.  (Corresponds to the k_iCallback enum in the callback structure.) */
   m_iCallback: number;
+  /** Points to the callback structure */
   m_pubParam: Deno.PointerValue;
+  /** Size of the data pointed to by m_pubParam */
   m_cubParam: number;
 }
 
+/**
+ * Field offsets and total size of `CallbackMsg_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const CallbackMsg_t_layout = {
   4: { size: 20, m_hSteamUser: 0, m_iCallback: 4, m_pubParam: 8, m_cubParam: 16 },
   8: { size: 24, m_hSteamUser: 0, m_iCallback: 4, m_pubParam: 8, m_cubParam: 16 },
 } as const;
 
+/** Read a `CallbackMsg_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeCallbackMsg_t(bytes: Uint8Array): CallbackMsg_t {
   const L = CallbackMsg_t_layout[PACK];
   return {
@@ -1506,6 +1818,7 @@ export function decodeCallbackMsg_t(bytes: Uint8Array): CallbackMsg_t {
   };
 }
 
+/** Write a `CallbackMsg_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeCallbackMsg_t(value: CallbackMsg_t): Uint8Array {
   const out = new Uint8Array(CallbackMsg_t_layout[PACK].size);
   const L = CallbackMsg_t_layout[PACK];
@@ -1516,6 +1829,7 @@ export function encodeCallbackMsg_t(value: CallbackMsg_t): Uint8Array {
   return out;
 }
 
+/** Steam's `ValvePackingSentinel_t` struct. */
 export interface ValvePackingSentinel_t {
   m_u32: number;
   m_u64: bigint;
@@ -1523,11 +1837,16 @@ export interface ValvePackingSentinel_t {
   m_d: number;
 }
 
+/**
+ * Field offsets and total size of `ValvePackingSentinel_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const ValvePackingSentinel_t_layout = {
   4: { size: 24, m_u32: 0, m_u64: 4, m_u16: 12, m_d: 16 },
   8: { size: 32, m_u32: 0, m_u64: 8, m_u16: 16, m_d: 24 },
 } as const;
 
+/** Read a `ValvePackingSentinel_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeValvePackingSentinel_t(bytes: Uint8Array): ValvePackingSentinel_t {
   const L = ValvePackingSentinel_t_layout[PACK];
   return {
@@ -1538,6 +1857,7 @@ export function decodeValvePackingSentinel_t(bytes: Uint8Array): ValvePackingSen
   };
 }
 
+/** Write a `ValvePackingSentinel_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeValvePackingSentinel_t(value: ValvePackingSentinel_t): Uint8Array {
   const out = new Uint8Array(ValvePackingSentinel_t_layout[PACK].size);
   const L = ValvePackingSentinel_t_layout[PACK];
@@ -1548,16 +1868,22 @@ export function encodeValvePackingSentinel_t(value: ValvePackingSentinel_t): Uin
   return out;
 }
 
+/** Steam's `AnalogAction_t` struct. */
 export interface AnalogAction_t {
   actionHandle: bigint;
   analogActionData: InputAnalogActionData_t;
 }
 
+/**
+ * Field offsets and total size of `AnalogAction_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const AnalogAction_t_layout = {
   4: { size: 21, actionHandle: 0, analogActionData: 8 },
   8: { size: 21, actionHandle: 0, analogActionData: 8 },
 } as const;
 
+/** Read a `AnalogAction_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeAnalogAction_t(bytes: Uint8Array): AnalogAction_t {
   const L = AnalogAction_t_layout[PACK];
   return {
@@ -1571,6 +1897,7 @@ export function decodeAnalogAction_t(bytes: Uint8Array): AnalogAction_t {
   };
 }
 
+/** Write a `AnalogAction_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeAnalogAction_t(value: AnalogAction_t): Uint8Array {
   const out = new Uint8Array(AnalogAction_t_layout[PACK].size);
   const L = AnalogAction_t_layout[PACK];
@@ -1579,16 +1906,22 @@ export function encodeAnalogAction_t(value: AnalogAction_t): Uint8Array {
   return out;
 }
 
+/** Steam's `DigitalAction_t` struct. */
 export interface DigitalAction_t {
   actionHandle: bigint;
   digitalActionData: InputDigitalActionData_t;
 }
 
+/**
+ * Field offsets and total size of `DigitalAction_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const DigitalAction_t_layout = {
   4: { size: 10, actionHandle: 0, digitalActionData: 8 },
   8: { size: 10, actionHandle: 0, digitalActionData: 8 },
 } as const;
 
+/** Read a `DigitalAction_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeDigitalAction_t(bytes: Uint8Array): DigitalAction_t {
   const L = DigitalAction_t_layout[PACK];
   return {
@@ -1602,6 +1935,7 @@ export function decodeDigitalAction_t(bytes: Uint8Array): DigitalAction_t {
   };
 }
 
+/** Write a `DigitalAction_t` into the bytes Steam expects, using this platform's layout. */
 export function encodeDigitalAction_t(value: DigitalAction_t): Uint8Array {
   const out = new Uint8Array(DigitalAction_t_layout[PACK].size);
   const L = DigitalAction_t_layout[PACK];
@@ -1610,28 +1944,50 @@ export function encodeDigitalAction_t(value: DigitalAction_t): Uint8Array {
   return out;
 }
 
+/**
+ * Purpose: Called when an authenticated connection to the Steam back-end has been established.
+ * This means the Steam client now has a working connection to the Steam servers.
+ * Usually this will have occurred before the game has launched, and should
+ * only be seen if the user has dropped connection due to a networking issue
+ * or a Steam server update.
+ */
 export type SteamServersConnected_t = Record<string, never>;
 
+/**
+ * Field offsets and total size of `SteamServersConnected_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamServersConnected_t_layout = {
   4: { size: 1 },
   8: { size: 1 },
 } as const;
 
+/** Read a `SteamServersConnected_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamServersConnected_t(bytes: Uint8Array): SteamServersConnected_t {
   void bytes;
   return {};
 }
 
+/**
+ * Purpose: called when a connection attempt has failed
+ * this will occur periodically if the Steam client is not connected,
+ * and has failed in it's retry to establish a connection
+ */
 export interface SteamServerConnectFailure_t {
   m_eResult: EResult;
   m_bStillRetrying: boolean;
 }
 
+/**
+ * Field offsets and total size of `SteamServerConnectFailure_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamServerConnectFailure_t_layout = {
   4: { size: 8, m_eResult: 0, m_bStillRetrying: 4 },
   8: { size: 8, m_eResult: 0, m_bStillRetrying: 4 },
 } as const;
 
+/** Read a `SteamServerConnectFailure_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamServerConnectFailure_t(bytes: Uint8Array): SteamServerConnectFailure_t {
   const L = SteamServerConnectFailure_t_layout[PACK];
   return {
@@ -1640,15 +1996,24 @@ export function decodeSteamServerConnectFailure_t(bytes: Uint8Array): SteamServe
   };
 }
 
+/**
+ * Purpose: called if the client has lost connection to the Steam servers
+ * real-time services will be disabled until a matching SteamServersConnected_t has been posted
+ */
 export interface SteamServersDisconnected_t {
   m_eResult: EResult;
 }
 
+/**
+ * Field offsets and total size of `SteamServersDisconnected_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamServersDisconnected_t_layout = {
   4: { size: 4, m_eResult: 0 },
   8: { size: 4, m_eResult: 0 },
 } as const;
 
+/** Read a `SteamServersDisconnected_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamServersDisconnected_t(bytes: Uint8Array): SteamServersDisconnected_t {
   const L = SteamServersDisconnected_t_layout[PACK];
   return {
@@ -1656,6 +2021,12 @@ export function decodeSteamServersDisconnected_t(bytes: Uint8Array): SteamServer
   };
 }
 
+/**
+ * Purpose: Sent by the Steam server to the client telling it to disconnect from the specified game server,
+ * which it may be in the process of or already connected to.
+ * The game client should immediately disconnect upon receiving this message.
+ * This can usually occur if the user doesn't have rights to play on the game server.
+ */
 export interface ClientGameServerDeny_t {
   m_uAppID: number;
   m_unGameServerIP: number;
@@ -1664,6 +2035,10 @@ export interface ClientGameServerDeny_t {
   m_uReason: number;
 }
 
+/**
+ * Field offsets and total size of `ClientGameServerDeny_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const ClientGameServerDeny_t_layout = {
   4: {
     size: 16,
@@ -1683,6 +2058,7 @@ export const ClientGameServerDeny_t_layout = {
   },
 } as const;
 
+/** Read a `ClientGameServerDeny_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeClientGameServerDeny_t(bytes: Uint8Array): ClientGameServerDeny_t {
   const L = ClientGameServerDeny_t_layout[PACK];
   return {
@@ -1694,15 +2070,25 @@ export function decodeClientGameServerDeny_t(bytes: Uint8Array): ClientGameServe
   };
 }
 
+/**
+ * Purpose: called when the callback system for this client is in an error state (and has flushed pending callbacks)
+ * When getting this message the client should disconnect from Steam, reset any stored Steam state and reconnect.
+ * This usually occurs in the rare event the Steam client has some kind of fatal error.
+ */
 export interface IPCFailure_t {
   m_eFailureType: number;
 }
 
+/**
+ * Field offsets and total size of `IPCFailure_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const IPCFailure_t_layout = {
   4: { size: 1, m_eFailureType: 0 },
   8: { size: 1, m_eFailureType: 0 },
 } as const;
 
+/** Read a `IPCFailure_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeIPCFailure_t(bytes: Uint8Array): IPCFailure_t {
   const L = IPCFailure_t_layout[PACK];
   return {
@@ -1710,29 +2096,42 @@ export function decodeIPCFailure_t(bytes: Uint8Array): IPCFailure_t {
   };
 }
 
+/** Purpose: Signaled whenever licenses change */
 export type LicensesUpdated_t = Record<string, never>;
 
+/**
+ * Field offsets and total size of `LicensesUpdated_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const LicensesUpdated_t_layout = {
   4: { size: 1 },
   8: { size: 1 },
 } as const;
 
+/** Read a `LicensesUpdated_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeLicensesUpdated_t(bytes: Uint8Array): LicensesUpdated_t {
   void bytes;
   return {};
 }
 
+/** callback for BeginAuthSession */
 export interface ValidateAuthTicketResponse_t {
   m_SteamID: bigint;
   m_eAuthSessionResponse: EAuthSessionResponse;
+  /** different from m_SteamID if borrowed */
   m_OwnerSteamID: bigint;
 }
 
+/**
+ * Field offsets and total size of `ValidateAuthTicketResponse_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const ValidateAuthTicketResponse_t_layout = {
   4: { size: 20, m_SteamID: 0, m_eAuthSessionResponse: 8, m_OwnerSteamID: 12 },
   8: { size: 20, m_SteamID: 0, m_eAuthSessionResponse: 8, m_OwnerSteamID: 12 },
 } as const;
 
+/** Read a `ValidateAuthTicketResponse_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeValidateAuthTicketResponse_t(
   bytes: Uint8Array,
 ): ValidateAuthTicketResponse_t {
@@ -1744,17 +2143,26 @@ export function decodeValidateAuthTicketResponse_t(
   };
 }
 
+/** Purpose: called when a user has responded to a microtransaction authorization request */
 export interface MicroTxnAuthorizationResponse_t {
+  /** AppID for this microtransaction */
   m_unAppID: number;
+  /** OrderID provided for the microtransaction */
   m_ulOrderID: bigint;
+  /** if user authorized transaction */
   m_bAuthorized: number;
 }
 
+/**
+ * Field offsets and total size of `MicroTxnAuthorizationResponse_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const MicroTxnAuthorizationResponse_t_layout = {
   4: { size: 16, m_unAppID: 0, m_ulOrderID: 4, m_bAuthorized: 12 },
   8: { size: 24, m_unAppID: 0, m_ulOrderID: 8, m_bAuthorized: 16 },
 } as const;
 
+/** Read a `MicroTxnAuthorizationResponse_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeMicroTxnAuthorizationResponse_t(
   bytes: Uint8Array,
 ): MicroTxnAuthorizationResponse_t {
@@ -1766,15 +2174,21 @@ export function decodeMicroTxnAuthorizationResponse_t(
   };
 }
 
+/** Purpose: Result from RequestEncryptedAppTicket */
 export interface EncryptedAppTicketResponse_t {
   m_eResult: EResult;
 }
 
+/**
+ * Field offsets and total size of `EncryptedAppTicketResponse_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const EncryptedAppTicketResponse_t_layout = {
   4: { size: 4, m_eResult: 0 },
   8: { size: 4, m_eResult: 0 },
 } as const;
 
+/** Read a `EncryptedAppTicketResponse_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeEncryptedAppTicketResponse_t(
   bytes: Uint8Array,
 ): EncryptedAppTicketResponse_t {
@@ -1784,16 +2198,22 @@ export function decodeEncryptedAppTicketResponse_t(
   };
 }
 
+/** callback for GetAuthSessionTicket */
 export interface GetAuthSessionTicketResponse_t {
   m_hAuthTicket: number;
   m_eResult: EResult;
 }
 
+/**
+ * Field offsets and total size of `GetAuthSessionTicketResponse_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GetAuthSessionTicketResponse_t_layout = {
   4: { size: 8, m_hAuthTicket: 0, m_eResult: 4 },
   8: { size: 8, m_hAuthTicket: 0, m_eResult: 4 },
 } as const;
 
+/** Read a `GetAuthSessionTicketResponse_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGetAuthSessionTicketResponse_t(
   bytes: Uint8Array,
 ): GetAuthSessionTicketResponse_t {
@@ -1804,15 +2224,21 @@ export function decodeGetAuthSessionTicketResponse_t(
   };
 }
 
+/** Purpose: sent to your game in response to a steam://gamewebcallback/ command */
 export interface GameWebCallback_t {
   m_szURL: string;
 }
 
+/**
+ * Field offsets and total size of `GameWebCallback_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GameWebCallback_t_layout = {
   4: { size: 256, m_szURL: 0 },
   8: { size: 256, m_szURL: 0 },
 } as const;
 
+/** Read a `GameWebCallback_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGameWebCallback_t(bytes: Uint8Array): GameWebCallback_t {
   const L = GameWebCallback_t_layout[PACK];
   return {
@@ -1820,15 +2246,21 @@ export function decodeGameWebCallback_t(bytes: Uint8Array): GameWebCallback_t {
   };
 }
 
+/** Purpose: sent to your game in response to ISteamUser::RequestStoreAuthURL */
 export interface StoreAuthURLResponse_t {
   m_szURL: string;
 }
 
+/**
+ * Field offsets and total size of `StoreAuthURLResponse_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const StoreAuthURLResponse_t_layout = {
   4: { size: 512, m_szURL: 0 },
   8: { size: 512, m_szURL: 0 },
 } as const;
 
+/** Read a `StoreAuthURLResponse_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeStoreAuthURLResponse_t(bytes: Uint8Array): StoreAuthURLResponse_t {
   const L = StoreAuthURLResponse_t_layout[PACK];
   return {
@@ -1836,14 +2268,21 @@ export function decodeStoreAuthURLResponse_t(bytes: Uint8Array): StoreAuthURLRes
   };
 }
 
+/** Purpose: sent in response to ISteamUser::GetMarketEligibility */
 export interface MarketEligibilityResponse_t {
   m_bAllowed: boolean;
   m_eNotAllowedReason: EMarketNotAllowedReasonFlags;
   m_rtAllowedAtTime: number;
+  /** The number of days any user is required to have had Steam Guard before they can use the market */
   m_cdaySteamGuardRequiredDays: number;
+  /** The number of days after initial device authorization a user must wait before using the market on that device */
   m_cdayNewDeviceCooldown: number;
 }
 
+/**
+ * Field offsets and total size of `MarketEligibilityResponse_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const MarketEligibilityResponse_t_layout = {
   4: {
     size: 20,
@@ -1863,6 +2302,7 @@ export const MarketEligibilityResponse_t_layout = {
   },
 } as const;
 
+/** Read a `MarketEligibilityResponse_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeMarketEligibilityResponse_t(bytes: Uint8Array): MarketEligibilityResponse_t {
   const L = MarketEligibilityResponse_t_layout[PACK];
   return {
@@ -1874,17 +2314,36 @@ export function decodeMarketEligibilityResponse_t(bytes: Uint8Array): MarketElig
   };
 }
 
+/**
+ * Purpose: sent for games with enabled anti indulgence / duration control, for
+ * enabled users. Lets the game know whether the user can keep playing or
+ * whether the game should exit, and returns info about remaining gameplay time.
+ * This callback is fired asynchronously in response to timers triggering.
+ * It is also fired in response to calls to GetDurationControl().
+ */
 export interface DurationControl_t {
+  /** result of call (always k_EResultOK for asynchronous timer-based notifications) */
   m_eResult: EResult;
+  /** appid generating playtime */
   m_appid: number;
+  /** is duration control applicable to user + game combination */
   m_bApplicable: boolean;
+  /** playtime since most recent 5 hour gap in playtime, only counting up to regulatory limit of playtime, in seconds */
   m_csecsLast5h: number;
+  /** recommended progress (either everything is fine, or please exit game) */
   m_progress: EDurationControlProgress;
+  /** notification to show, if any (always k_EDurationControlNotification_None for API calls) */
   m_notification: EDurationControlNotification;
+  /** playtime on current calendar day */
   m_csecsToday: number;
+  /** playtime remaining until the user hits a regulatory limit */
   m_csecsRemaining: number;
 }
 
+/**
+ * Field offsets and total size of `DurationControl_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const DurationControl_t_layout = {
   4: {
     size: 32,
@@ -1910,6 +2369,7 @@ export const DurationControl_t_layout = {
   },
 } as const;
 
+/** Read a `DurationControl_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeDurationControl_t(bytes: Uint8Array): DurationControl_t {
   const L = DurationControl_t_layout[PACK];
   return {
@@ -1924,6 +2384,7 @@ export function decodeDurationControl_t(bytes: Uint8Array): DurationControl_t {
   };
 }
 
+/** callback for GetTicketForWebApi */
 export interface GetTicketForWebApiResponse_t {
   m_hAuthTicket: number;
   m_eResult: EResult;
@@ -1931,11 +2392,16 @@ export interface GetTicketForWebApiResponse_t {
   m_rgubTicket: string;
 }
 
+/**
+ * Field offsets and total size of `GetTicketForWebApiResponse_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GetTicketForWebApiResponse_t_layout = {
   4: { size: 2572, m_hAuthTicket: 0, m_eResult: 4, m_cubTicket: 8, m_rgubTicket: 12 },
   8: { size: 2572, m_hAuthTicket: 0, m_eResult: 4, m_cubTicket: 8, m_rgubTicket: 12 },
 } as const;
 
+/** Read a `GetTicketForWebApiResponse_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGetTicketForWebApiResponse_t(
   bytes: Uint8Array,
 ): GetTicketForWebApiResponse_t {
@@ -1948,16 +2414,24 @@ export function decodeGetTicketForWebApiResponse_t(
   };
 }
 
+/** Purpose: called when a friends' status changes */
 export interface PersonaStateChange_t {
+  /** steamID of the friend who changed */
   m_ulSteamID: bigint;
+  /** what's changed */
   m_nChangeFlags: number;
 }
 
+/**
+ * Field offsets and total size of `PersonaStateChange_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const PersonaStateChange_t_layout = {
   4: { size: 12, m_ulSteamID: 0, m_nChangeFlags: 8 },
   8: { size: 16, m_ulSteamID: 0, m_nChangeFlags: 8 },
 } as const;
 
+/** Read a `PersonaStateChange_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodePersonaStateChange_t(bytes: Uint8Array): PersonaStateChange_t {
   const L = PersonaStateChange_t_layout[PACK];
   return {
@@ -1966,18 +2440,31 @@ export function decodePersonaStateChange_t(bytes: Uint8Array): PersonaStateChang
   };
 }
 
+/**
+ * Purpose: posted when game overlay activates or deactivates
+ * the game can use this to be pause or resume single player games
+ */
 export interface GameOverlayActivated_t {
+  /** true if it's just been activated, false otherwise */
   m_bActive: number;
+  /** true if the user asked for the overlay to be activated/deactivated */
   m_bUserInitiated: boolean;
+  /** the appID of the game (should always be the current game) */
   m_nAppID: number;
+  /** used internally */
   m_dwOverlayPID: number;
 }
 
+/**
+ * Field offsets and total size of `GameOverlayActivated_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GameOverlayActivated_t_layout = {
   4: { size: 12, m_bActive: 0, m_bUserInitiated: 1, m_nAppID: 4, m_dwOverlayPID: 8 },
   8: { size: 12, m_bActive: 0, m_bUserInitiated: 1, m_nAppID: 4, m_dwOverlayPID: 8 },
 } as const;
 
+/** Read a `GameOverlayActivated_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGameOverlayActivated_t(bytes: Uint8Array): GameOverlayActivated_t {
   const L = GameOverlayActivated_t_layout[PACK];
   return {
@@ -1988,16 +2475,27 @@ export function decodeGameOverlayActivated_t(bytes: Uint8Array): GameOverlayActi
   };
 }
 
+/**
+ * Purpose: called when the user tries to join a different game server from their friends list
+ * game client should attempt to connect to specified server when this is received
+ */
 export interface GameServerChangeRequested_t {
+  /** server address ("127.0.0.1:27015", "tf2.valvesoftware.com") */
   m_rgchServer: string;
+  /** server password, if any */
   m_rgchPassword: string;
 }
 
+/**
+ * Field offsets and total size of `GameServerChangeRequested_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GameServerChangeRequested_t_layout = {
   4: { size: 128, m_rgchServer: 0, m_rgchPassword: 64 },
   8: { size: 128, m_rgchServer: 0, m_rgchPassword: 64 },
 } as const;
 
+/** Read a `GameServerChangeRequested_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGameServerChangeRequested_t(bytes: Uint8Array): GameServerChangeRequested_t {
   const L = GameServerChangeRequested_t_layout[PACK];
   return {
@@ -2006,16 +2504,25 @@ export function decodeGameServerChangeRequested_t(bytes: Uint8Array): GameServer
   };
 }
 
+/**
+ * Purpose: called when the user tries to join a lobby from their friends list
+ * game client should attempt to connect to specified lobby when this is received
+ */
 export interface GameLobbyJoinRequested_t {
   m_steamIDLobby: bigint;
   m_steamIDFriend: bigint;
 }
 
+/**
+ * Field offsets and total size of `GameLobbyJoinRequested_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GameLobbyJoinRequested_t_layout = {
   4: { size: 16, m_steamIDLobby: 0, m_steamIDFriend: 8 },
   8: { size: 16, m_steamIDLobby: 0, m_steamIDFriend: 8 },
 } as const;
 
+/** Read a `GameLobbyJoinRequested_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGameLobbyJoinRequested_t(bytes: Uint8Array): GameLobbyJoinRequested_t {
   const L = GameLobbyJoinRequested_t_layout[PACK];
   return {
@@ -2024,18 +2531,31 @@ export function decodeGameLobbyJoinRequested_t(bytes: Uint8Array): GameLobbyJoin
   };
 }
 
+/**
+ * Purpose: called when an avatar is loaded in from a previous GetLargeFriendAvatar() call
+ * if the image wasn't already available
+ */
 export interface AvatarImageLoaded_t {
+  /** steamid the avatar has been loaded for */
   m_steamID: bigint;
+  /** the image index of the now loaded image */
   m_iImage: number;
+  /** width of the loaded image */
   m_iWide: number;
+  /** height of the loaded image */
   m_iTall: number;
 }
 
+/**
+ * Field offsets and total size of `AvatarImageLoaded_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const AvatarImageLoaded_t_layout = {
   4: { size: 20, m_steamID: 0, m_iImage: 8, m_iWide: 12, m_iTall: 16 },
   8: { size: 20, m_steamID: 0, m_iImage: 8, m_iWide: 12, m_iTall: 16 },
 } as const;
 
+/** Read a `AvatarImageLoaded_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeAvatarImageLoaded_t(bytes: Uint8Array): AvatarImageLoaded_t {
   const L = AvatarImageLoaded_t_layout[PACK];
   return {
@@ -2046,17 +2566,23 @@ export function decodeAvatarImageLoaded_t(bytes: Uint8Array): AvatarImageLoaded_
   };
 }
 
+/** Purpose: marks the return of a request officer list call */
 export interface ClanOfficerListResponse_t {
   m_steamIDClan: bigint;
   m_cOfficers: number;
   m_bSuccess: number;
 }
 
+/**
+ * Field offsets and total size of `ClanOfficerListResponse_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const ClanOfficerListResponse_t_layout = {
   4: { size: 16, m_steamIDClan: 0, m_cOfficers: 8, m_bSuccess: 12 },
   8: { size: 16, m_steamIDClan: 0, m_cOfficers: 8, m_bSuccess: 12 },
 } as const;
 
+/** Read a `ClanOfficerListResponse_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeClanOfficerListResponse_t(bytes: Uint8Array): ClanOfficerListResponse_t {
   const L = ClanOfficerListResponse_t_layout[PACK];
   return {
@@ -2066,16 +2592,24 @@ export function decodeClanOfficerListResponse_t(bytes: Uint8Array): ClanOfficerL
   };
 }
 
+/** Purpose: callback indicating updated data about friends rich presence information */
 export interface FriendRichPresenceUpdate_t {
+  /** friend who's rich presence has changed */
   m_steamIDFriend: bigint;
+  /** the appID of the game (should always be the current game) */
   m_nAppID: number;
 }
 
+/**
+ * Field offsets and total size of `FriendRichPresenceUpdate_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const FriendRichPresenceUpdate_t_layout = {
   4: { size: 12, m_steamIDFriend: 0, m_nAppID: 8 },
   8: { size: 12, m_steamIDFriend: 0, m_nAppID: 8 },
 } as const;
 
+/** Read a `FriendRichPresenceUpdate_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeFriendRichPresenceUpdate_t(bytes: Uint8Array): FriendRichPresenceUpdate_t {
   const L = FriendRichPresenceUpdate_t_layout[PACK];
   return {
@@ -2084,16 +2618,26 @@ export function decodeFriendRichPresenceUpdate_t(bytes: Uint8Array): FriendRichP
   };
 }
 
+/**
+ * Purpose: called when the user tries to join a game from their friends list
+ * rich presence will have been set with the "connect" key which is set here
+ */
 export interface GameRichPresenceJoinRequested_t {
+  /** the friend they did the join via (will be invalid if not directly via a friend) */
   m_steamIDFriend: bigint;
   m_rgchConnect: string;
 }
 
+/**
+ * Field offsets and total size of `GameRichPresenceJoinRequested_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GameRichPresenceJoinRequested_t_layout = {
   4: { size: 264, m_steamIDFriend: 0, m_rgchConnect: 8 },
   8: { size: 264, m_steamIDFriend: 0, m_rgchConnect: 8 },
 } as const;
 
+/** Read a `GameRichPresenceJoinRequested_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGameRichPresenceJoinRequested_t(
   bytes: Uint8Array,
 ): GameRichPresenceJoinRequested_t {
@@ -2104,17 +2648,23 @@ export function decodeGameRichPresenceJoinRequested_t(
   };
 }
 
+/** Purpose: a chat message has been received for a clan chat the game has joined */
 export interface GameConnectedClanChatMsg_t {
   m_steamIDClanChat: bigint;
   m_steamIDUser: bigint;
   m_iMessageID: number;
 }
 
+/**
+ * Field offsets and total size of `GameConnectedClanChatMsg_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GameConnectedClanChatMsg_t_layout = {
   4: { size: 20, m_steamIDClanChat: 0, m_steamIDUser: 8, m_iMessageID: 16 },
   8: { size: 20, m_steamIDClanChat: 0, m_steamIDUser: 8, m_iMessageID: 16 },
 } as const;
 
+/** Read a `GameConnectedClanChatMsg_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGameConnectedClanChatMsg_t(bytes: Uint8Array): GameConnectedClanChatMsg_t {
   const L = GameConnectedClanChatMsg_t_layout[PACK];
   return {
@@ -2124,16 +2674,22 @@ export function decodeGameConnectedClanChatMsg_t(bytes: Uint8Array): GameConnect
   };
 }
 
+/** Purpose: a user has joined a clan chat */
 export interface GameConnectedChatJoin_t {
   m_steamIDClanChat: bigint;
   m_steamIDUser: bigint;
 }
 
+/**
+ * Field offsets and total size of `GameConnectedChatJoin_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GameConnectedChatJoin_t_layout = {
   4: { size: 16, m_steamIDClanChat: 0, m_steamIDUser: 8 },
   8: { size: 16, m_steamIDClanChat: 0, m_steamIDUser: 8 },
 } as const;
 
+/** Read a `GameConnectedChatJoin_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGameConnectedChatJoin_t(bytes: Uint8Array): GameConnectedChatJoin_t {
   const L = GameConnectedChatJoin_t_layout[PACK];
   return {
@@ -2142,18 +2698,26 @@ export function decodeGameConnectedChatJoin_t(bytes: Uint8Array): GameConnectedC
   };
 }
 
+/** Purpose: a user has left the chat we're in */
 export interface GameConnectedChatLeave_t {
   m_steamIDClanChat: bigint;
   m_steamIDUser: bigint;
+  /** true if admin kicked */
   m_bKicked: boolean;
+  /** true if Steam connection dropped */
   m_bDropped: boolean;
 }
 
+/**
+ * Field offsets and total size of `GameConnectedChatLeave_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GameConnectedChatLeave_t_layout = {
   4: { size: 18, m_steamIDClanChat: 0, m_steamIDUser: 8, m_bKicked: 16, m_bDropped: 17 },
   8: { size: 18, m_steamIDClanChat: 0, m_steamIDUser: 8, m_bKicked: 16, m_bDropped: 17 },
 } as const;
 
+/** Read a `GameConnectedChatLeave_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGameConnectedChatLeave_t(bytes: Uint8Array): GameConnectedChatLeave_t {
   const L = GameConnectedChatLeave_t_layout[PACK];
   return {
@@ -2164,15 +2728,21 @@ export function decodeGameConnectedChatLeave_t(bytes: Uint8Array): GameConnected
   };
 }
 
+/** Purpose: a DownloadClanActivityCounts() call has finished */
 export interface DownloadClanActivityCountsResult_t {
   m_bSuccess: boolean;
 }
 
+/**
+ * Field offsets and total size of `DownloadClanActivityCountsResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const DownloadClanActivityCountsResult_t_layout = {
   4: { size: 1, m_bSuccess: 0 },
   8: { size: 1, m_bSuccess: 0 },
 } as const;
 
+/** Read a `DownloadClanActivityCountsResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeDownloadClanActivityCountsResult_t(
   bytes: Uint8Array,
 ): DownloadClanActivityCountsResult_t {
@@ -2182,16 +2752,22 @@ export function decodeDownloadClanActivityCountsResult_t(
   };
 }
 
+/** Purpose: a JoinClanChatRoom() call has finished */
 export interface JoinClanChatRoomCompletionResult_t {
   m_steamIDClanChat: bigint;
   m_eChatRoomEnterResponse: EChatRoomEnterResponse;
 }
 
+/**
+ * Field offsets and total size of `JoinClanChatRoomCompletionResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const JoinClanChatRoomCompletionResult_t_layout = {
   4: { size: 12, m_steamIDClanChat: 0, m_eChatRoomEnterResponse: 8 },
   8: { size: 12, m_steamIDClanChat: 0, m_eChatRoomEnterResponse: 8 },
 } as const;
 
+/** Read a `JoinClanChatRoomCompletionResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeJoinClanChatRoomCompletionResult_t(
   bytes: Uint8Array,
 ): JoinClanChatRoomCompletionResult_t {
@@ -2202,16 +2778,22 @@ export function decodeJoinClanChatRoomCompletionResult_t(
   };
 }
 
+/** Purpose: a chat message has been received from a user */
 export interface GameConnectedFriendChatMsg_t {
   m_steamIDUser: bigint;
   m_iMessageID: number;
 }
 
+/**
+ * Field offsets and total size of `GameConnectedFriendChatMsg_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GameConnectedFriendChatMsg_t_layout = {
   4: { size: 12, m_steamIDUser: 0, m_iMessageID: 8 },
   8: { size: 12, m_steamIDUser: 0, m_iMessageID: 8 },
 } as const;
 
+/** Read a `GameConnectedFriendChatMsg_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGameConnectedFriendChatMsg_t(
   bytes: Uint8Array,
 ): GameConnectedFriendChatMsg_t {
@@ -2222,17 +2804,23 @@ export function decodeGameConnectedFriendChatMsg_t(
   };
 }
 
+/** Steam's `FriendsGetFollowerCount_t` callback, id 344. */
 export interface FriendsGetFollowerCount_t {
   m_eResult: EResult;
   m_steamID: bigint;
   m_nCount: number;
 }
 
+/**
+ * Field offsets and total size of `FriendsGetFollowerCount_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const FriendsGetFollowerCount_t_layout = {
   4: { size: 16, m_eResult: 0, m_steamID: 4, m_nCount: 12 },
   8: { size: 16, m_eResult: 0, m_steamID: 4, m_nCount: 12 },
 } as const;
 
+/** Read a `FriendsGetFollowerCount_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeFriendsGetFollowerCount_t(bytes: Uint8Array): FriendsGetFollowerCount_t {
   const L = FriendsGetFollowerCount_t_layout[PACK];
   return {
@@ -2242,17 +2830,23 @@ export function decodeFriendsGetFollowerCount_t(bytes: Uint8Array): FriendsGetFo
   };
 }
 
+/** Steam's `FriendsIsFollowing_t` callback, id 345. */
 export interface FriendsIsFollowing_t {
   m_eResult: EResult;
   m_steamID: bigint;
   m_bIsFollowing: boolean;
 }
 
+/**
+ * Field offsets and total size of `FriendsIsFollowing_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const FriendsIsFollowing_t_layout = {
   4: { size: 16, m_eResult: 0, m_steamID: 4, m_bIsFollowing: 12 },
   8: { size: 16, m_eResult: 0, m_steamID: 4, m_bIsFollowing: 12 },
 } as const;
 
+/** Read a `FriendsIsFollowing_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeFriendsIsFollowing_t(bytes: Uint8Array): FriendsIsFollowing_t {
   const L = FriendsIsFollowing_t_layout[PACK];
   return {
@@ -2262,6 +2856,7 @@ export function decodeFriendsIsFollowing_t(bytes: Uint8Array): FriendsIsFollowin
   };
 }
 
+/** Steam's `FriendsEnumerateFollowingList_t` callback, id 346. */
 export interface FriendsEnumerateFollowingList_t {
   m_eResult: EResult;
   m_rgSteamID: bigint[];
@@ -2269,11 +2864,16 @@ export interface FriendsEnumerateFollowingList_t {
   m_nTotalResultCount: number;
 }
 
+/**
+ * Field offsets and total size of `FriendsEnumerateFollowingList_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const FriendsEnumerateFollowingList_t_layout = {
   4: { size: 412, m_eResult: 0, m_rgSteamID: 4, m_nResultsReturned: 404, m_nTotalResultCount: 408 },
   8: { size: 412, m_eResult: 0, m_rgSteamID: 4, m_nResultsReturned: 404, m_nTotalResultCount: 408 },
 } as const;
 
+/** Read a `FriendsEnumerateFollowingList_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeFriendsEnumerateFollowingList_t(
   bytes: Uint8Array,
 ): FriendsEnumerateFollowingList_t {
@@ -2286,27 +2886,39 @@ export function decodeFriendsEnumerateFollowingList_t(
   };
 }
 
+/** Purpose: Invoked when the status of unread messages changes */
 export type UnreadChatMessagesChanged_t = Record<string, never>;
 
+/**
+ * Field offsets and total size of `UnreadChatMessagesChanged_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const UnreadChatMessagesChanged_t_layout = {
   4: { size: 1 },
   8: { size: 1 },
 } as const;
 
+/** Read a `UnreadChatMessagesChanged_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeUnreadChatMessagesChanged_t(bytes: Uint8Array): UnreadChatMessagesChanged_t {
   void bytes;
   return {};
 }
 
+/** Purpose: Dispatched when an overlay browser instance is navigated to a protocol/scheme registered by RegisterProtocolInOverlayBrowser() */
 export interface OverlayBrowserProtocolNavigation_t {
   rgchURI: string;
 }
 
+/**
+ * Field offsets and total size of `OverlayBrowserProtocolNavigation_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const OverlayBrowserProtocolNavigation_t_layout = {
   4: { size: 1024, rgchURI: 0 },
   8: { size: 1024, rgchURI: 0 },
 } as const;
 
+/** Read a `OverlayBrowserProtocolNavigation_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeOverlayBrowserProtocolNavigation_t(
   bytes: Uint8Array,
 ): OverlayBrowserProtocolNavigation_t {
@@ -2316,15 +2928,21 @@ export function decodeOverlayBrowserProtocolNavigation_t(
   };
 }
 
+/** Purpose: A user's equipped profile items have changed */
 export interface EquippedProfileItemsChanged_t {
   m_steamID: bigint;
 }
 
+/**
+ * Field offsets and total size of `EquippedProfileItemsChanged_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const EquippedProfileItemsChanged_t_layout = {
   4: { size: 8, m_steamID: 0 },
   8: { size: 8, m_steamID: 0 },
 } as const;
 
+/** Read a `EquippedProfileItemsChanged_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeEquippedProfileItemsChanged_t(
   bytes: Uint8Array,
 ): EquippedProfileItemsChanged_t {
@@ -2334,6 +2952,7 @@ export function decodeEquippedProfileItemsChanged_t(
   };
 }
 
+/** Purpose: */
 export interface EquippedProfileItems_t {
   m_eResult: EResult;
   m_steamID: bigint;
@@ -2345,6 +2964,10 @@ export interface EquippedProfileItems_t {
   m_bFromCache: boolean;
 }
 
+/**
+ * Field offsets and total size of `EquippedProfileItems_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const EquippedProfileItems_t_layout = {
   4: {
     size: 20,
@@ -2370,6 +2993,7 @@ export const EquippedProfileItems_t_layout = {
   },
 } as const;
 
+/** Read a `EquippedProfileItems_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeEquippedProfileItems_t(bytes: Uint8Array): EquippedProfileItems_t {
   const L = EquippedProfileItems_t_layout[PACK];
   return {
@@ -2384,27 +3008,39 @@ export function decodeEquippedProfileItems_t(bytes: Uint8Array): EquippedProfile
   };
 }
 
+/** Purpose: The country of the user changed */
 export type IPCountry_t = Record<string, never>;
 
+/**
+ * Field offsets and total size of `IPCountry_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const IPCountry_t_layout = {
   4: { size: 1 },
   8: { size: 1 },
 } as const;
 
+/** Read a `IPCountry_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeIPCountry_t(bytes: Uint8Array): IPCountry_t {
   void bytes;
   return {};
 }
 
+/** Purpose: Fired when running on a handheld PC or laptop with less than 10 minutes of battery is left, fires then every minute */
 export interface LowBatteryPower_t {
   m_nMinutesBatteryLeft: number;
 }
 
+/**
+ * Field offsets and total size of `LowBatteryPower_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const LowBatteryPower_t_layout = {
   4: { size: 1, m_nMinutesBatteryLeft: 0 },
   8: { size: 1, m_nMinutesBatteryLeft: 0 },
 } as const;
 
+/** Read a `LowBatteryPower_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeLowBatteryPower_t(bytes: Uint8Array): LowBatteryPower_t {
   const L = LowBatteryPower_t_layout[PACK];
   return {
@@ -2412,17 +3048,23 @@ export function decodeLowBatteryPower_t(bytes: Uint8Array): LowBatteryPower_t {
   };
 }
 
+/** Purpose: called when a SteamAsyncCall_t has completed (or failed) */
 export interface SteamAPICallCompleted_t {
   m_hAsyncCall: bigint;
   m_iCallback: number;
   m_cubParam: number;
 }
 
+/**
+ * Field offsets and total size of `SteamAPICallCompleted_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamAPICallCompleted_t_layout = {
   4: { size: 16, m_hAsyncCall: 0, m_iCallback: 8, m_cubParam: 12 },
   8: { size: 16, m_hAsyncCall: 0, m_iCallback: 8, m_cubParam: 12 },
 } as const;
 
+/** Read a `SteamAPICallCompleted_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamAPICallCompleted_t(bytes: Uint8Array): SteamAPICallCompleted_t {
   const L = SteamAPICallCompleted_t_layout[PACK];
   return {
@@ -2432,27 +3074,39 @@ export function decodeSteamAPICallCompleted_t(bytes: Uint8Array): SteamAPICallCo
   };
 }
 
+/** called when Steam wants to shutdown */
 export type SteamShutdown_t = Record<string, never>;
 
+/**
+ * Field offsets and total size of `SteamShutdown_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamShutdown_t_layout = {
   4: { size: 1 },
   8: { size: 1 },
 } as const;
 
+/** Read a `SteamShutdown_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamShutdown_t(bytes: Uint8Array): SteamShutdown_t {
   void bytes;
   return {};
 }
 
+/** callback for CheckFileSignature */
 export interface CheckFileSignature_t {
   m_eCheckFileSignature: ECheckFileSignature;
 }
 
+/**
+ * Field offsets and total size of `CheckFileSignature_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const CheckFileSignature_t_layout = {
   4: { size: 4, m_eCheckFileSignature: 0 },
   8: { size: 4, m_eCheckFileSignature: 0 },
 } as const;
 
+/** Read a `CheckFileSignature_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeCheckFileSignature_t(bytes: Uint8Array): CheckFileSignature_t {
   const L = CheckFileSignature_t_layout[PACK];
   return {
@@ -2460,17 +3114,24 @@ export function decodeCheckFileSignature_t(bytes: Uint8Array): CheckFileSignatur
   };
 }
 
+/** Full Screen gamepad text input has been closed */
 export interface GamepadTextInputDismissed_t {
+  /** true if user entered & accepted text (Call ISteamUtils::GetEnteredGamepadTextInput() for text), false if canceled input */
   m_bSubmitted: boolean;
   m_unSubmittedText: number;
   m_unAppID: number;
 }
 
+/**
+ * Field offsets and total size of `GamepadTextInputDismissed_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GamepadTextInputDismissed_t_layout = {
   4: { size: 12, m_bSubmitted: 0, m_unSubmittedText: 4, m_unAppID: 8 },
   8: { size: 12, m_bSubmitted: 0, m_unSubmittedText: 4, m_unAppID: 8 },
 } as const;
 
+/** Read a `GamepadTextInputDismissed_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGamepadTextInputDismissed_t(bytes: Uint8Array): GamepadTextInputDismissed_t {
   const L = GamepadTextInputDismissed_t_layout[PACK];
   return {
@@ -2480,25 +3141,37 @@ export function decodeGamepadTextInputDismissed_t(bytes: Uint8Array): GamepadTex
   };
 }
 
+/** Steam's `AppResumingFromSuspend_t` callback, id 736. */
 export type AppResumingFromSuspend_t = Record<string, never>;
 
+/**
+ * Field offsets and total size of `AppResumingFromSuspend_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const AppResumingFromSuspend_t_layout = {
   4: { size: 1 },
   8: { size: 1 },
 } as const;
 
+/** Read a `AppResumingFromSuspend_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeAppResumingFromSuspend_t(bytes: Uint8Array): AppResumingFromSuspend_t {
   void bytes;
   return {};
 }
 
+/** The floating on-screen keyboard has been closed */
 export type FloatingGamepadTextInputDismissed_t = Record<string, never>;
 
+/**
+ * Field offsets and total size of `FloatingGamepadTextInputDismissed_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const FloatingGamepadTextInputDismissed_t_layout = {
   4: { size: 1 },
   8: { size: 1 },
 } as const;
 
+/** Read a `FloatingGamepadTextInputDismissed_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeFloatingGamepadTextInputDismissed_t(
   bytes: Uint8Array,
 ): FloatingGamepadTextInputDismissed_t {
@@ -2506,15 +3179,22 @@ export function decodeFloatingGamepadTextInputDismissed_t(
   return {};
 }
 
+/** The text filtering dictionary has changed */
 export interface FilterTextDictionaryChanged_t {
+  /** One of ELanguage, or k_LegallyRequiredFiltering */
   m_eLanguage: number;
 }
 
+/**
+ * Field offsets and total size of `FilterTextDictionaryChanged_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const FilterTextDictionaryChanged_t_layout = {
   4: { size: 4, m_eLanguage: 0 },
   8: { size: 4, m_eLanguage: 0 },
 } as const;
 
+/** Read a `FilterTextDictionaryChanged_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeFilterTextDictionaryChanged_t(
   bytes: Uint8Array,
 ): FilterTextDictionaryChanged_t {
@@ -2524,16 +3204,23 @@ export function decodeFilterTextDictionaryChanged_t(
   };
 }
 
+/** Purpose: a server was added/removed from the favorites list, you should refresh now */
 export interface FavoritesListChanged_t {
+  /** an IP of 0 means reload the whole list, any other value means just one server */
   m_nIP: number;
   m_nQueryPort: number;
   m_nConnPort: number;
   m_nAppID: number;
   m_nFlags: number;
+  /** true if this is adding the entry, otherwise it is a remove */
   m_bAdd: boolean;
   m_unAccountId: number;
 }
 
+/**
+ * Field offsets and total size of `FavoritesListChanged_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const FavoritesListChanged_t_layout = {
   4: {
     size: 28,
@@ -2557,6 +3244,7 @@ export const FavoritesListChanged_t_layout = {
   },
 } as const;
 
+/** Read a `FavoritesListChanged_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeFavoritesListChanged_t(bytes: Uint8Array): FavoritesListChanged_t {
   const L = FavoritesListChanged_t_layout[PACK];
   return {
@@ -2570,17 +3258,32 @@ export function decodeFavoritesListChanged_t(bytes: Uint8Array): FavoritesListCh
   };
 }
 
+/**
+ * Purpose: Someone has invited you to join a Lobby
+ * normally you don't need to do anything with this, since
+ * the Steam UI will also display a '<user> has invited you to the lobby, join?' dialog
+ * if the user outside a game chooses to join, your game will be launched with the parameter "+connect_lobby <64-bit lobby id>",
+ * or with the callback GameLobbyJoinRequested_t if they're already in-game
+ */
 export interface LobbyInvite_t {
+  /** Steam ID of the person making the invite */
   m_ulSteamIDUser: bigint;
+  /** Steam ID of the Lobby */
   m_ulSteamIDLobby: bigint;
+  /** GameID of the Lobby */
   m_ulGameID: bigint;
 }
 
+/**
+ * Field offsets and total size of `LobbyInvite_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const LobbyInvite_t_layout = {
   4: { size: 24, m_ulSteamIDUser: 0, m_ulSteamIDLobby: 8, m_ulGameID: 16 },
   8: { size: 24, m_ulSteamIDUser: 0, m_ulSteamIDLobby: 8, m_ulGameID: 16 },
 } as const;
 
+/** Read a `LobbyInvite_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeLobbyInvite_t(bytes: Uint8Array): LobbyInvite_t {
   const L = LobbyInvite_t_layout[PACK];
   return {
@@ -2590,13 +3293,26 @@ export function decodeLobbyInvite_t(bytes: Uint8Array): LobbyInvite_t {
   };
 }
 
+/**
+ * Purpose: Sent on entering a lobby, or on failing to enter
+ * m_EChatRoomEnterResponse will be set to k_EChatRoomEnterResponseSuccess on success,
+ * or a higher value on failure (see enum EChatRoomEnterResponse)
+ */
 export interface LobbyEnter_t {
+  /** SteamID of the Lobby you have entered */
   m_ulSteamIDLobby: bigint;
+  /** Permissions of the current user */
   m_rgfChatPermissions: number;
+  /** If true, then only invited users may join */
   m_bLocked: boolean;
+  /** EChatRoomEnterResponse */
   m_EChatRoomEnterResponse: number;
 }
 
+/**
+ * Field offsets and total size of `LobbyEnter_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const LobbyEnter_t_layout = {
   4: {
     size: 20,
@@ -2614,6 +3330,7 @@ export const LobbyEnter_t_layout = {
   },
 } as const;
 
+/** Read a `LobbyEnter_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeLobbyEnter_t(bytes: Uint8Array): LobbyEnter_t {
   const L = LobbyEnter_t_layout[PACK];
   return {
@@ -2624,17 +3341,30 @@ export function decodeLobbyEnter_t(bytes: Uint8Array): LobbyEnter_t {
   };
 }
 
+/**
+ * Purpose: The lobby metadata has changed
+ * if m_ulSteamIDMember is the steamID of a lobby member, use GetLobbyMemberData() to access per-user details
+ * if m_ulSteamIDMember == m_ulSteamIDLobby, use GetLobbyData() to access lobby metadata
+ */
 export interface LobbyDataUpdate_t {
+  /** steamID of the Lobby */
   m_ulSteamIDLobby: bigint;
+  /** steamID of the member whose data changed, or the room itself */
   m_ulSteamIDMember: bigint;
+  /** true if we lobby data was successfully changed; */
   m_bSuccess: number;
 }
 
+/**
+ * Field offsets and total size of `LobbyDataUpdate_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const LobbyDataUpdate_t_layout = {
   4: { size: 20, m_ulSteamIDLobby: 0, m_ulSteamIDMember: 8, m_bSuccess: 16 },
   8: { size: 24, m_ulSteamIDLobby: 0, m_ulSteamIDMember: 8, m_bSuccess: 16 },
 } as const;
 
+/** Read a `LobbyDataUpdate_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeLobbyDataUpdate_t(bytes: Uint8Array): LobbyDataUpdate_t {
   const L = LobbyDataUpdate_t_layout[PACK];
   return {
@@ -2644,13 +3374,25 @@ export function decodeLobbyDataUpdate_t(bytes: Uint8Array): LobbyDataUpdate_t {
   };
 }
 
+/**
+ * Purpose: The lobby chat room state has changed
+ * this is usually sent when a user has joined or left the lobby
+ */
 export interface LobbyChatUpdate_t {
+  /** Lobby ID */
   m_ulSteamIDLobby: bigint;
+  /** user who's status in the lobby just changed - can be recipient */
   m_ulSteamIDUserChanged: bigint;
+  /** Chat member who made the change (different from SteamIDUserChange if kicking, muting, etc.) */
   m_ulSteamIDMakingChange: bigint;
+  /** bitfield of EChatMemberStateChange values */
   m_rgfChatMemberStateChange: number;
 }
 
+/**
+ * Field offsets and total size of `LobbyChatUpdate_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const LobbyChatUpdate_t_layout = {
   4: {
     size: 28,
@@ -2668,6 +3410,7 @@ export const LobbyChatUpdate_t_layout = {
   },
 } as const;
 
+/** Read a `LobbyChatUpdate_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeLobbyChatUpdate_t(bytes: Uint8Array): LobbyChatUpdate_t {
   const L = LobbyChatUpdate_t_layout[PACK];
   return {
@@ -2678,18 +3421,31 @@ export function decodeLobbyChatUpdate_t(bytes: Uint8Array): LobbyChatUpdate_t {
   };
 }
 
+/**
+ * Purpose: A chat message for this lobby has been sent
+ * use GetLobbyChatEntry( m_iChatID ) to retrieve the contents of this message
+ */
 export interface LobbyChatMsg_t {
+  /** the lobby id this is in */
   m_ulSteamIDLobby: bigint;
+  /** steamID of the user who has sent this message */
   m_ulSteamIDUser: bigint;
+  /** type of message */
   m_eChatEntryType: number;
+  /** index of the chat entry to lookup */
   m_iChatID: number;
 }
 
+/**
+ * Field offsets and total size of `LobbyChatMsg_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const LobbyChatMsg_t_layout = {
   4: { size: 24, m_ulSteamIDLobby: 0, m_ulSteamIDUser: 8, m_eChatEntryType: 16, m_iChatID: 20 },
   8: { size: 24, m_ulSteamIDLobby: 0, m_ulSteamIDUser: 8, m_eChatEntryType: 16, m_iChatID: 20 },
 } as const;
 
+/** Read a `LobbyChatMsg_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeLobbyChatMsg_t(bytes: Uint8Array): LobbyChatMsg_t {
   const L = LobbyChatMsg_t_layout[PACK];
   return {
@@ -2700,18 +3456,32 @@ export function decodeLobbyChatMsg_t(bytes: Uint8Array): LobbyChatMsg_t {
   };
 }
 
+/**
+ * Purpose: A game created a game for all the members of the lobby to join,
+ * as triggered by a SetLobbyGameServer()
+ * it's up to the individual clients to take action on this; the usual
+ * game behavior is to leave the lobby and connect to the specified game server
+ */
 export interface LobbyGameCreated_t {
+  /** the lobby we were in */
   m_ulSteamIDLobby: bigint;
+  /** the new game server that has been created or found for the lobby members */
   m_ulSteamIDGameServer: bigint;
+  /** IP & Port of the game server (if any) */
   m_unIP: number;
   m_usPort: number;
 }
 
+/**
+ * Field offsets and total size of `LobbyGameCreated_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const LobbyGameCreated_t_layout = {
   4: { size: 24, m_ulSteamIDLobby: 0, m_ulSteamIDGameServer: 8, m_unIP: 16, m_usPort: 20 },
   8: { size: 24, m_ulSteamIDLobby: 0, m_ulSteamIDGameServer: 8, m_unIP: 16, m_usPort: 20 },
 } as const;
 
+/** Read a `LobbyGameCreated_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeLobbyGameCreated_t(bytes: Uint8Array): LobbyGameCreated_t {
   const L = LobbyGameCreated_t_layout[PACK];
   return {
@@ -2722,15 +3492,25 @@ export function decodeLobbyGameCreated_t(bytes: Uint8Array): LobbyGameCreated_t 
   };
 }
 
+/**
+ * Purpose: Number of matching lobbies found
+ * iterate the returned lobbies with GetLobbyByIndex(), from values 0 to m_nLobbiesMatching-1
+ */
 export interface LobbyMatchList_t {
+  /** Number of lobbies that matched search criteria and we have SteamIDs for */
   m_nLobbiesMatching: number;
 }
 
+/**
+ * Field offsets and total size of `LobbyMatchList_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const LobbyMatchList_t_layout = {
   4: { size: 4, m_nLobbiesMatching: 0 },
   8: { size: 4, m_nLobbiesMatching: 0 },
 } as const;
 
+/** Read a `LobbyMatchList_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeLobbyMatchList_t(bytes: Uint8Array): LobbyMatchList_t {
   const L = LobbyMatchList_t_layout[PACK];
   return {
@@ -2738,17 +3518,29 @@ export function decodeLobbyMatchList_t(bytes: Uint8Array): LobbyMatchList_t {
   };
 }
 
+/**
+ * Purpose: posted if a user is forcefully removed from a lobby
+ * can occur if a user loses connection to Steam
+ */
 export interface LobbyKicked_t {
+  /** Lobby */
   m_ulSteamIDLobby: bigint;
+  /** User who kicked you - possibly the ID of the lobby itself */
   m_ulSteamIDAdmin: bigint;
+  /** true if you were kicked from the lobby due to the user losing connection to Steam (currently always true) */
   m_bKickedDueToDisconnect: number;
 }
 
+/**
+ * Field offsets and total size of `LobbyKicked_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const LobbyKicked_t_layout = {
   4: { size: 20, m_ulSteamIDLobby: 0, m_ulSteamIDAdmin: 8, m_bKickedDueToDisconnect: 16 },
   8: { size: 24, m_ulSteamIDLobby: 0, m_ulSteamIDAdmin: 8, m_bKickedDueToDisconnect: 16 },
 } as const;
 
+/** Read a `LobbyKicked_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeLobbyKicked_t(bytes: Uint8Array): LobbyKicked_t {
   const L = LobbyKicked_t_layout[PACK];
   return {
@@ -2758,16 +3550,29 @@ export function decodeLobbyKicked_t(bytes: Uint8Array): LobbyKicked_t {
   };
 }
 
+/**
+ * Purpose: Result of our request to create a Lobby
+ * m_eResult == k_EResultOK on success
+ * at this point, the lobby has been joined and is ready for use
+ * a LobbyEnter_t callback will also be received (since the local user is joining their own lobby)
+ */
 export interface LobbyCreated_t {
+  /** k_EResultOK - the lobby was successfully created */
   m_eResult: EResult;
+  /** chat room, zero if failed */
   m_ulSteamIDLobby: bigint;
 }
 
+/**
+ * Field offsets and total size of `LobbyCreated_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const LobbyCreated_t_layout = {
   4: { size: 12, m_eResult: 0, m_ulSteamIDLobby: 4 },
   8: { size: 16, m_eResult: 0, m_ulSteamIDLobby: 8 },
 } as const;
 
+/** Read a `LobbyCreated_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeLobbyCreated_t(bytes: Uint8Array): LobbyCreated_t {
   const L = LobbyCreated_t_layout[PACK];
   return {
@@ -2776,15 +3581,26 @@ export function decodeLobbyCreated_t(bytes: Uint8Array): LobbyCreated_t {
   };
 }
 
+/**
+ * Purpose: Result of our request to create a Lobby
+ * m_eResult == k_EResultOK on success
+ * at this point, the lobby has been joined and is ready for use
+ * a LobbyEnter_t callback will also be received (since the local user is joining their own lobby)
+ */
 export interface FavoritesListAccountsUpdated_t {
   m_eResult: EResult;
 }
 
+/**
+ * Field offsets and total size of `FavoritesListAccountsUpdated_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const FavoritesListAccountsUpdated_t_layout = {
   4: { size: 4, m_eResult: 0 },
   8: { size: 4, m_eResult: 0 },
 } as const;
 
+/** Read a `FavoritesListAccountsUpdated_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeFavoritesListAccountsUpdated_t(
   bytes: Uint8Array,
 ): FavoritesListAccountsUpdated_t {
@@ -2794,6 +3610,11 @@ export function decodeFavoritesListAccountsUpdated_t(
   };
 }
 
+/**
+ * Steam has responded to the user request to join a party via the given Beacon ID.
+ * If successful, the connect string contains game-specific instructions to connect
+ * to the game with that party.
+ */
 export interface JoinPartyCallback_t {
   m_eResult: EResult;
   m_ulBeaconID: bigint;
@@ -2801,6 +3622,10 @@ export interface JoinPartyCallback_t {
   m_rgchConnectString: string;
 }
 
+/**
+ * Field offsets and total size of `JoinPartyCallback_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const JoinPartyCallback_t_layout = {
   4: {
     size: 276,
@@ -2818,6 +3643,7 @@ export const JoinPartyCallback_t_layout = {
   },
 } as const;
 
+/** Read a `JoinPartyCallback_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeJoinPartyCallback_t(bytes: Uint8Array): JoinPartyCallback_t {
   const L = JoinPartyCallback_t_layout[PACK];
   return {
@@ -2828,16 +3654,22 @@ export function decodeJoinPartyCallback_t(bytes: Uint8Array): JoinPartyCallback_
   };
 }
 
+/** Response to CreateBeacon request. If successful, the beacon ID is provided. */
 export interface CreateBeaconCallback_t {
   m_eResult: EResult;
   m_ulBeaconID: bigint;
 }
 
+/**
+ * Field offsets and total size of `CreateBeaconCallback_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const CreateBeaconCallback_t_layout = {
   4: { size: 12, m_eResult: 0, m_ulBeaconID: 4 },
   8: { size: 16, m_eResult: 0, m_ulBeaconID: 8 },
 } as const;
 
+/** Read a `CreateBeaconCallback_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeCreateBeaconCallback_t(bytes: Uint8Array): CreateBeaconCallback_t {
   const L = CreateBeaconCallback_t_layout[PACK];
   return {
@@ -2846,16 +3678,27 @@ export function decodeCreateBeaconCallback_t(bytes: Uint8Array): CreateBeaconCal
   };
 }
 
+/**
+ * Someone has used the beacon to join your party - they are in-flight now
+ * and we've reserved one of the open slots for them.
+ * You should confirm when they join your party by calling OnReservationCompleted().
+ * Otherwise, Steam may timeout their reservation eventually.
+ */
 export interface ReservationNotificationCallback_t {
   m_ulBeaconID: bigint;
   m_steamIDJoiner: bigint;
 }
 
+/**
+ * Field offsets and total size of `ReservationNotificationCallback_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const ReservationNotificationCallback_t_layout = {
   4: { size: 16, m_ulBeaconID: 0, m_steamIDJoiner: 8 },
   8: { size: 16, m_ulBeaconID: 0, m_steamIDJoiner: 8 },
 } as const;
 
+/** Read a `ReservationNotificationCallback_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeReservationNotificationCallback_t(
   bytes: Uint8Array,
 ): ReservationNotificationCallback_t {
@@ -2866,15 +3709,21 @@ export function decodeReservationNotificationCallback_t(
   };
 }
 
+/** Response to ChangeNumOpenSlots call */
 export interface ChangeNumOpenSlotsCallback_t {
   m_eResult: EResult;
 }
 
+/**
+ * Field offsets and total size of `ChangeNumOpenSlotsCallback_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const ChangeNumOpenSlotsCallback_t_layout = {
   4: { size: 4, m_eResult: 0 },
   8: { size: 4, m_eResult: 0 },
 } as const;
 
+/** Read a `ChangeNumOpenSlotsCallback_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeChangeNumOpenSlotsCallback_t(
   bytes: Uint8Array,
 ): ChangeNumOpenSlotsCallback_t {
@@ -2884,13 +3733,19 @@ export function decodeChangeNumOpenSlotsCallback_t(
   };
 }
 
+/** The list of possible Party beacon locations has changed */
 export type AvailableBeaconLocationsUpdated_t = Record<string, never>;
 
+/**
+ * Field offsets and total size of `AvailableBeaconLocationsUpdated_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const AvailableBeaconLocationsUpdated_t_layout = {
   4: { size: 1 },
   8: { size: 1 },
 } as const;
 
+/** Read a `AvailableBeaconLocationsUpdated_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeAvailableBeaconLocationsUpdated_t(
   bytes: Uint8Array,
 ): AvailableBeaconLocationsUpdated_t {
@@ -2898,29 +3753,44 @@ export function decodeAvailableBeaconLocationsUpdated_t(
   return {};
 }
 
+/** The list of active beacons may have changed */
 export type ActiveBeaconsUpdated_t = Record<string, never>;
 
+/**
+ * Field offsets and total size of `ActiveBeaconsUpdated_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const ActiveBeaconsUpdated_t_layout = {
   4: { size: 1 },
   8: { size: 1 },
 } as const;
 
+/** Read a `ActiveBeaconsUpdated_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeActiveBeaconsUpdated_t(bytes: Uint8Array): ActiveBeaconsUpdated_t {
   void bytes;
   return {};
 }
 
+/** Purpose: The result of a call to FileShare() */
 export interface RemoteStorageFileShareResult_t {
+  /** The result of the operation */
   m_eResult: EResult;
+  /** The handle that can be shared with users and features */
   m_hFile: bigint;
+  /** The name of the file that was shared */
   m_rgchFilename: string;
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageFileShareResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageFileShareResult_t_layout = {
   4: { size: 272, m_eResult: 0, m_hFile: 4, m_rgchFilename: 12 },
   8: { size: 280, m_eResult: 0, m_hFile: 8, m_rgchFilename: 16 },
 } as const;
 
+/** Read a `RemoteStorageFileShareResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageFileShareResult_t(
   bytes: Uint8Array,
 ): RemoteStorageFileShareResult_t {
@@ -2932,12 +3802,18 @@ export function decodeRemoteStorageFileShareResult_t(
   };
 }
 
+/** Purpose: The result of a call to PublishFile() */
 export interface RemoteStoragePublishFileResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
   m_bUserNeedsToAcceptWorkshopLegalAgreement: boolean;
 }
 
+/**
+ * Field offsets and total size of `RemoteStoragePublishFileResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStoragePublishFileResult_t_layout = {
   4: {
     size: 16,
@@ -2953,6 +3829,7 @@ export const RemoteStoragePublishFileResult_t_layout = {
   },
 } as const;
 
+/** Read a `RemoteStoragePublishFileResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStoragePublishFileResult_t(
   bytes: Uint8Array,
 ): RemoteStoragePublishFileResult_t {
@@ -2967,16 +3844,23 @@ export function decodeRemoteStoragePublishFileResult_t(
   };
 }
 
+/** Purpose: The result of a call to DeletePublishedFile() */
 export interface RemoteStorageDeletePublishedFileResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageDeletePublishedFileResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageDeletePublishedFileResult_t_layout = {
   4: { size: 12, m_eResult: 0, m_nPublishedFileId: 4 },
   8: { size: 16, m_eResult: 0, m_nPublishedFileId: 8 },
 } as const;
 
+/** Read a `RemoteStorageDeletePublishedFileResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageDeletePublishedFileResult_t(
   bytes: Uint8Array,
 ): RemoteStorageDeletePublishedFileResult_t {
@@ -2987,13 +3871,19 @@ export function decodeRemoteStorageDeletePublishedFileResult_t(
   };
 }
 
+/** Purpose: The result of a call to EnumerateUserPublishedFiles() */
 export interface RemoteStorageEnumerateUserPublishedFilesResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nResultsReturned: number;
   m_nTotalResultCount: number;
   m_rgPublishedFileId: bigint[];
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageEnumerateUserPublishedFilesResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageEnumerateUserPublishedFilesResult_t_layout = {
   4: {
     size: 412,
@@ -3011,6 +3901,7 @@ export const RemoteStorageEnumerateUserPublishedFilesResult_t_layout = {
   },
 } as const;
 
+/** Read a `RemoteStorageEnumerateUserPublishedFilesResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageEnumerateUserPublishedFilesResult_t(
   bytes: Uint8Array,
 ): RemoteStorageEnumerateUserPublishedFilesResult_t {
@@ -3023,16 +3914,23 @@ export function decodeRemoteStorageEnumerateUserPublishedFilesResult_t(
   };
 }
 
+/** Purpose: The result of a call to SubscribePublishedFile() */
 export interface RemoteStorageSubscribePublishedFileResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageSubscribePublishedFileResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageSubscribePublishedFileResult_t_layout = {
   4: { size: 12, m_eResult: 0, m_nPublishedFileId: 4 },
   8: { size: 16, m_eResult: 0, m_nPublishedFileId: 8 },
 } as const;
 
+/** Read a `RemoteStorageSubscribePublishedFileResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageSubscribePublishedFileResult_t(
   bytes: Uint8Array,
 ): RemoteStorageSubscribePublishedFileResult_t {
@@ -3043,7 +3941,9 @@ export function decodeRemoteStorageSubscribePublishedFileResult_t(
   };
 }
 
+/** Purpose: The result of a call to EnumerateSubscribePublishedFiles() */
 export interface RemoteStorageEnumerateUserSubscribedFilesResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nResultsReturned: number;
   m_nTotalResultCount: number;
@@ -3051,6 +3951,10 @@ export interface RemoteStorageEnumerateUserSubscribedFilesResult_t {
   m_rgRTimeSubscribed: number[];
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageEnumerateUserSubscribedFilesResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageEnumerateUserSubscribedFilesResult_t_layout = {
   4: {
     size: 612,
@@ -3070,6 +3974,7 @@ export const RemoteStorageEnumerateUserSubscribedFilesResult_t_layout = {
   },
 } as const;
 
+/** Read a `RemoteStorageEnumerateUserSubscribedFilesResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageEnumerateUserSubscribedFilesResult_t(
   bytes: Uint8Array,
 ): RemoteStorageEnumerateUserSubscribedFilesResult_t {
@@ -3083,16 +3988,23 @@ export function decodeRemoteStorageEnumerateUserSubscribedFilesResult_t(
   };
 }
 
+/** Purpose: The result of a call to UnsubscribePublishedFile() */
 export interface RemoteStorageUnsubscribePublishedFileResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageUnsubscribePublishedFileResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageUnsubscribePublishedFileResult_t_layout = {
   4: { size: 12, m_eResult: 0, m_nPublishedFileId: 4 },
   8: { size: 16, m_eResult: 0, m_nPublishedFileId: 8 },
 } as const;
 
+/** Read a `RemoteStorageUnsubscribePublishedFileResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageUnsubscribePublishedFileResult_t(
   bytes: Uint8Array,
 ): RemoteStorageUnsubscribePublishedFileResult_t {
@@ -3103,12 +4015,18 @@ export function decodeRemoteStorageUnsubscribePublishedFileResult_t(
   };
 }
 
+/** Purpose: The result of a call to CommitPublishedFileUpdate() */
 export interface RemoteStorageUpdatePublishedFileResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
   m_bUserNeedsToAcceptWorkshopLegalAgreement: boolean;
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageUpdatePublishedFileResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageUpdatePublishedFileResult_t_layout = {
   4: {
     size: 16,
@@ -3124,6 +4042,7 @@ export const RemoteStorageUpdatePublishedFileResult_t_layout = {
   },
 } as const;
 
+/** Read a `RemoteStorageUpdatePublishedFileResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageUpdatePublishedFileResult_t(
   bytes: Uint8Array,
 ): RemoteStorageUpdatePublishedFileResult_t {
@@ -3138,15 +4057,26 @@ export function decodeRemoteStorageUpdatePublishedFileResult_t(
   };
 }
 
+/** Purpose: The result of a call to UGCDownload() */
 export interface RemoteStorageDownloadUGCResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
+  /** The handle to the file that was attempted to be downloaded. */
   m_hFile: bigint;
+  /** ID of the app that created this file. */
   m_nAppID: number;
+  /** The size of the file that was downloaded, in bytes. */
   m_nSizeInBytes: number;
+  /** The name of the file that was downloaded. */
   m_pchFileName: string;
+  /** Steam ID of the user who created this content. */
   m_ulSteamIDOwner: bigint;
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageDownloadUGCResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageDownloadUGCResult_t_layout = {
   4: {
     size: 288,
@@ -3168,6 +4098,7 @@ export const RemoteStorageDownloadUGCResult_t_layout = {
   },
 } as const;
 
+/** Read a `RemoteStorageDownloadUGCResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageDownloadUGCResult_t(
   bytes: Uint8Array,
 ): RemoteStorageDownloadUGCResult_t {
@@ -3182,30 +4113,53 @@ export function decodeRemoteStorageDownloadUGCResult_t(
   };
 }
 
+/** Purpose: The result of a call to GetPublishedFileDetails() */
 export interface RemoteStorageGetPublishedFileDetailsResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
+  /** ID of the app that created this file. */
   m_nCreatorAppID: number;
+  /** ID of the app that will consume this file. */
   m_nConsumerAppID: number;
+  /** title of document */
   m_rgchTitle: string;
+  /** description of document */
   m_rgchDescription: string;
+  /** The handle of the primary file */
   m_hFile: bigint;
+  /** The handle of the preview file */
   m_hPreviewFile: bigint;
+  /** Steam ID of the user who created this content. */
   m_ulSteamIDOwner: bigint;
+  /** time when the published file was created */
   m_rtimeCreated: number;
+  /** time when the published file was last updated */
   m_rtimeUpdated: number;
   m_eVisibility: ERemoteStoragePublishedFileVisibility;
   m_bBanned: boolean;
+  /** comma separated list of all tags associated with this file */
   m_rgchTags: string;
+  /** whether the list of tags was too long to be returned in the provided buffer */
   m_bTagsTruncated: boolean;
+  /** The name of the primary file */
   m_pchFileName: string;
+  /** Size of the primary file */
   m_nFileSize: number;
+  /** Size of the preview file */
   m_nPreviewFileSize: number;
+  /** URL (for a video or a website) */
   m_rgchURL: string;
+  /** Type of the file */
   m_eFileType: EWorkshopFileType;
+  /** developer has specifically flagged this item as accepted in the Workshop */
   m_bAcceptedForUse: boolean;
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageGetPublishedFileDetailsResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageGetPublishedFileDetailsResult_t_layout = {
   4: {
     size: 9748,
@@ -3257,6 +4211,7 @@ export const RemoteStorageGetPublishedFileDetailsResult_t_layout = {
   },
 } as const;
 
+/** Read a `RemoteStorageGetPublishedFileDetailsResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageGetPublishedFileDetailsResult_t(
   bytes: Uint8Array,
 ): RemoteStorageGetPublishedFileDetailsResult_t {
@@ -3286,6 +4241,7 @@ export function decodeRemoteStorageGetPublishedFileDetailsResult_t(
   };
 }
 
+/** Steam's `RemoteStorageEnumerateWorkshopFilesResult_t` callback, id 1319. */
 export interface RemoteStorageEnumerateWorkshopFilesResult_t {
   m_eResult: EResult;
   m_nResultsReturned: number;
@@ -3296,6 +4252,10 @@ export interface RemoteStorageEnumerateWorkshopFilesResult_t {
   m_unStartIndex: number;
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageEnumerateWorkshopFilesResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageEnumerateWorkshopFilesResult_t_layout = {
   4: {
     size: 620,
@@ -3319,6 +4279,7 @@ export const RemoteStorageEnumerateWorkshopFilesResult_t_layout = {
   },
 } as const;
 
+/** Read a `RemoteStorageEnumerateWorkshopFilesResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageEnumerateWorkshopFilesResult_t(
   bytes: Uint8Array,
 ): RemoteStorageEnumerateWorkshopFilesResult_t {
@@ -3334,6 +4295,7 @@ export function decodeRemoteStorageEnumerateWorkshopFilesResult_t(
   };
 }
 
+/** Purpose: The result of GetPublishedItemVoteDetails */
 export interface RemoteStorageGetPublishedItemVoteDetailsResult_t {
   m_eResult: EResult;
   m_unPublishedFileId: bigint;
@@ -3343,6 +4305,10 @@ export interface RemoteStorageGetPublishedItemVoteDetailsResult_t {
   m_fScore: number;
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageGetPublishedItemVoteDetailsResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageGetPublishedItemVoteDetailsResult_t_layout = {
   4: {
     size: 28,
@@ -3364,6 +4330,7 @@ export const RemoteStorageGetPublishedItemVoteDetailsResult_t_layout = {
   },
 } as const;
 
+/** Read a `RemoteStorageGetPublishedItemVoteDetailsResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageGetPublishedItemVoteDetailsResult_t(
   bytes: Uint8Array,
 ): RemoteStorageGetPublishedItemVoteDetailsResult_t {
@@ -3378,16 +4345,24 @@ export function decodeRemoteStorageGetPublishedItemVoteDetailsResult_t(
   };
 }
 
+/** Purpose: User subscribed to a file for the app (from within the app or on the web) */
 export interface RemoteStoragePublishedFileSubscribed_t {
+  /** The published file id */
   m_nPublishedFileId: bigint;
+  /** ID of the app that will consume this file. */
   m_nAppID: number;
 }
 
+/**
+ * Field offsets and total size of `RemoteStoragePublishedFileSubscribed_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStoragePublishedFileSubscribed_t_layout = {
   4: { size: 12, m_nPublishedFileId: 0, m_nAppID: 8 },
   8: { size: 16, m_nPublishedFileId: 0, m_nAppID: 8 },
 } as const;
 
+/** Read a `RemoteStoragePublishedFileSubscribed_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStoragePublishedFileSubscribed_t(
   bytes: Uint8Array,
 ): RemoteStoragePublishedFileSubscribed_t {
@@ -3398,16 +4373,24 @@ export function decodeRemoteStoragePublishedFileSubscribed_t(
   };
 }
 
+/** Purpose: User unsubscribed from a file for the app (from within the app or on the web) */
 export interface RemoteStoragePublishedFileUnsubscribed_t {
+  /** The published file id */
   m_nPublishedFileId: bigint;
+  /** ID of the app that will consume this file. */
   m_nAppID: number;
 }
 
+/**
+ * Field offsets and total size of `RemoteStoragePublishedFileUnsubscribed_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStoragePublishedFileUnsubscribed_t_layout = {
   4: { size: 12, m_nPublishedFileId: 0, m_nAppID: 8 },
   8: { size: 16, m_nPublishedFileId: 0, m_nAppID: 8 },
 } as const;
 
+/** Read a `RemoteStoragePublishedFileUnsubscribed_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStoragePublishedFileUnsubscribed_t(
   bytes: Uint8Array,
 ): RemoteStoragePublishedFileUnsubscribed_t {
@@ -3418,16 +4401,24 @@ export function decodeRemoteStoragePublishedFileUnsubscribed_t(
   };
 }
 
+/** Purpose: Published file that a user owns was deleted (from within the app or the web) */
 export interface RemoteStoragePublishedFileDeleted_t {
+  /** The published file id */
   m_nPublishedFileId: bigint;
+  /** ID of the app that will consume this file. */
   m_nAppID: number;
 }
 
+/**
+ * Field offsets and total size of `RemoteStoragePublishedFileDeleted_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStoragePublishedFileDeleted_t_layout = {
   4: { size: 12, m_nPublishedFileId: 0, m_nAppID: 8 },
   8: { size: 16, m_nPublishedFileId: 0, m_nAppID: 8 },
 } as const;
 
+/** Read a `RemoteStoragePublishedFileDeleted_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStoragePublishedFileDeleted_t(
   bytes: Uint8Array,
 ): RemoteStoragePublishedFileDeleted_t {
@@ -3438,16 +4429,24 @@ export function decodeRemoteStoragePublishedFileDeleted_t(
   };
 }
 
+/** Purpose: The result of a call to UpdateUserPublishedItemVote() */
 export interface RemoteStorageUpdateUserPublishedItemVoteResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
+  /** The published file id */
   m_nPublishedFileId: bigint;
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageUpdateUserPublishedItemVoteResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageUpdateUserPublishedItemVoteResult_t_layout = {
   4: { size: 12, m_eResult: 0, m_nPublishedFileId: 4 },
   8: { size: 16, m_eResult: 0, m_nPublishedFileId: 8 },
 } as const;
 
+/** Read a `RemoteStorageUpdateUserPublishedItemVoteResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageUpdateUserPublishedItemVoteResult_t(
   bytes: Uint8Array,
 ): RemoteStorageUpdateUserPublishedItemVoteResult_t {
@@ -3458,17 +4457,26 @@ export function decodeRemoteStorageUpdateUserPublishedItemVoteResult_t(
   };
 }
 
+/** Purpose: The result of a call to GetUserPublishedItemVoteDetails() */
 export interface RemoteStorageUserVoteDetails_t {
+  /** The result of the operation. */
   m_eResult: EResult;
+  /** The published file id */
   m_nPublishedFileId: bigint;
+  /** what the user voted */
   m_eVote: EWorkshopVote;
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageUserVoteDetails_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageUserVoteDetails_t_layout = {
   4: { size: 16, m_eResult: 0, m_nPublishedFileId: 4, m_eVote: 12 },
   8: { size: 24, m_eResult: 0, m_nPublishedFileId: 8, m_eVote: 16 },
 } as const;
 
+/** Read a `RemoteStorageUserVoteDetails_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageUserVoteDetails_t(
   bytes: Uint8Array,
 ): RemoteStorageUserVoteDetails_t {
@@ -3480,13 +4488,19 @@ export function decodeRemoteStorageUserVoteDetails_t(
   };
 }
 
+/** Steam's `RemoteStorageEnumerateUserSharedWorkshopFilesResult_t` callback, id 1326. */
 export interface RemoteStorageEnumerateUserSharedWorkshopFilesResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
   m_nResultsReturned: number;
   m_nTotalResultCount: number;
   m_rgPublishedFileId: bigint[];
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageEnumerateUserSharedWorkshopFilesResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageEnumerateUserSharedWorkshopFilesResult_t_layout = {
   4: {
     size: 412,
@@ -3504,6 +4518,7 @@ export const RemoteStorageEnumerateUserSharedWorkshopFilesResult_t_layout = {
   },
 } as const;
 
+/** Read a `RemoteStorageEnumerateUserSharedWorkshopFilesResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageEnumerateUserSharedWorkshopFilesResult_t(
   bytes: Uint8Array,
 ): RemoteStorageEnumerateUserSharedWorkshopFilesResult_t {
@@ -3516,17 +4531,26 @@ export function decodeRemoteStorageEnumerateUserSharedWorkshopFilesResult_t(
   };
 }
 
+/** Steam's `RemoteStorageSetUserPublishedFileActionResult_t` callback, id 1327. */
 export interface RemoteStorageSetUserPublishedFileActionResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
+  /** The published file id */
   m_nPublishedFileId: bigint;
+  /** the action that was attempted */
   m_eAction: EWorkshopFileAction;
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageSetUserPublishedFileActionResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageSetUserPublishedFileActionResult_t_layout = {
   4: { size: 16, m_eResult: 0, m_nPublishedFileId: 4, m_eAction: 12 },
   8: { size: 24, m_eResult: 0, m_nPublishedFileId: 8, m_eAction: 16 },
 } as const;
 
+/** Read a `RemoteStorageSetUserPublishedFileActionResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageSetUserPublishedFileActionResult_t(
   bytes: Uint8Array,
 ): RemoteStorageSetUserPublishedFileActionResult_t {
@@ -3538,8 +4562,11 @@ export function decodeRemoteStorageSetUserPublishedFileActionResult_t(
   };
 }
 
+/** Steam's `RemoteStorageEnumeratePublishedFilesByUserActionResult_t` callback, id 1328. */
 export interface RemoteStorageEnumeratePublishedFilesByUserActionResult_t {
+  /** The result of the operation. */
   m_eResult: EResult;
+  /** the action that was filtered on */
   m_eAction: EWorkshopFileAction;
   m_nResultsReturned: number;
   m_nTotalResultCount: number;
@@ -3547,6 +4574,10 @@ export interface RemoteStorageEnumeratePublishedFilesByUserActionResult_t {
   m_rgRTimeUpdated: number[];
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageEnumeratePublishedFilesByUserActionResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageEnumeratePublishedFilesByUserActionResult_t_layout = {
   4: {
     size: 616,
@@ -3568,6 +4599,7 @@ export const RemoteStorageEnumeratePublishedFilesByUserActionResult_t_layout = {
   },
 } as const;
 
+/** Read a `RemoteStorageEnumeratePublishedFilesByUserActionResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageEnumeratePublishedFilesByUserActionResult_t(
   bytes: Uint8Array,
 ): RemoteStorageEnumeratePublishedFilesByUserActionResult_t {
@@ -3582,16 +4614,22 @@ export function decodeRemoteStorageEnumeratePublishedFilesByUserActionResult_t(
   };
 }
 
+/** Purpose: Called periodically while a PublishWorkshopFile is in progress */
 export interface RemoteStoragePublishFileProgress_t {
   m_dPercentFile: number;
   m_bPreview: boolean;
 }
 
+/**
+ * Field offsets and total size of `RemoteStoragePublishFileProgress_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStoragePublishFileProgress_t_layout = {
   4: { size: 12, m_dPercentFile: 0, m_bPreview: 8 },
   8: { size: 16, m_dPercentFile: 0, m_bPreview: 8 },
 } as const;
 
+/** Read a `RemoteStoragePublishFileProgress_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStoragePublishFileProgress_t(
   bytes: Uint8Array,
 ): RemoteStoragePublishFileProgress_t {
@@ -3602,17 +4640,26 @@ export function decodeRemoteStoragePublishFileProgress_t(
   };
 }
 
+/** Purpose: Called when the content for a published file is updated */
 export interface RemoteStoragePublishedFileUpdated_t {
+  /** The published file id */
   m_nPublishedFileId: bigint;
+  /** ID of the app that will consume this file. */
   m_nAppID: number;
+  /** not used anymore */
   m_ulUnused: bigint;
 }
 
+/**
+ * Field offsets and total size of `RemoteStoragePublishedFileUpdated_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStoragePublishedFileUpdated_t_layout = {
   4: { size: 20, m_nPublishedFileId: 0, m_nAppID: 8, m_ulUnused: 12 },
   8: { size: 24, m_nPublishedFileId: 0, m_nAppID: 8, m_ulUnused: 16 },
 } as const;
 
+/** Read a `RemoteStoragePublishedFileUpdated_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStoragePublishedFileUpdated_t(
   bytes: Uint8Array,
 ): RemoteStoragePublishedFileUpdated_t {
@@ -3624,15 +4671,22 @@ export function decodeRemoteStoragePublishedFileUpdated_t(
   };
 }
 
+/** Purpose: Called when a FileWriteAsync completes */
 export interface RemoteStorageFileWriteAsyncComplete_t {
+  /** result */
   m_eResult: EResult;
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageFileWriteAsyncComplete_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageFileWriteAsyncComplete_t_layout = {
   4: { size: 4, m_eResult: 0 },
   8: { size: 4, m_eResult: 0 },
 } as const;
 
+/** Read a `RemoteStorageFileWriteAsyncComplete_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageFileWriteAsyncComplete_t(
   bytes: Uint8Array,
 ): RemoteStorageFileWriteAsyncComplete_t {
@@ -3642,18 +4696,28 @@ export function decodeRemoteStorageFileWriteAsyncComplete_t(
   };
 }
 
+/** Purpose: Called when a FileReadAsync completes */
 export interface RemoteStorageFileReadAsyncComplete_t {
+  /** call handle of the async read which was made */
   m_hFileReadAsync: bigint;
+  /** result */
   m_eResult: EResult;
+  /** offset in the file this read was at */
   m_nOffset: number;
+  /** amount read - will the <= the amount requested */
   m_cubRead: number;
 }
 
+/**
+ * Field offsets and total size of `RemoteStorageFileReadAsyncComplete_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageFileReadAsyncComplete_t_layout = {
   4: { size: 20, m_hFileReadAsync: 0, m_eResult: 8, m_nOffset: 12, m_cubRead: 16 },
   8: { size: 24, m_hFileReadAsync: 0, m_eResult: 8, m_nOffset: 12, m_cubRead: 16 },
 } as const;
 
+/** Read a `RemoteStorageFileReadAsyncComplete_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageFileReadAsyncComplete_t(
   bytes: Uint8Array,
 ): RemoteStorageFileReadAsyncComplete_t {
@@ -3666,13 +4730,23 @@ export function decodeRemoteStorageFileReadAsyncComplete_t(
   };
 }
 
+/**
+ * Purpose: one or more files for this app have changed locally after syncing
+ * to remote session changes
+ * Note: only posted if this happens DURING the local app session
+ */
 export type RemoteStorageLocalFileChange_t = Record<string, never>;
 
+/**
+ * Field offsets and total size of `RemoteStorageLocalFileChange_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoteStorageLocalFileChange_t_layout = {
   4: { size: 1 },
   8: { size: 1 },
 } as const;
 
+/** Read a `RemoteStorageLocalFileChange_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoteStorageLocalFileChange_t(
   bytes: Uint8Array,
 ): RemoteStorageLocalFileChange_t {
@@ -3680,17 +4754,29 @@ export function decodeRemoteStorageLocalFileChange_t(
   return {};
 }
 
+/**
+ * Purpose: called when the latests stats and achievements have been received
+ * from the server
+ */
 export interface UserStatsReceived_t {
+  /** Game these stats are for */
   m_nGameID: bigint;
+  /** Success / error fetching the stats */
   m_eResult: EResult;
+  /** The user for whom the stats are retrieved for */
   m_steamIDUser: bigint;
 }
 
+/**
+ * Field offsets and total size of `UserStatsReceived_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const UserStatsReceived_t_layout = {
   4: { size: 20, m_nGameID: 0, m_eResult: 8, m_steamIDUser: 12 },
   8: { size: 24, m_nGameID: 0, m_eResult: 8, m_steamIDUser: 12 },
 } as const;
 
+/** Read a `UserStatsReceived_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeUserStatsReceived_t(bytes: Uint8Array): UserStatsReceived_t {
   const L = UserStatsReceived_t_layout[PACK];
   return {
@@ -3700,16 +4786,24 @@ export function decodeUserStatsReceived_t(bytes: Uint8Array): UserStatsReceived_
   };
 }
 
+/** Purpose: result of a request to store the user stats for a game */
 export interface UserStatsStored_t {
+  /** Game these stats are for */
   m_nGameID: bigint;
+  /** success / error */
   m_eResult: EResult;
 }
 
+/**
+ * Field offsets and total size of `UserStatsStored_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const UserStatsStored_t_layout = {
   4: { size: 12, m_nGameID: 0, m_eResult: 8 },
   8: { size: 16, m_nGameID: 0, m_eResult: 8 },
 } as const;
 
+/** Read a `UserStatsStored_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeUserStatsStored_t(bytes: Uint8Array): UserStatsStored_t {
   const L = UserStatsStored_t_layout[PACK];
   return {
@@ -3718,14 +4812,28 @@ export function decodeUserStatsStored_t(bytes: Uint8Array): UserStatsStored_t {
   };
 }
 
+/**
+ * Purpose: result of a request to store the achievements for a game, or an
+ * "indicate progress" call. If both m_nCurProgress and m_nMaxProgress
+ * are zero, that means the achievement has been fully unlocked.
+ */
 export interface UserAchievementStored_t {
+  /** Game this is for */
   m_nGameID: bigint;
+  /** unused. if this is a "group" achievement */
   m_bGroupAchievement: boolean;
+  /** name of the achievement */
   m_rgchAchievementName: string;
+  /** current progress towards the achievement */
   m_nCurProgress: number;
+  /** "out of" this many */
   m_nMaxProgress: number;
 }
 
+/**
+ * Field offsets and total size of `UserAchievementStored_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const UserAchievementStored_t_layout = {
   4: {
     size: 148,
@@ -3745,6 +4853,7 @@ export const UserAchievementStored_t_layout = {
   },
 } as const;
 
+/** Read a `UserAchievementStored_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeUserAchievementStored_t(bytes: Uint8Array): UserAchievementStored_t {
   const L = UserAchievementStored_t_layout[PACK];
   return {
@@ -3756,16 +4865,27 @@ export function decodeUserAchievementStored_t(bytes: Uint8Array): UserAchievemen
   };
 }
 
+/**
+ * Purpose: call result for finding a leaderboard, returned as a result of FindOrCreateLeaderboard() or FindLeaderboard()
+ * use CCallResult<> to map this async result to a member function
+ */
 export interface LeaderboardFindResult_t {
+  /** handle to the leaderboard serarched for, 0 if no leaderboard found */
   m_hSteamLeaderboard: bigint;
+  /** 0 if no leaderboard found */
   m_bLeaderboardFound: number;
 }
 
+/**
+ * Field offsets and total size of `LeaderboardFindResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const LeaderboardFindResult_t_layout = {
   4: { size: 12, m_hSteamLeaderboard: 0, m_bLeaderboardFound: 8 },
   8: { size: 16, m_hSteamLeaderboard: 0, m_bLeaderboardFound: 8 },
 } as const;
 
+/** Read a `LeaderboardFindResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeLeaderboardFindResult_t(bytes: Uint8Array): LeaderboardFindResult_t {
   const L = LeaderboardFindResult_t_layout[PACK];
   return {
@@ -3774,17 +4894,28 @@ export function decodeLeaderboardFindResult_t(bytes: Uint8Array): LeaderboardFin
   };
 }
 
+/**
+ * Purpose: call result indicating scores for a leaderboard have been downloaded and are ready to be retrieved, returned as a result of DownloadLeaderboardEntries()
+ * use CCallResult<> to map this async result to a member function
+ */
 export interface LeaderboardScoresDownloaded_t {
   m_hSteamLeaderboard: bigint;
+  /** the handle to pass into GetDownloadedLeaderboardEntries() */
   m_hSteamLeaderboardEntries: bigint;
+  /** the number of entries downloaded */
   m_cEntryCount: number;
 }
 
+/**
+ * Field offsets and total size of `LeaderboardScoresDownloaded_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const LeaderboardScoresDownloaded_t_layout = {
   4: { size: 20, m_hSteamLeaderboard: 0, m_hSteamLeaderboardEntries: 8, m_cEntryCount: 16 },
   8: { size: 24, m_hSteamLeaderboard: 0, m_hSteamLeaderboardEntries: 8, m_cEntryCount: 16 },
 } as const;
 
+/** Read a `LeaderboardScoresDownloaded_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeLeaderboardScoresDownloaded_t(
   bytes: Uint8Array,
 ): LeaderboardScoresDownloaded_t {
@@ -3796,15 +4927,29 @@ export function decodeLeaderboardScoresDownloaded_t(
   };
 }
 
+/**
+ * Purpose: call result indicating scores has been uploaded, returned as a result of UploadLeaderboardScore()
+ * use CCallResult<> to map this async result to a member function
+ */
 export interface LeaderboardScoreUploaded_t {
+  /** 1 if the call was successful */
   m_bSuccess: number;
+  /** the leaderboard handle that was */
   m_hSteamLeaderboard: bigint;
+  /** the score that was attempted to set */
   m_nScore: number;
+  /** true if the score in the leaderboard change, false if the existing score was better */
   m_bScoreChanged: number;
+  /** the new global rank of the user in this leaderboard */
   m_nGlobalRankNew: number;
+  /** the previous global rank of the user in this leaderboard; 0 if the user had no existing entry in the leaderboard */
   m_nGlobalRankPrevious: number;
 }
 
+/**
+ * Field offsets and total size of `LeaderboardScoreUploaded_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const LeaderboardScoreUploaded_t_layout = {
   4: {
     size: 28,
@@ -3826,6 +4971,7 @@ export const LeaderboardScoreUploaded_t_layout = {
   },
 } as const;
 
+/** Read a `LeaderboardScoreUploaded_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeLeaderboardScoreUploaded_t(bytes: Uint8Array): LeaderboardScoreUploaded_t {
   const L = LeaderboardScoreUploaded_t_layout[PACK];
   return {
@@ -3838,16 +4984,24 @@ export function decodeLeaderboardScoreUploaded_t(bytes: Uint8Array): Leaderboard
   };
 }
 
+/** Steam's `NumberOfCurrentPlayers_t` callback, id 1107. */
 export interface NumberOfCurrentPlayers_t {
+  /** 1 if the call was successful */
   m_bSuccess: number;
+  /** Number of players currently playing */
   m_cPlayers: number;
 }
 
+/**
+ * Field offsets and total size of `NumberOfCurrentPlayers_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const NumberOfCurrentPlayers_t_layout = {
   4: { size: 8, m_bSuccess: 0, m_cPlayers: 4 },
   8: { size: 8, m_bSuccess: 0, m_cPlayers: 4 },
 } as const;
 
+/** Read a `NumberOfCurrentPlayers_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeNumberOfCurrentPlayers_t(bytes: Uint8Array): NumberOfCurrentPlayers_t {
   const L = NumberOfCurrentPlayers_t_layout[PACK];
   return {
@@ -3856,15 +5010,25 @@ export function decodeNumberOfCurrentPlayers_t(bytes: Uint8Array): NumberOfCurre
   };
 }
 
+/**
+ * Purpose: Callback indicating that a user's stats have been unloaded.
+ * Call RequestUserStats again to access stats for this user
+ */
 export interface UserStatsUnloaded_t {
+  /** User whose stats have been unloaded */
   m_steamIDUser: bigint;
 }
 
+/**
+ * Field offsets and total size of `UserStatsUnloaded_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const UserStatsUnloaded_t_layout = {
   4: { size: 8, m_steamIDUser: 0 },
   8: { size: 8, m_steamIDUser: 0 },
 } as const;
 
+/** Read a `UserStatsUnloaded_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeUserStatsUnloaded_t(bytes: Uint8Array): UserStatsUnloaded_t {
   const L = UserStatsUnloaded_t_layout[PACK];
   return {
@@ -3872,18 +5036,28 @@ export function decodeUserStatsUnloaded_t(bytes: Uint8Array): UserStatsUnloaded_
   };
 }
 
+/** Purpose: Callback indicating that an achievement icon has been fetched */
 export interface UserAchievementIconFetched_t {
+  /** Game this is for */
   m_nGameID: bigint;
+  /** name of the achievement */
   m_rgchAchievementName: string;
+  /** Is the icon for the achieved or not achieved version? */
   m_bAchieved: boolean;
+  /** Handle to the image, which can be used in SteamUtils()->GetImageRGBA(), 0 means no image is set for the achievement */
   m_nIconHandle: number;
 }
 
+/**
+ * Field offsets and total size of `UserAchievementIconFetched_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const UserAchievementIconFetched_t_layout = {
   4: { size: 144, m_nGameID: 0, m_rgchAchievementName: 8, m_bAchieved: 136, m_nIconHandle: 140 },
   8: { size: 144, m_nGameID: 0, m_rgchAchievementName: 8, m_bAchieved: 136, m_nIconHandle: 140 },
 } as const;
 
+/** Read a `UserAchievementIconFetched_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeUserAchievementIconFetched_t(
   bytes: Uint8Array,
 ): UserAchievementIconFetched_t {
@@ -3896,16 +5070,24 @@ export function decodeUserAchievementIconFetched_t(
   };
 }
 
+/** Purpose: Callback indicating that global achievement percentages are fetched */
 export interface GlobalAchievementPercentagesReady_t {
+  /** Game this is for */
   m_nGameID: bigint;
+  /** Result of the operation */
   m_eResult: EResult;
 }
 
+/**
+ * Field offsets and total size of `GlobalAchievementPercentagesReady_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GlobalAchievementPercentagesReady_t_layout = {
   4: { size: 12, m_nGameID: 0, m_eResult: 8 },
   8: { size: 16, m_nGameID: 0, m_eResult: 8 },
 } as const;
 
+/** Read a `GlobalAchievementPercentagesReady_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGlobalAchievementPercentagesReady_t(
   bytes: Uint8Array,
 ): GlobalAchievementPercentagesReady_t {
@@ -3916,16 +5098,24 @@ export function decodeGlobalAchievementPercentagesReady_t(
   };
 }
 
+/** Purpose: call result indicating UGC has been uploaded, returned as a result of SetLeaderboardUGC() */
 export interface LeaderboardUGCSet_t {
+  /** The result of the operation */
   m_eResult: EResult;
+  /** the leaderboard handle that was */
   m_hSteamLeaderboard: bigint;
 }
 
+/**
+ * Field offsets and total size of `LeaderboardUGCSet_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const LeaderboardUGCSet_t_layout = {
   4: { size: 12, m_eResult: 0, m_hSteamLeaderboard: 4 },
   8: { size: 16, m_eResult: 0, m_hSteamLeaderboard: 8 },
 } as const;
 
+/** Read a `LeaderboardUGCSet_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeLeaderboardUGCSet_t(bytes: Uint8Array): LeaderboardUGCSet_t {
   const L = LeaderboardUGCSet_t_layout[PACK];
   return {
@@ -3934,16 +5124,27 @@ export function decodeLeaderboardUGCSet_t(bytes: Uint8Array): LeaderboardUGCSet_
   };
 }
 
+/**
+ * Purpose: callback indicating global stats have been received.
+ * Returned as a result of RequestGlobalStats()
+ */
 export interface GlobalStatsReceived_t {
+  /** Game global stats were requested for */
   m_nGameID: bigint;
+  /** The result of the request */
   m_eResult: EResult;
 }
 
+/**
+ * Field offsets and total size of `GlobalStatsReceived_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GlobalStatsReceived_t_layout = {
   4: { size: 12, m_nGameID: 0, m_eResult: 8 },
   8: { size: 16, m_nGameID: 0, m_eResult: 8 },
 } as const;
 
+/** Read a `GlobalStatsReceived_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGlobalStatsReceived_t(bytes: Uint8Array): GlobalStatsReceived_t {
   const L = GlobalStatsReceived_t_layout[PACK];
   return {
@@ -3952,15 +5153,22 @@ export function decodeGlobalStatsReceived_t(bytes: Uint8Array): GlobalStatsRecei
   };
 }
 
+/** Purpose: posted after the user gains ownership of DLC & that DLC is installed */
 export interface DlcInstalled_t {
+  /** AppID of the DLC */
   m_nAppID: number;
 }
 
+/**
+ * Field offsets and total size of `DlcInstalled_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const DlcInstalled_t_layout = {
   4: { size: 4, m_nAppID: 0 },
   8: { size: 4, m_nAppID: 0 },
 } as const;
 
+/** Read a `DlcInstalled_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeDlcInstalled_t(bytes: Uint8Array): DlcInstalled_t {
   const L = DlcInstalled_t_layout[PACK];
   return {
@@ -3968,18 +5176,33 @@ export function decodeDlcInstalled_t(bytes: Uint8Array): DlcInstalled_t {
   };
 }
 
+/**
+ * Purpose: posted after the user gains executes a Steam URL with command line or query parameters
+ * such as steam://run/<appid>//-commandline/?param1=value1&param2=value2&param3=value3 etc
+ * while the game is already running.  The new params can be queried
+ * with GetLaunchQueryParam and GetLaunchCommandLine
+ */
 export type NewUrlLaunchParameters_t = Record<string, never>;
 
+/**
+ * Field offsets and total size of `NewUrlLaunchParameters_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const NewUrlLaunchParameters_t_layout = {
   4: { size: 1 },
   8: { size: 1 },
 } as const;
 
+/** Read a `NewUrlLaunchParameters_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeNewUrlLaunchParameters_t(bytes: Uint8Array): NewUrlLaunchParameters_t {
   void bytes;
   return {};
 }
 
+/**
+ * Purpose: response to RequestAppProofOfPurchaseKey/RequestAllProofOfPurchaseKeys
+ * for supporting third-party CD keys, or other proof-of-purchase systems.
+ */
 export interface AppProofOfPurchaseKeyResponse_t {
   m_eResult: EResult;
   m_nAppID: number;
@@ -3987,11 +5210,16 @@ export interface AppProofOfPurchaseKeyResponse_t {
   m_rgchKey: string;
 }
 
+/**
+ * Field offsets and total size of `AppProofOfPurchaseKeyResponse_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const AppProofOfPurchaseKeyResponse_t_layout = {
   4: { size: 252, m_eResult: 0, m_nAppID: 4, m_cchKeyLength: 8, m_rgchKey: 12 },
   8: { size: 252, m_eResult: 0, m_nAppID: 4, m_cchKeyLength: 8, m_rgchKey: 12 },
 } as const;
 
+/** Read a `AppProofOfPurchaseKeyResponse_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeAppProofOfPurchaseKeyResponse_t(
   bytes: Uint8Array,
 ): AppProofOfPurchaseKeyResponse_t {
@@ -4004,18 +5232,26 @@ export function decodeAppProofOfPurchaseKeyResponse_t(
   };
 }
 
+/** Purpose: response to GetFileDetails */
 export interface FileDetailsResult_t {
   m_eResult: EResult;
+  /** original file size in bytes */
   m_ulFileSize: bigint;
+  /** original file SHA1 hash */
   m_FileSHA: string;
   m_unFlags: number;
 }
 
+/**
+ * Field offsets and total size of `FileDetailsResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const FileDetailsResult_t_layout = {
   4: { size: 36, m_eResult: 0, m_ulFileSize: 4, m_FileSHA: 12, m_unFlags: 32 },
   8: { size: 40, m_eResult: 0, m_ulFileSize: 8, m_FileSHA: 16, m_unFlags: 36 },
 } as const;
 
+/** Read a `FileDetailsResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeFileDetailsResult_t(bytes: Uint8Array): FileDetailsResult_t {
   const L = FileDetailsResult_t_layout[PACK];
   return {
@@ -4026,18 +5262,28 @@ export function decodeFileDetailsResult_t(bytes: Uint8Array): FileDetailsResult_
   };
 }
 
+/** Purpose: called for games in Timed Trial mode */
 export interface TimedTrialStatus_t {
+  /** appID */
   m_unAppID: number;
+  /** if true, time allowed / played refers to offline time, not total time */
   m_bIsOffline: boolean;
+  /** how many seconds the app can be played in total */
   m_unSecondsAllowed: number;
+  /** how many seconds the app was already played */
   m_unSecondsPlayed: number;
 }
 
+/**
+ * Field offsets and total size of `TimedTrialStatus_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const TimedTrialStatus_t_layout = {
   4: { size: 16, m_unAppID: 0, m_bIsOffline: 4, m_unSecondsAllowed: 8, m_unSecondsPlayed: 12 },
   8: { size: 16, m_unAppID: 0, m_bIsOffline: 4, m_unSecondsAllowed: 8, m_unSecondsPlayed: 12 },
 } as const;
 
+/** Read a `TimedTrialStatus_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeTimedTrialStatus_t(bytes: Uint8Array): TimedTrialStatus_t {
   const L = TimedTrialStatus_t_layout[PACK];
   return {
@@ -4048,15 +5294,25 @@ export function decodeTimedTrialStatus_t(bytes: Uint8Array): TimedTrialStatus_t 
   };
 }
 
+/**
+ * callback notification - a user wants to talk to us over the P2P channel via the SendP2PPacket() API
+ * in response, a call to AcceptP2PPacketsFromUser() needs to be made, if you want to talk with them
+ */
 export interface P2PSessionRequest_t {
+  /** user who wants to talk to us */
   m_steamIDRemote: bigint;
 }
 
+/**
+ * Field offsets and total size of `P2PSessionRequest_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const P2PSessionRequest_t_layout = {
   4: { size: 8, m_steamIDRemote: 0 },
   8: { size: 8, m_steamIDRemote: 0 },
 } as const;
 
+/** Read a `P2PSessionRequest_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeP2PSessionRequest_t(bytes: Uint8Array): P2PSessionRequest_t {
   const L = P2PSessionRequest_t_layout[PACK];
   return {
@@ -4064,16 +5320,28 @@ export function decodeP2PSessionRequest_t(bytes: Uint8Array): P2PSessionRequest_
   };
 }
 
+/**
+ * callback notification - packets can't get through to the specified user via the SendP2PPacket() API
+ * all packets queued packets unsent at this point will be dropped
+ * further attempts to send will retry making the connection (but will be dropped if we fail again)
+ */
 export interface P2PSessionConnectFail_t {
+  /** user we were sending packets to */
   m_steamIDRemote: bigint;
+  /** EP2PSessionError indicating why we're having trouble */
   m_eP2PSessionError: number;
 }
 
+/**
+ * Field offsets and total size of `P2PSessionConnectFail_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const P2PSessionConnectFail_t_layout = {
   4: { size: 9, m_steamIDRemote: 0, m_eP2PSessionError: 8 },
   8: { size: 9, m_steamIDRemote: 0, m_eP2PSessionError: 8 },
 } as const;
 
+/** Read a `P2PSessionConnectFail_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeP2PSessionConnectFail_t(bytes: Uint8Array): P2PSessionConnectFail_t {
   const L = P2PSessionConnectFail_t_layout[PACK];
   return {
@@ -4082,18 +5350,31 @@ export function decodeP2PSessionConnectFail_t(bytes: Uint8Array): P2PSessionConn
   };
 }
 
+/**
+ * callback notification - status of a socket has changed
+ * used as part of the CreateListenSocket() / CreateP2PConnectionSocket()
+ */
 export interface SocketStatusCallback_t {
+  /** the socket used to send/receive data to the remote host */
   m_hSocket: number;
+  /** this is the server socket that we were listening on; NULL if this was an outgoing connection */
   m_hListenSocket: number;
+  /** remote steamID we have connected to, if it has one */
   m_steamIDRemote: bigint;
+  /** socket state, ESNetSocketState */
   m_eSNetSocketState: number;
 }
 
+/**
+ * Field offsets and total size of `SocketStatusCallback_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SocketStatusCallback_t_layout = {
   4: { size: 20, m_hSocket: 0, m_hListenSocket: 4, m_steamIDRemote: 8, m_eSNetSocketState: 16 },
   8: { size: 20, m_hSocket: 0, m_hListenSocket: 4, m_steamIDRemote: 8, m_eSNetSocketState: 16 },
 } as const;
 
+/** Read a `SocketStatusCallback_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSocketStatusCallback_t(bytes: Uint8Array): SocketStatusCallback_t {
   const L = SocketStatusCallback_t_layout[PACK];
   return {
@@ -4104,16 +5385,25 @@ export function decodeSocketStatusCallback_t(bytes: Uint8Array): SocketStatusCal
   };
 }
 
+/**
+ * Purpose: Screenshot successfully written or otherwise added to the library
+ * and can now be tagged
+ */
 export interface ScreenshotReady_t {
   m_hLocal: number;
   m_eResult: EResult;
 }
 
+/**
+ * Field offsets and total size of `ScreenshotReady_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const ScreenshotReady_t_layout = {
   4: { size: 8, m_hLocal: 0, m_eResult: 4 },
   8: { size: 8, m_hLocal: 0, m_eResult: 4 },
 } as const;
 
+/** Read a `ScreenshotReady_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeScreenshotReady_t(bytes: Uint8Array): ScreenshotReady_t {
   const L = ScreenshotReady_t_layout[PACK];
   return {
@@ -4122,39 +5412,61 @@ export function decodeScreenshotReady_t(bytes: Uint8Array): ScreenshotReady_t {
   };
 }
 
+/**
+ * Purpose: Screenshot has been requested by the user.  Only sent if
+ * HookScreenshots() has been called, in which case Steam will not take
+ * the screenshot itself.
+ */
 export type ScreenshotRequested_t = Record<string, never>;
 
+/**
+ * Field offsets and total size of `ScreenshotRequested_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const ScreenshotRequested_t_layout = {
   4: { size: 1 },
   8: { size: 1 },
 } as const;
 
+/** Read a `ScreenshotRequested_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeScreenshotRequested_t(bytes: Uint8Array): ScreenshotRequested_t {
   void bytes;
   return {};
 }
 
+/** Steam's `PlaybackStatusHasChanged_t` callback, id 4001. */
 export type PlaybackStatusHasChanged_t = Record<string, never>;
 
+/**
+ * Field offsets and total size of `PlaybackStatusHasChanged_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const PlaybackStatusHasChanged_t_layout = {
   4: { size: 1 },
   8: { size: 1 },
 } as const;
 
+/** Read a `PlaybackStatusHasChanged_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodePlaybackStatusHasChanged_t(bytes: Uint8Array): PlaybackStatusHasChanged_t {
   void bytes;
   return {};
 }
 
+/** Steam's `VolumeHasChanged_t` callback, id 4002. */
 export interface VolumeHasChanged_t {
   m_flNewVolume: number;
 }
 
+/**
+ * Field offsets and total size of `VolumeHasChanged_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const VolumeHasChanged_t_layout = {
   4: { size: 4, m_flNewVolume: 0 },
   8: { size: 4, m_flNewVolume: 0 },
 } as const;
 
+/** Read a `VolumeHasChanged_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeVolumeHasChanged_t(bytes: Uint8Array): VolumeHasChanged_t {
   const L = VolumeHasChanged_t_layout[PACK];
   return {
@@ -4162,14 +5474,20 @@ export function decodeVolumeHasChanged_t(bytes: Uint8Array): VolumeHasChanged_t 
   };
 }
 
+/** Steam's `HTTPRequestCompleted_t` callback, id 2101. */
 export interface HTTPRequestCompleted_t {
   m_hRequest: number;
   m_ulContextValue: bigint;
   m_bRequestSuccessful: boolean;
   m_eStatusCode: EHTTPStatusCode;
+  /** Same as GetHTTPResponseBodySize() */
   m_unBodySize: number;
 }
 
+/**
+ * Field offsets and total size of `HTTPRequestCompleted_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTTPRequestCompleted_t_layout = {
   4: {
     size: 24,
@@ -4189,6 +5507,7 @@ export const HTTPRequestCompleted_t_layout = {
   },
 } as const;
 
+/** Read a `HTTPRequestCompleted_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTTPRequestCompleted_t(bytes: Uint8Array): HTTPRequestCompleted_t {
   const L = HTTPRequestCompleted_t_layout[PACK];
   return {
@@ -4200,16 +5519,22 @@ export function decodeHTTPRequestCompleted_t(bytes: Uint8Array): HTTPRequestComp
   };
 }
 
+/** Steam's `HTTPRequestHeadersReceived_t` callback, id 2102. */
 export interface HTTPRequestHeadersReceived_t {
   m_hRequest: number;
   m_ulContextValue: bigint;
 }
 
+/**
+ * Field offsets and total size of `HTTPRequestHeadersReceived_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTTPRequestHeadersReceived_t_layout = {
   4: { size: 12, m_hRequest: 0, m_ulContextValue: 4 },
   8: { size: 16, m_hRequest: 0, m_ulContextValue: 8 },
 } as const;
 
+/** Read a `HTTPRequestHeadersReceived_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTTPRequestHeadersReceived_t(
   bytes: Uint8Array,
 ): HTTPRequestHeadersReceived_t {
@@ -4220,6 +5545,7 @@ export function decodeHTTPRequestHeadersReceived_t(
   };
 }
 
+/** Steam's `HTTPRequestDataReceived_t` callback, id 2103. */
 export interface HTTPRequestDataReceived_t {
   m_hRequest: number;
   m_ulContextValue: bigint;
@@ -4227,11 +5553,16 @@ export interface HTTPRequestDataReceived_t {
   m_cBytesReceived: number;
 }
 
+/**
+ * Field offsets and total size of `HTTPRequestDataReceived_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTTPRequestDataReceived_t_layout = {
   4: { size: 20, m_hRequest: 0, m_ulContextValue: 4, m_cOffset: 12, m_cBytesReceived: 16 },
   8: { size: 24, m_hRequest: 0, m_ulContextValue: 8, m_cOffset: 16, m_cBytesReceived: 20 },
 } as const;
 
+/** Read a `HTTPRequestDataReceived_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTTPRequestDataReceived_t(bytes: Uint8Array): HTTPRequestDataReceived_t {
   const L = HTTPRequestDataReceived_t_layout[PACK];
   return {
@@ -4242,15 +5573,25 @@ export function decodeHTTPRequestDataReceived_t(bytes: Uint8Array): HTTPRequestD
   };
 }
 
+/**
+ * Purpose: called when a new controller has been connected, will fire once
+ * per controller if multiple new controllers connect in the same frame
+ */
 export interface SteamInputDeviceConnected_t {
+  /** Handle for device */
   m_ulConnectedDeviceHandle: bigint;
 }
 
+/**
+ * Field offsets and total size of `SteamInputDeviceConnected_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamInputDeviceConnected_t_layout = {
   4: { size: 8, m_ulConnectedDeviceHandle: 0 },
   8: { size: 8, m_ulConnectedDeviceHandle: 0 },
 } as const;
 
+/** Read a `SteamInputDeviceConnected_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamInputDeviceConnected_t(bytes: Uint8Array): SteamInputDeviceConnected_t {
   const L = SteamInputDeviceConnected_t_layout[PACK];
   return {
@@ -4258,15 +5599,25 @@ export function decodeSteamInputDeviceConnected_t(bytes: Uint8Array): SteamInput
   };
 }
 
+/**
+ * Purpose: called when a new controller has been connected, will fire once
+ * per controller if multiple new controllers connect in the same frame
+ */
 export interface SteamInputDeviceDisconnected_t {
+  /** Handle for device */
   m_ulDisconnectedDeviceHandle: bigint;
 }
 
+/**
+ * Field offsets and total size of `SteamInputDeviceDisconnected_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamInputDeviceDisconnected_t_layout = {
   4: { size: 8, m_ulDisconnectedDeviceHandle: 0 },
   8: { size: 8, m_ulDisconnectedDeviceHandle: 0 },
 } as const;
 
+/** Read a `SteamInputDeviceDisconnected_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamInputDeviceDisconnected_t(
   bytes: Uint8Array,
 ): SteamInputDeviceDisconnected_t {
@@ -4276,16 +5627,29 @@ export function decodeSteamInputDeviceDisconnected_t(
   };
 }
 
+/**
+ * Purpose: called when a controller configuration has been loaded, will fire once
+ * per controller per focus change for Steam Input enabled controllers
+ */
 export interface SteamInputConfigurationLoaded_t {
   m_unAppID: number;
+  /** Handle for device */
   m_ulDeviceHandle: bigint;
+  /** May differ from local user when using */
   m_ulMappingCreator: bigint;
+  /** Binding revision from In-game Action File. */
   m_unMajorRevision: number;
   m_unMinorRevision: number;
+  /** Does the configuration contain any Analog/Digital actions? */
   m_bUsesSteamInputAPI: boolean;
+  /** Does the configuration contain any Xinput bindings? */
   m_bUsesGamepadAPI: boolean;
 }
 
+/**
+ * Field offsets and total size of `SteamInputConfigurationLoaded_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamInputConfigurationLoaded_t_layout = {
   4: {
     size: 32,
@@ -4309,6 +5673,7 @@ export const SteamInputConfigurationLoaded_t_layout = {
   },
 } as const;
 
+/** Read a `SteamInputConfigurationLoaded_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamInputConfigurationLoaded_t(
   bytes: Uint8Array,
 ): SteamInputConfigurationLoaded_t {
@@ -4324,14 +5689,26 @@ export function decodeSteamInputConfigurationLoaded_t(
   };
 }
 
+/**
+ * Purpose: called when controller gamepad slots change - on Linux/macOS these
+ * slots are shared for all running apps.
+ */
 export interface SteamInputGamepadSlotChange_t {
   m_unAppID: number;
+  /** Handle for device */
   m_ulDeviceHandle: bigint;
+  /** Type of device */
   m_eDeviceType: ESteamInputType;
+  /** Previous GamepadSlot - can be -1 controller doesn't uses gamepad bindings */
   m_nOldGamepadSlot: number;
+  /** New Gamepad Slot - can be -1 controller doesn't uses gamepad bindings */
   m_nNewGamepadSlot: number;
 }
 
+/**
+ * Field offsets and total size of `SteamInputGamepadSlotChange_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamInputGamepadSlotChange_t_layout = {
   4: {
     size: 24,
@@ -4351,6 +5728,7 @@ export const SteamInputGamepadSlotChange_t_layout = {
   },
 } as const;
 
+/** Read a `SteamInputGamepadSlotChange_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamInputGamepadSlotChange_t(
   bytes: Uint8Array,
 ): SteamInputGamepadSlotChange_t {
@@ -4364,15 +5742,22 @@ export function decodeSteamInputGamepadSlotChange_t(
   };
 }
 
+/** Purpose: Callback for querying UGC */
 export interface SteamUGCQueryCompleted_t {
   m_handle: bigint;
   m_eResult: EResult;
   m_unNumResultsReturned: number;
   m_unTotalMatchingResults: number;
+  /** indicates whether this data was retrieved from the local on-disk cache */
   m_bCachedData: boolean;
+  /** If a paging cursor was used, then this will be the next cursor to get the next result set. */
   m_rgchNextCursor: string;
 }
 
+/**
+ * Field offsets and total size of `SteamUGCQueryCompleted_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamUGCQueryCompleted_t_layout = {
   4: {
     size: 280,
@@ -4394,6 +5779,7 @@ export const SteamUGCQueryCompleted_t_layout = {
   },
 } as const;
 
+/** Read a `SteamUGCQueryCompleted_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamUGCQueryCompleted_t(bytes: Uint8Array): SteamUGCQueryCompleted_t {
   const L = SteamUGCQueryCompleted_t_layout[PACK];
   return {
@@ -4406,16 +5792,23 @@ export function decodeSteamUGCQueryCompleted_t(bytes: Uint8Array): SteamUGCQuery
   };
 }
 
+/** Purpose: Callback for requesting details on one piece of UGC */
 export interface SteamUGCRequestUGCDetailsResult_t {
   m_details: SteamUGCDetails_t;
+  /** indicates whether this data was retrieved from the local on-disk cache */
   m_bCachedData: boolean;
 }
 
+/**
+ * Field offsets and total size of `SteamUGCRequestUGCDetailsResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamUGCRequestUGCDetailsResult_t_layout = {
   4: { size: 9776, m_details: 0, m_bCachedData: 9772 },
   8: { size: 9792, m_details: 0, m_bCachedData: 9784 },
 } as const;
 
+/** Read a `SteamUGCRequestUGCDetailsResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamUGCRequestUGCDetailsResult_t(
   bytes: Uint8Array,
 ): SteamUGCRequestUGCDetailsResult_t {
@@ -4428,12 +5821,18 @@ export function decodeSteamUGCRequestUGCDetailsResult_t(
   };
 }
 
+/** Purpose: result for ISteamUGC::CreateItem() */
 export interface CreateItemResult_t {
   m_eResult: EResult;
+  /** new item got this UGC PublishFileID */
   m_nPublishedFileId: bigint;
   m_bUserNeedsToAcceptWorkshopLegalAgreement: boolean;
 }
 
+/**
+ * Field offsets and total size of `CreateItemResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const CreateItemResult_t_layout = {
   4: {
     size: 16,
@@ -4449,6 +5848,7 @@ export const CreateItemResult_t_layout = {
   },
 } as const;
 
+/** Read a `CreateItemResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeCreateItemResult_t(bytes: Uint8Array): CreateItemResult_t {
   const L = CreateItemResult_t_layout[PACK];
   return {
@@ -4461,12 +5861,17 @@ export function decodeCreateItemResult_t(bytes: Uint8Array): CreateItemResult_t 
   };
 }
 
+/** Purpose: result for ISteamUGC::SubmitItemUpdate() */
 export interface SubmitItemUpdateResult_t {
   m_eResult: EResult;
   m_bUserNeedsToAcceptWorkshopLegalAgreement: boolean;
   m_nPublishedFileId: bigint;
 }
 
+/**
+ * Field offsets and total size of `SubmitItemUpdateResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SubmitItemUpdateResult_t_layout = {
   4: {
     size: 16,
@@ -4482,6 +5887,7 @@ export const SubmitItemUpdateResult_t_layout = {
   },
 } as const;
 
+/** Read a `SubmitItemUpdateResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSubmitItemUpdateResult_t(bytes: Uint8Array): SubmitItemUpdateResult_t {
   const L = SubmitItemUpdateResult_t_layout[PACK];
   return {
@@ -4494,6 +5900,7 @@ export function decodeSubmitItemUpdateResult_t(bytes: Uint8Array): SubmitItemUpd
   };
 }
 
+/** Purpose: a Workshop item has been installed or updated */
 export interface ItemInstalled_t {
   m_unAppID: number;
   m_nPublishedFileId: bigint;
@@ -4501,11 +5908,16 @@ export interface ItemInstalled_t {
   m_unManifestID: bigint;
 }
 
+/**
+ * Field offsets and total size of `ItemInstalled_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const ItemInstalled_t_layout = {
   4: { size: 28, m_unAppID: 0, m_nPublishedFileId: 4, m_hLegacyContent: 12, m_unManifestID: 20 },
   8: { size: 32, m_unAppID: 0, m_nPublishedFileId: 8, m_hLegacyContent: 16, m_unManifestID: 24 },
 } as const;
 
+/** Read a `ItemInstalled_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeItemInstalled_t(bytes: Uint8Array): ItemInstalled_t {
   const L = ItemInstalled_t_layout[PACK];
   return {
@@ -4516,17 +5928,23 @@ export function decodeItemInstalled_t(bytes: Uint8Array): ItemInstalled_t {
   };
 }
 
+/** Purpose: result of DownloadItem(), existing item files can be accessed again */
 export interface DownloadItemResult_t {
   m_unAppID: number;
   m_nPublishedFileId: bigint;
   m_eResult: EResult;
 }
 
+/**
+ * Field offsets and total size of `DownloadItemResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const DownloadItemResult_t_layout = {
   4: { size: 16, m_unAppID: 0, m_nPublishedFileId: 4, m_eResult: 12 },
   8: { size: 24, m_unAppID: 0, m_nPublishedFileId: 8, m_eResult: 16 },
 } as const;
 
+/** Read a `DownloadItemResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeDownloadItemResult_t(bytes: Uint8Array): DownloadItemResult_t {
   const L = DownloadItemResult_t_layout[PACK];
   return {
@@ -4536,17 +5954,23 @@ export function decodeDownloadItemResult_t(bytes: Uint8Array): DownloadItemResul
   };
 }
 
+/** Purpose: result of AddItemToFavorites() or RemoveItemFromFavorites() */
 export interface UserFavoriteItemsListChanged_t {
   m_nPublishedFileId: bigint;
   m_eResult: EResult;
   m_bWasAddRequest: boolean;
 }
 
+/**
+ * Field offsets and total size of `UserFavoriteItemsListChanged_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const UserFavoriteItemsListChanged_t_layout = {
   4: { size: 16, m_nPublishedFileId: 0, m_eResult: 8, m_bWasAddRequest: 12 },
   8: { size: 16, m_nPublishedFileId: 0, m_eResult: 8, m_bWasAddRequest: 12 },
 } as const;
 
+/** Read a `UserFavoriteItemsListChanged_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeUserFavoriteItemsListChanged_t(
   bytes: Uint8Array,
 ): UserFavoriteItemsListChanged_t {
@@ -4558,17 +5982,23 @@ export function decodeUserFavoriteItemsListChanged_t(
   };
 }
 
+/** Purpose: The result of a call to SetUserItemVote() */
 export interface SetUserItemVoteResult_t {
   m_nPublishedFileId: bigint;
   m_eResult: EResult;
   m_bVoteUp: boolean;
 }
 
+/**
+ * Field offsets and total size of `SetUserItemVoteResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SetUserItemVoteResult_t_layout = {
   4: { size: 16, m_nPublishedFileId: 0, m_eResult: 8, m_bVoteUp: 12 },
   8: { size: 16, m_nPublishedFileId: 0, m_eResult: 8, m_bVoteUp: 12 },
 } as const;
 
+/** Read a `SetUserItemVoteResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSetUserItemVoteResult_t(bytes: Uint8Array): SetUserItemVoteResult_t {
   const L = SetUserItemVoteResult_t_layout[PACK];
   return {
@@ -4578,6 +6008,7 @@ export function decodeSetUserItemVoteResult_t(bytes: Uint8Array): SetUserItemVot
   };
 }
 
+/** Purpose: The result of a call to GetUserItemVote() */
 export interface GetUserItemVoteResult_t {
   m_nPublishedFileId: bigint;
   m_eResult: EResult;
@@ -4586,6 +6017,10 @@ export interface GetUserItemVoteResult_t {
   m_bVoteSkipped: boolean;
 }
 
+/**
+ * Field offsets and total size of `GetUserItemVoteResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GetUserItemVoteResult_t_layout = {
   4: {
     size: 16,
@@ -4605,6 +6040,7 @@ export const GetUserItemVoteResult_t_layout = {
   },
 } as const;
 
+/** Read a `GetUserItemVoteResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGetUserItemVoteResult_t(bytes: Uint8Array): GetUserItemVoteResult_t {
   const L = GetUserItemVoteResult_t_layout[PACK];
   return {
@@ -4616,15 +6052,21 @@ export function decodeGetUserItemVoteResult_t(bytes: Uint8Array): GetUserItemVot
   };
 }
 
+/** Purpose: The result of a call to StartPlaytimeTracking() */
 export interface StartPlaytimeTrackingResult_t {
   m_eResult: EResult;
 }
 
+/**
+ * Field offsets and total size of `StartPlaytimeTrackingResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const StartPlaytimeTrackingResult_t_layout = {
   4: { size: 4, m_eResult: 0 },
   8: { size: 4, m_eResult: 0 },
 } as const;
 
+/** Read a `StartPlaytimeTrackingResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeStartPlaytimeTrackingResult_t(
   bytes: Uint8Array,
 ): StartPlaytimeTrackingResult_t {
@@ -4634,15 +6076,21 @@ export function decodeStartPlaytimeTrackingResult_t(
   };
 }
 
+/** Purpose: The result of a call to StopPlaytimeTracking() */
 export interface StopPlaytimeTrackingResult_t {
   m_eResult: EResult;
 }
 
+/**
+ * Field offsets and total size of `StopPlaytimeTrackingResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const StopPlaytimeTrackingResult_t_layout = {
   4: { size: 4, m_eResult: 0 },
   8: { size: 4, m_eResult: 0 },
 } as const;
 
+/** Read a `StopPlaytimeTrackingResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeStopPlaytimeTrackingResult_t(
   bytes: Uint8Array,
 ): StopPlaytimeTrackingResult_t {
@@ -4652,17 +6100,23 @@ export function decodeStopPlaytimeTrackingResult_t(
   };
 }
 
+/** Purpose: The result of a call to AddDependency */
 export interface AddUGCDependencyResult_t {
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
   m_nChildPublishedFileId: bigint;
 }
 
+/**
+ * Field offsets and total size of `AddUGCDependencyResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const AddUGCDependencyResult_t_layout = {
   4: { size: 20, m_eResult: 0, m_nPublishedFileId: 4, m_nChildPublishedFileId: 12 },
   8: { size: 24, m_eResult: 0, m_nPublishedFileId: 8, m_nChildPublishedFileId: 16 },
 } as const;
 
+/** Read a `AddUGCDependencyResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeAddUGCDependencyResult_t(bytes: Uint8Array): AddUGCDependencyResult_t {
   const L = AddUGCDependencyResult_t_layout[PACK];
   return {
@@ -4672,17 +6126,23 @@ export function decodeAddUGCDependencyResult_t(bytes: Uint8Array): AddUGCDepende
   };
 }
 
+/** Purpose: The result of a call to RemoveDependency */
 export interface RemoveUGCDependencyResult_t {
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
   m_nChildPublishedFileId: bigint;
 }
 
+/**
+ * Field offsets and total size of `RemoveUGCDependencyResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoveUGCDependencyResult_t_layout = {
   4: { size: 20, m_eResult: 0, m_nPublishedFileId: 4, m_nChildPublishedFileId: 12 },
   8: { size: 24, m_eResult: 0, m_nPublishedFileId: 8, m_nChildPublishedFileId: 16 },
 } as const;
 
+/** Read a `RemoveUGCDependencyResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoveUGCDependencyResult_t(bytes: Uint8Array): RemoveUGCDependencyResult_t {
   const L = RemoveUGCDependencyResult_t_layout[PACK];
   return {
@@ -4692,17 +6152,23 @@ export function decodeRemoveUGCDependencyResult_t(bytes: Uint8Array): RemoveUGCD
   };
 }
 
+/** Purpose: The result of a call to AddAppDependency */
 export interface AddAppDependencyResult_t {
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
   m_nAppID: number;
 }
 
+/**
+ * Field offsets and total size of `AddAppDependencyResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const AddAppDependencyResult_t_layout = {
   4: { size: 16, m_eResult: 0, m_nPublishedFileId: 4, m_nAppID: 12 },
   8: { size: 24, m_eResult: 0, m_nPublishedFileId: 8, m_nAppID: 16 },
 } as const;
 
+/** Read a `AddAppDependencyResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeAddAppDependencyResult_t(bytes: Uint8Array): AddAppDependencyResult_t {
   const L = AddAppDependencyResult_t_layout[PACK];
   return {
@@ -4712,17 +6178,23 @@ export function decodeAddAppDependencyResult_t(bytes: Uint8Array): AddAppDepende
   };
 }
 
+/** Purpose: The result of a call to RemoveAppDependency */
 export interface RemoveAppDependencyResult_t {
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
   m_nAppID: number;
 }
 
+/**
+ * Field offsets and total size of `RemoveAppDependencyResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const RemoveAppDependencyResult_t_layout = {
   4: { size: 16, m_eResult: 0, m_nPublishedFileId: 4, m_nAppID: 12 },
   8: { size: 24, m_eResult: 0, m_nPublishedFileId: 8, m_nAppID: 16 },
 } as const;
 
+/** Read a `RemoveAppDependencyResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeRemoveAppDependencyResult_t(bytes: Uint8Array): RemoveAppDependencyResult_t {
   const L = RemoveAppDependencyResult_t_layout[PACK];
   return {
@@ -4732,14 +6204,24 @@ export function decodeRemoveAppDependencyResult_t(bytes: Uint8Array): RemoveAppD
   };
 }
 
+/**
+ * Purpose: The result of a call to GetAppDependencies.  Callback may be called
+ * multiple times until all app dependencies have been returned.
+ */
 export interface GetAppDependenciesResult_t {
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
   m_rgAppIDs: number[];
+  /** number returned in this struct */
   m_nNumAppDependencies: number;
+  /** total found */
   m_nTotalNumAppDependencies: number;
 }
 
+/**
+ * Field offsets and total size of `GetAppDependenciesResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GetAppDependenciesResult_t_layout = {
   4: {
     size: 148,
@@ -4759,6 +6241,7 @@ export const GetAppDependenciesResult_t_layout = {
   },
 } as const;
 
+/** Read a `GetAppDependenciesResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGetAppDependenciesResult_t(bytes: Uint8Array): GetAppDependenciesResult_t {
   const L = GetAppDependenciesResult_t_layout[PACK];
   return {
@@ -4770,16 +6253,22 @@ export function decodeGetAppDependenciesResult_t(bytes: Uint8Array): GetAppDepen
   };
 }
 
+/** Purpose: The result of a call to DeleteItem */
 export interface DeleteItemResult_t {
   m_eResult: EResult;
   m_nPublishedFileId: bigint;
 }
 
+/**
+ * Field offsets and total size of `DeleteItemResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const DeleteItemResult_t_layout = {
   4: { size: 12, m_eResult: 0, m_nPublishedFileId: 4 },
   8: { size: 16, m_eResult: 0, m_nPublishedFileId: 8 },
 } as const;
 
+/** Read a `DeleteItemResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeDeleteItemResult_t(bytes: Uint8Array): DeleteItemResult_t {
   const L = DeleteItemResult_t_layout[PACK];
   return {
@@ -4788,15 +6277,21 @@ export function decodeDeleteItemResult_t(bytes: Uint8Array): DeleteItemResult_t 
   };
 }
 
+/** Purpose: signal that the list of subscribed items changed */
 export interface UserSubscribedItemsListChanged_t {
   m_nAppID: number;
 }
 
+/**
+ * Field offsets and total size of `UserSubscribedItemsListChanged_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const UserSubscribedItemsListChanged_t_layout = {
   4: { size: 4, m_nAppID: 0 },
   8: { size: 4, m_nAppID: 0 },
 } as const;
 
+/** Read a `UserSubscribedItemsListChanged_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeUserSubscribedItemsListChanged_t(
   bytes: Uint8Array,
 ): UserSubscribedItemsListChanged_t {
@@ -4806,6 +6301,7 @@ export function decodeUserSubscribedItemsListChanged_t(
   };
 }
 
+/** Purpose: Status of the user's acceptable/rejection of the app's specific Workshop EULA */
 export interface WorkshopEULAStatus_t {
   m_eResult: EResult;
   m_nAppID: number;
@@ -4815,6 +6311,10 @@ export interface WorkshopEULAStatus_t {
   m_bNeedsAction: boolean;
 }
 
+/**
+ * Field offsets and total size of `WorkshopEULAStatus_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const WorkshopEULAStatus_t_layout = {
   4: {
     size: 20,
@@ -4836,6 +6336,7 @@ export const WorkshopEULAStatus_t_layout = {
   },
 } as const;
 
+/** Read a `WorkshopEULAStatus_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeWorkshopEULAStatus_t(bytes: Uint8Array): WorkshopEULAStatus_t {
   const L = WorkshopEULAStatus_t_layout[PACK];
   return {
@@ -4848,15 +6349,21 @@ export function decodeWorkshopEULAStatus_t(bytes: Uint8Array): WorkshopEULAStatu
   };
 }
 
+/** Purpose: The browser is ready for use */
 export interface HTML_BrowserReady_t {
   unBrowserHandle: number;
 }
 
+/**
+ * Field offsets and total size of `HTML_BrowserReady_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_BrowserReady_t_layout = {
   4: { size: 4, unBrowserHandle: 0 },
   8: { size: 4, unBrowserHandle: 0 },
 } as const;
 
+/** Read a `HTML_BrowserReady_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_BrowserReady_t(bytes: Uint8Array): HTML_BrowserReady_t {
   const L = HTML_BrowserReady_t_layout[PACK];
   return {
@@ -4864,6 +6371,7 @@ export function decodeHTML_BrowserReady_t(bytes: Uint8Array): HTML_BrowserReady_
   };
 }
 
+/** Purpose: the browser has a pending paint */
 export interface HTML_NeedsPaint_t {
   unBrowserHandle: number;
   pBGRA: string;
@@ -4879,6 +6387,10 @@ export interface HTML_NeedsPaint_t {
   unPageSerial: number;
 }
 
+/**
+ * Field offsets and total size of `HTML_NeedsPaint_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_NeedsPaint_t_layout = {
   4: {
     size: 52,
@@ -4912,6 +6424,7 @@ export const HTML_NeedsPaint_t_layout = {
   },
 } as const;
 
+/** Read a `HTML_NeedsPaint_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_NeedsPaint_t(bytes: Uint8Array): HTML_NeedsPaint_t {
   const L = HTML_NeedsPaint_t_layout[PACK];
   return {
@@ -4930,6 +6443,10 @@ export function decodeHTML_NeedsPaint_t(bytes: Uint8Array): HTML_NeedsPaint_t {
   };
 }
 
+/**
+ * Purpose: The browser wanted to navigate to a new page
+ * NOTE - you MUST call AllowStartRequest in response to this callback
+ */
 export interface HTML_StartRequest_t {
   unBrowserHandle: number;
   pchURL: string;
@@ -4938,11 +6455,16 @@ export interface HTML_StartRequest_t {
   bIsRedirect: boolean;
 }
 
+/**
+ * Field offsets and total size of `HTML_StartRequest_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_StartRequest_t_layout = {
   4: { size: 32, unBrowserHandle: 0, pchURL: 4, pchTarget: 12, pchPostData: 20, bIsRedirect: 28 },
   8: { size: 40, unBrowserHandle: 0, pchURL: 8, pchTarget: 16, pchPostData: 24, bIsRedirect: 32 },
 } as const;
 
+/** Read a `HTML_StartRequest_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_StartRequest_t(bytes: Uint8Array): HTML_StartRequest_t {
   const L = HTML_StartRequest_t_layout[PACK];
   return {
@@ -4954,15 +6476,21 @@ export function decodeHTML_StartRequest_t(bytes: Uint8Array): HTML_StartRequest_
   };
 }
 
+/** Purpose: The browser has been requested to close due to user interaction (usually from a javascript window.close() call) */
 export interface HTML_CloseBrowser_t {
   unBrowserHandle: number;
 }
 
+/**
+ * Field offsets and total size of `HTML_CloseBrowser_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_CloseBrowser_t_layout = {
   4: { size: 4, unBrowserHandle: 0 },
   8: { size: 4, unBrowserHandle: 0 },
 } as const;
 
+/** Read a `HTML_CloseBrowser_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_CloseBrowser_t(bytes: Uint8Array): HTML_CloseBrowser_t {
   const L = HTML_CloseBrowser_t_layout[PACK];
   return {
@@ -4970,6 +6498,7 @@ export function decodeHTML_CloseBrowser_t(bytes: Uint8Array): HTML_CloseBrowser_
   };
 }
 
+/** Purpose: the browser is navigating to a new url */
 export interface HTML_URLChanged_t {
   unBrowserHandle: number;
   pchURL: string;
@@ -4979,6 +6508,10 @@ export interface HTML_URLChanged_t {
   bNewNavigation: boolean;
 }
 
+/**
+ * Field offsets and total size of `HTML_URLChanged_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_URLChanged_t_layout = {
   4: {
     size: 36,
@@ -5000,6 +6533,7 @@ export const HTML_URLChanged_t_layout = {
   },
 } as const;
 
+/** Read a `HTML_URLChanged_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_URLChanged_t(bytes: Uint8Array): HTML_URLChanged_t {
   const L = HTML_URLChanged_t_layout[PACK];
   return {
@@ -5012,17 +6546,23 @@ export function decodeHTML_URLChanged_t(bytes: Uint8Array): HTML_URLChanged_t {
   };
 }
 
+/** Purpose: A page is finished loading */
 export interface HTML_FinishedRequest_t {
   unBrowserHandle: number;
   pchURL: string;
   pchPageTitle: string;
 }
 
+/**
+ * Field offsets and total size of `HTML_FinishedRequest_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_FinishedRequest_t_layout = {
   4: { size: 20, unBrowserHandle: 0, pchURL: 4, pchPageTitle: 12 },
   8: { size: 24, unBrowserHandle: 0, pchURL: 8, pchPageTitle: 16 },
 } as const;
 
+/** Read a `HTML_FinishedRequest_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_FinishedRequest_t(bytes: Uint8Array): HTML_FinishedRequest_t {
   const L = HTML_FinishedRequest_t_layout[PACK];
   return {
@@ -5032,16 +6572,22 @@ export function decodeHTML_FinishedRequest_t(bytes: Uint8Array): HTML_FinishedRe
   };
 }
 
+/** Purpose: a request to load this url in a new tab */
 export interface HTML_OpenLinkInNewTab_t {
   unBrowserHandle: number;
   pchURL: string;
 }
 
+/**
+ * Field offsets and total size of `HTML_OpenLinkInNewTab_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_OpenLinkInNewTab_t_layout = {
   4: { size: 12, unBrowserHandle: 0, pchURL: 4 },
   8: { size: 16, unBrowserHandle: 0, pchURL: 8 },
 } as const;
 
+/** Read a `HTML_OpenLinkInNewTab_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_OpenLinkInNewTab_t(bytes: Uint8Array): HTML_OpenLinkInNewTab_t {
   const L = HTML_OpenLinkInNewTab_t_layout[PACK];
   return {
@@ -5050,16 +6596,22 @@ export function decodeHTML_OpenLinkInNewTab_t(bytes: Uint8Array): HTML_OpenLinkI
   };
 }
 
+/** Purpose: the page has a new title now */
 export interface HTML_ChangedTitle_t {
   unBrowserHandle: number;
   pchTitle: string;
 }
 
+/**
+ * Field offsets and total size of `HTML_ChangedTitle_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_ChangedTitle_t_layout = {
   4: { size: 12, unBrowserHandle: 0, pchTitle: 4 },
   8: { size: 16, unBrowserHandle: 0, pchTitle: 8 },
 } as const;
 
+/** Read a `HTML_ChangedTitle_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_ChangedTitle_t(bytes: Uint8Array): HTML_ChangedTitle_t {
   const L = HTML_ChangedTitle_t_layout[PACK];
   return {
@@ -5068,17 +6620,23 @@ export function decodeHTML_ChangedTitle_t(bytes: Uint8Array): HTML_ChangedTitle_
   };
 }
 
+/** Purpose: results from a search */
 export interface HTML_SearchResults_t {
   unBrowserHandle: number;
   unResults: number;
   unCurrentMatch: number;
 }
 
+/**
+ * Field offsets and total size of `HTML_SearchResults_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_SearchResults_t_layout = {
   4: { size: 12, unBrowserHandle: 0, unResults: 4, unCurrentMatch: 8 },
   8: { size: 12, unBrowserHandle: 0, unResults: 4, unCurrentMatch: 8 },
 } as const;
 
+/** Read a `HTML_SearchResults_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_SearchResults_t(bytes: Uint8Array): HTML_SearchResults_t {
   const L = HTML_SearchResults_t_layout[PACK];
   return {
@@ -5088,17 +6646,23 @@ export function decodeHTML_SearchResults_t(bytes: Uint8Array): HTML_SearchResult
   };
 }
 
+/** Purpose: page history status changed on the ability to go backwards and forward */
 export interface HTML_CanGoBackAndForward_t {
   unBrowserHandle: number;
   bCanGoBack: boolean;
   bCanGoForward: boolean;
 }
 
+/**
+ * Field offsets and total size of `HTML_CanGoBackAndForward_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_CanGoBackAndForward_t_layout = {
   4: { size: 8, unBrowserHandle: 0, bCanGoBack: 4, bCanGoForward: 5 },
   8: { size: 8, unBrowserHandle: 0, bCanGoBack: 4, bCanGoForward: 5 },
 } as const;
 
+/** Read a `HTML_CanGoBackAndForward_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_CanGoBackAndForward_t(bytes: Uint8Array): HTML_CanGoBackAndForward_t {
   const L = HTML_CanGoBackAndForward_t_layout[PACK];
   return {
@@ -5108,6 +6672,7 @@ export function decodeHTML_CanGoBackAndForward_t(bytes: Uint8Array): HTML_CanGoB
   };
 }
 
+/** Purpose: details on the visibility and size of the horizontal scrollbar */
 export interface HTML_HorizontalScroll_t {
   unBrowserHandle: number;
   unScrollMax: number;
@@ -5117,6 +6682,10 @@ export interface HTML_HorizontalScroll_t {
   unPageSize: number;
 }
 
+/**
+ * Field offsets and total size of `HTML_HorizontalScroll_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_HorizontalScroll_t_layout = {
   4: {
     size: 24,
@@ -5138,6 +6707,7 @@ export const HTML_HorizontalScroll_t_layout = {
   },
 } as const;
 
+/** Read a `HTML_HorizontalScroll_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_HorizontalScroll_t(bytes: Uint8Array): HTML_HorizontalScroll_t {
   const L = HTML_HorizontalScroll_t_layout[PACK];
   return {
@@ -5150,6 +6720,7 @@ export function decodeHTML_HorizontalScroll_t(bytes: Uint8Array): HTML_Horizonta
   };
 }
 
+/** Purpose: details on the visibility and size of the vertical scrollbar */
 export interface HTML_VerticalScroll_t {
   unBrowserHandle: number;
   unScrollMax: number;
@@ -5159,6 +6730,10 @@ export interface HTML_VerticalScroll_t {
   unPageSize: number;
 }
 
+/**
+ * Field offsets and total size of `HTML_VerticalScroll_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_VerticalScroll_t_layout = {
   4: {
     size: 24,
@@ -5180,6 +6755,7 @@ export const HTML_VerticalScroll_t_layout = {
   },
 } as const;
 
+/** Read a `HTML_VerticalScroll_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_VerticalScroll_t(bytes: Uint8Array): HTML_VerticalScroll_t {
   const L = HTML_VerticalScroll_t_layout[PACK];
   return {
@@ -5192,6 +6768,7 @@ export function decodeHTML_VerticalScroll_t(bytes: Uint8Array): HTML_VerticalScr
   };
 }
 
+/** Purpose: response to GetLinkAtPosition call */
 export interface HTML_LinkAtPosition_t {
   unBrowserHandle: number;
   x: number;
@@ -5201,11 +6778,16 @@ export interface HTML_LinkAtPosition_t {
   bLiveLink: boolean;
 }
 
+/**
+ * Field offsets and total size of `HTML_LinkAtPosition_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_LinkAtPosition_t_layout = {
   4: { size: 24, unBrowserHandle: 0, x: 4, y: 8, pchURL: 12, bInput: 20, bLiveLink: 21 },
   8: { size: 32, unBrowserHandle: 0, x: 4, y: 8, pchURL: 16, bInput: 24, bLiveLink: 25 },
 } as const;
 
+/** Read a `HTML_LinkAtPosition_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_LinkAtPosition_t(bytes: Uint8Array): HTML_LinkAtPosition_t {
   const L = HTML_LinkAtPosition_t_layout[PACK];
   return {
@@ -5218,16 +6800,25 @@ export function decodeHTML_LinkAtPosition_t(bytes: Uint8Array): HTML_LinkAtPosit
   };
 }
 
+/**
+ * Purpose: show a Javascript alert dialog, call JSDialogResponse
+ * when the user dismisses this dialog (or right away to ignore it)
+ */
 export interface HTML_JSAlert_t {
   unBrowserHandle: number;
   pchMessage: string;
 }
 
+/**
+ * Field offsets and total size of `HTML_JSAlert_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_JSAlert_t_layout = {
   4: { size: 12, unBrowserHandle: 0, pchMessage: 4 },
   8: { size: 16, unBrowserHandle: 0, pchMessage: 8 },
 } as const;
 
+/** Read a `HTML_JSAlert_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_JSAlert_t(bytes: Uint8Array): HTML_JSAlert_t {
   const L = HTML_JSAlert_t_layout[PACK];
   return {
@@ -5236,16 +6827,25 @@ export function decodeHTML_JSAlert_t(bytes: Uint8Array): HTML_JSAlert_t {
   };
 }
 
+/**
+ * Purpose: show a Javascript confirmation dialog, call JSDialogResponse
+ * when the user dismisses this dialog (or right away to ignore it)
+ */
 export interface HTML_JSConfirm_t {
   unBrowserHandle: number;
   pchMessage: string;
 }
 
+/**
+ * Field offsets and total size of `HTML_JSConfirm_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_JSConfirm_t_layout = {
   4: { size: 12, unBrowserHandle: 0, pchMessage: 4 },
   8: { size: 16, unBrowserHandle: 0, pchMessage: 8 },
 } as const;
 
+/** Read a `HTML_JSConfirm_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_JSConfirm_t(bytes: Uint8Array): HTML_JSConfirm_t {
   const L = HTML_JSConfirm_t_layout[PACK];
   return {
@@ -5254,17 +6854,26 @@ export function decodeHTML_JSConfirm_t(bytes: Uint8Array): HTML_JSConfirm_t {
   };
 }
 
+/**
+ * Purpose: when received show a file open dialog
+ * then call FileLoadDialogResponse with the file(s) the user selected.
+ */
 export interface HTML_FileOpenDialog_t {
   unBrowserHandle: number;
   pchTitle: string;
   pchInitialFile: string;
 }
 
+/**
+ * Field offsets and total size of `HTML_FileOpenDialog_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_FileOpenDialog_t_layout = {
   4: { size: 20, unBrowserHandle: 0, pchTitle: 4, pchInitialFile: 12 },
   8: { size: 24, unBrowserHandle: 0, pchTitle: 8, pchInitialFile: 16 },
 } as const;
 
+/** Read a `HTML_FileOpenDialog_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_FileOpenDialog_t(bytes: Uint8Array): HTML_FileOpenDialog_t {
   const L = HTML_FileOpenDialog_t_layout[PACK];
   return {
@@ -5274,6 +6883,14 @@ export function decodeHTML_FileOpenDialog_t(bytes: Uint8Array): HTML_FileOpenDia
   };
 }
 
+/**
+ * Purpose: a new html window is being created.
+ * IMPORTANT NOTE: at this time, the API does not allow you to acknowledge or
+ * render the contents of this new window, so the new window is always destroyed
+ * immediately. The URL and other parameters of the new window are passed here
+ * to give your application the opportunity to call CreateBrowser and set up
+ * a new browser in response to the attempted popup, if you wish to do so.
+ */
 export interface HTML_NewWindow_t {
   unBrowserHandle: number;
   pchURL: string;
@@ -5284,6 +6901,10 @@ export interface HTML_NewWindow_t {
   unNewWindow_BrowserHandle_IGNORE: number;
 }
 
+/**
+ * Field offsets and total size of `HTML_NewWindow_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_NewWindow_t_layout = {
   4: {
     size: 32,
@@ -5307,6 +6928,7 @@ export const HTML_NewWindow_t_layout = {
   },
 } as const;
 
+/** Read a `HTML_NewWindow_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_NewWindow_t(bytes: Uint8Array): HTML_NewWindow_t {
   const L = HTML_NewWindow_t_layout[PACK];
   return {
@@ -5320,16 +6942,22 @@ export function decodeHTML_NewWindow_t(bytes: Uint8Array): HTML_NewWindow_t {
   };
 }
 
+/** Purpose: change the cursor to display */
 export interface HTML_SetCursor_t {
   unBrowserHandle: number;
   eMouseCursor: number;
 }
 
+/**
+ * Field offsets and total size of `HTML_SetCursor_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_SetCursor_t_layout = {
   4: { size: 8, unBrowserHandle: 0, eMouseCursor: 4 },
   8: { size: 8, unBrowserHandle: 0, eMouseCursor: 4 },
 } as const;
 
+/** Read a `HTML_SetCursor_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_SetCursor_t(bytes: Uint8Array): HTML_SetCursor_t {
   const L = HTML_SetCursor_t_layout[PACK];
   return {
@@ -5338,16 +6966,22 @@ export function decodeHTML_SetCursor_t(bytes: Uint8Array): HTML_SetCursor_t {
   };
 }
 
+/** Purpose: informational message from the browser */
 export interface HTML_StatusText_t {
   unBrowserHandle: number;
   pchMsg: string;
 }
 
+/**
+ * Field offsets and total size of `HTML_StatusText_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_StatusText_t_layout = {
   4: { size: 12, unBrowserHandle: 0, pchMsg: 4 },
   8: { size: 16, unBrowserHandle: 0, pchMsg: 8 },
 } as const;
 
+/** Read a `HTML_StatusText_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_StatusText_t(bytes: Uint8Array): HTML_StatusText_t {
   const L = HTML_StatusText_t_layout[PACK];
   return {
@@ -5356,16 +6990,22 @@ export function decodeHTML_StatusText_t(bytes: Uint8Array): HTML_StatusText_t {
   };
 }
 
+/** Purpose: show a tooltip */
 export interface HTML_ShowToolTip_t {
   unBrowserHandle: number;
   pchMsg: string;
 }
 
+/**
+ * Field offsets and total size of `HTML_ShowToolTip_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_ShowToolTip_t_layout = {
   4: { size: 12, unBrowserHandle: 0, pchMsg: 4 },
   8: { size: 16, unBrowserHandle: 0, pchMsg: 8 },
 } as const;
 
+/** Read a `HTML_ShowToolTip_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_ShowToolTip_t(bytes: Uint8Array): HTML_ShowToolTip_t {
   const L = HTML_ShowToolTip_t_layout[PACK];
   return {
@@ -5374,16 +7014,22 @@ export function decodeHTML_ShowToolTip_t(bytes: Uint8Array): HTML_ShowToolTip_t 
   };
 }
 
+/** Purpose: update the text of an existing tooltip */
 export interface HTML_UpdateToolTip_t {
   unBrowserHandle: number;
   pchMsg: string;
 }
 
+/**
+ * Field offsets and total size of `HTML_UpdateToolTip_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_UpdateToolTip_t_layout = {
   4: { size: 12, unBrowserHandle: 0, pchMsg: 4 },
   8: { size: 16, unBrowserHandle: 0, pchMsg: 8 },
 } as const;
 
+/** Read a `HTML_UpdateToolTip_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_UpdateToolTip_t(bytes: Uint8Array): HTML_UpdateToolTip_t {
   const L = HTML_UpdateToolTip_t_layout[PACK];
   return {
@@ -5392,15 +7038,21 @@ export function decodeHTML_UpdateToolTip_t(bytes: Uint8Array): HTML_UpdateToolTi
   };
 }
 
+/** Purpose: hide the tooltip you are showing */
 export interface HTML_HideToolTip_t {
   unBrowserHandle: number;
 }
 
+/**
+ * Field offsets and total size of `HTML_HideToolTip_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_HideToolTip_t_layout = {
   4: { size: 4, unBrowserHandle: 0 },
   8: { size: 4, unBrowserHandle: 0 },
 } as const;
 
+/** Read a `HTML_HideToolTip_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_HideToolTip_t(bytes: Uint8Array): HTML_HideToolTip_t {
   const L = HTML_HideToolTip_t_layout[PACK];
   return {
@@ -5408,16 +7060,22 @@ export function decodeHTML_HideToolTip_t(bytes: Uint8Array): HTML_HideToolTip_t 
   };
 }
 
+/** Purpose: The browser has restarted due to an internal failure, use this new handle value */
 export interface HTML_BrowserRestarted_t {
   unBrowserHandle: number;
   unOldBrowserHandle: number;
 }
 
+/**
+ * Field offsets and total size of `HTML_BrowserRestarted_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const HTML_BrowserRestarted_t_layout = {
   4: { size: 8, unBrowserHandle: 0, unOldBrowserHandle: 4 },
   8: { size: 8, unBrowserHandle: 0, unOldBrowserHandle: 4 },
 } as const;
 
+/** Read a `HTML_BrowserRestarted_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeHTML_BrowserRestarted_t(bytes: Uint8Array): HTML_BrowserRestarted_t {
   const L = HTML_BrowserRestarted_t_layout[PACK];
   return {
@@ -5426,16 +7084,26 @@ export function decodeHTML_BrowserRestarted_t(bytes: Uint8Array): HTML_BrowserRe
   };
 }
 
+/**
+ * SteamInventoryResultReady_t callbacks are fired whenever asynchronous
+ * results transition from "Pending" to "OK" or an error state. There will
+ * always be exactly one callback per handle.
+ */
 export interface SteamInventoryResultReady_t {
   m_handle: number;
   m_result: EResult;
 }
 
+/**
+ * Field offsets and total size of `SteamInventoryResultReady_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamInventoryResultReady_t_layout = {
   4: { size: 8, m_handle: 0, m_result: 4 },
   8: { size: 8, m_handle: 0, m_result: 4 },
 } as const;
 
+/** Read a `SteamInventoryResultReady_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamInventoryResultReady_t(bytes: Uint8Array): SteamInventoryResultReady_t {
   const L = SteamInventoryResultReady_t_layout[PACK];
   return {
@@ -5444,15 +7112,29 @@ export function decodeSteamInventoryResultReady_t(bytes: Uint8Array): SteamInven
   };
 }
 
+/**
+ * SteamInventoryFullUpdate_t callbacks are triggered when GetAllItems
+ * successfully returns a result which is newer / fresher than the last
+ * known result. (It will not trigger if the inventory hasn't changed,
+ * or if results from two overlapping calls are reversed in flight and
+ * the earlier result is already known to be stale/out-of-date.)
+ * The normal ResultReady callback will still be triggered immediately
+ * afterwards; this is an additional notification for your convenience.
+ */
 export interface SteamInventoryFullUpdate_t {
   m_handle: number;
 }
 
+/**
+ * Field offsets and total size of `SteamInventoryFullUpdate_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamInventoryFullUpdate_t_layout = {
   4: { size: 4, m_handle: 0 },
   8: { size: 4, m_handle: 0 },
 } as const;
 
+/** Read a `SteamInventoryFullUpdate_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamInventoryFullUpdate_t(bytes: Uint8Array): SteamInventoryFullUpdate_t {
   const L = SteamInventoryFullUpdate_t_layout[PACK];
   return {
@@ -5460,13 +7142,24 @@ export function decodeSteamInventoryFullUpdate_t(bytes: Uint8Array): SteamInvent
   };
 }
 
+/**
+ * A SteamInventoryDefinitionUpdate_t callback is triggered whenever
+ * item definitions have been updated, which could be in response to
+ * LoadItemDefinitions() or any other async request which required
+ * a definition update in order to process results from the server.
+ */
 export type SteamInventoryDefinitionUpdate_t = Record<string, never>;
 
+/**
+ * Field offsets and total size of `SteamInventoryDefinitionUpdate_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamInventoryDefinitionUpdate_t_layout = {
   4: { size: 1 },
   8: { size: 1 },
 } as const;
 
+/** Read a `SteamInventoryDefinitionUpdate_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamInventoryDefinitionUpdate_t(
   bytes: Uint8Array,
 ): SteamInventoryDefinitionUpdate_t {
@@ -5474,18 +7167,25 @@ export function decodeSteamInventoryDefinitionUpdate_t(
   return {};
 }
 
+/** Returned */
 export interface SteamInventoryEligiblePromoItemDefIDs_t {
   m_result: EResult;
   m_steamID: bigint;
   m_numEligiblePromoItemDefs: number;
+  /** indicates that the data was retrieved from the cache and not the server */
   m_bCachedData: boolean;
 }
 
+/**
+ * Field offsets and total size of `SteamInventoryEligiblePromoItemDefIDs_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamInventoryEligiblePromoItemDefIDs_t_layout = {
   4: { size: 20, m_result: 0, m_steamID: 4, m_numEligiblePromoItemDefs: 12, m_bCachedData: 16 },
   8: { size: 20, m_result: 0, m_steamID: 4, m_numEligiblePromoItemDefs: 12, m_bCachedData: 16 },
 } as const;
 
+/** Read a `SteamInventoryEligiblePromoItemDefIDs_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamInventoryEligiblePromoItemDefIDs_t(
   bytes: Uint8Array,
 ): SteamInventoryEligiblePromoItemDefIDs_t {
@@ -5498,17 +7198,23 @@ export function decodeSteamInventoryEligiblePromoItemDefIDs_t(
   };
 }
 
+/** Triggered from StartPurchase call */
 export interface SteamInventoryStartPurchaseResult_t {
   m_result: EResult;
   m_ulOrderID: bigint;
   m_ulTransID: bigint;
 }
 
+/**
+ * Field offsets and total size of `SteamInventoryStartPurchaseResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamInventoryStartPurchaseResult_t_layout = {
   4: { size: 20, m_result: 0, m_ulOrderID: 4, m_ulTransID: 12 },
   8: { size: 24, m_result: 0, m_ulOrderID: 8, m_ulTransID: 16 },
 } as const;
 
+/** Read a `SteamInventoryStartPurchaseResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamInventoryStartPurchaseResult_t(
   bytes: Uint8Array,
 ): SteamInventoryStartPurchaseResult_t {
@@ -5520,16 +7226,22 @@ export function decodeSteamInventoryStartPurchaseResult_t(
   };
 }
 
+/** Triggered from RequestPrices */
 export interface SteamInventoryRequestPricesResult_t {
   m_result: EResult;
   m_rgchCurrency: string;
 }
 
+/**
+ * Field offsets and total size of `SteamInventoryRequestPricesResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamInventoryRequestPricesResult_t_layout = {
   4: { size: 8, m_result: 0, m_rgchCurrency: 4 },
   8: { size: 8, m_result: 0, m_rgchCurrency: 4 },
 } as const;
 
+/** Read a `SteamInventoryRequestPricesResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamInventoryRequestPricesResult_t(
   bytes: Uint8Array,
 ): SteamInventoryRequestPricesResult_t {
@@ -5540,6 +7252,7 @@ export function decodeSteamInventoryRequestPricesResult_t(
   };
 }
 
+/** Purpose: Callback for querying UGC */
 export interface SteamTimelineGamePhaseRecordingExists_t {
   m_rgchPhaseID: string;
   m_ulRecordingMS: bigint;
@@ -5548,6 +7261,10 @@ export interface SteamTimelineGamePhaseRecordingExists_t {
   m_unScreenshotCount: number;
 }
 
+/**
+ * Field offsets and total size of `SteamTimelineGamePhaseRecordingExists_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamTimelineGamePhaseRecordingExists_t_layout = {
   4: {
     size: 88,
@@ -5567,6 +7284,7 @@ export const SteamTimelineGamePhaseRecordingExists_t_layout = {
   },
 } as const;
 
+/** Read a `SteamTimelineGamePhaseRecordingExists_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamTimelineGamePhaseRecordingExists_t(
   bytes: Uint8Array,
 ): SteamTimelineGamePhaseRecordingExists_t {
@@ -5580,16 +7298,22 @@ export function decodeSteamTimelineGamePhaseRecordingExists_t(
   };
 }
 
+/** Purpose: Callback for querying UGC */
 export interface SteamTimelineEventRecordingExists_t {
   m_ulEventID: bigint;
   m_bRecordingExists: boolean;
 }
 
+/**
+ * Field offsets and total size of `SteamTimelineEventRecordingExists_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamTimelineEventRecordingExists_t_layout = {
   4: { size: 12, m_ulEventID: 0, m_bRecordingExists: 8 },
   8: { size: 16, m_ulEventID: 0, m_bRecordingExists: 8 },
 } as const;
 
+/** Read a `SteamTimelineEventRecordingExists_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamTimelineEventRecordingExists_t(
   bytes: Uint8Array,
 ): SteamTimelineEventRecordingExists_t {
@@ -5600,17 +7324,23 @@ export function decodeSteamTimelineEventRecordingExists_t(
   };
 }
 
+/** Steam's `GetVideoURLResult_t` callback, id 4611. */
 export interface GetVideoURLResult_t {
   m_eResult: EResult;
   m_unVideoAppID: number;
   m_rgchURL: string;
 }
 
+/**
+ * Field offsets and total size of `GetVideoURLResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GetVideoURLResult_t_layout = {
   4: { size: 264, m_eResult: 0, m_unVideoAppID: 4, m_rgchURL: 8 },
   8: { size: 264, m_eResult: 0, m_unVideoAppID: 4, m_rgchURL: 8 },
 } as const;
 
+/** Read a `GetVideoURLResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGetVideoURLResult_t(bytes: Uint8Array): GetVideoURLResult_t {
   const L = GetVideoURLResult_t_layout[PACK];
   return {
@@ -5620,16 +7350,22 @@ export function decodeGetVideoURLResult_t(bytes: Uint8Array): GetVideoURLResult_
   };
 }
 
+/** Steam's `GetOPFSettingsResult_t` callback, id 4624. */
 export interface GetOPFSettingsResult_t {
   m_eResult: EResult;
   m_unVideoAppID: number;
 }
 
+/**
+ * Field offsets and total size of `GetOPFSettingsResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GetOPFSettingsResult_t_layout = {
   4: { size: 8, m_eResult: 0, m_unVideoAppID: 4 },
   8: { size: 8, m_eResult: 0, m_unVideoAppID: 4 },
 } as const;
 
+/** Read a `GetOPFSettingsResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGetOPFSettingsResult_t(bytes: Uint8Array): GetOPFSettingsResult_t {
   const L = GetOPFSettingsResult_t_layout[PACK];
   return {
@@ -5638,15 +7374,21 @@ export function decodeGetOPFSettingsResult_t(bytes: Uint8Array): GetOPFSettingsR
   };
 }
 
+/** Steam's `BroadcastUploadStart_t` callback, id 4604. */
 export interface BroadcastUploadStart_t {
   m_bIsRTMP: boolean;
 }
 
+/**
+ * Field offsets and total size of `BroadcastUploadStart_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const BroadcastUploadStart_t_layout = {
   4: { size: 1, m_bIsRTMP: 0 },
   8: { size: 1, m_bIsRTMP: 0 },
 } as const;
 
+/** Read a `BroadcastUploadStart_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeBroadcastUploadStart_t(bytes: Uint8Array): BroadcastUploadStart_t {
   const L = BroadcastUploadStart_t_layout[PACK];
   return {
@@ -5654,15 +7396,21 @@ export function decodeBroadcastUploadStart_t(bytes: Uint8Array): BroadcastUpload
   };
 }
 
+/** Steam's `BroadcastUploadStop_t` callback, id 4605. */
 export interface BroadcastUploadStop_t {
   m_eResult: EBroadcastUploadResult;
 }
 
+/**
+ * Field offsets and total size of `BroadcastUploadStop_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const BroadcastUploadStop_t_layout = {
   4: { size: 4, m_eResult: 0 },
   8: { size: 4, m_eResult: 0 },
 } as const;
 
+/** Read a `BroadcastUploadStop_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeBroadcastUploadStop_t(bytes: Uint8Array): BroadcastUploadStop_t {
   const L = BroadcastUploadStop_t_layout[PACK];
   return {
@@ -5670,13 +7418,19 @@ export function decodeBroadcastUploadStop_t(bytes: Uint8Array): BroadcastUploadS
   };
 }
 
+/** Purpose: Callback for querying UGC */
 export type SteamParentalSettingsChanged_t = Record<string, never>;
 
+/**
+ * Field offsets and total size of `SteamParentalSettingsChanged_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamParentalSettingsChanged_t_layout = {
   4: { size: 1 },
   8: { size: 1 },
 } as const;
 
+/** Read a `SteamParentalSettingsChanged_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamParentalSettingsChanged_t(
   bytes: Uint8Array,
 ): SteamParentalSettingsChanged_t {
@@ -5684,15 +7438,21 @@ export function decodeSteamParentalSettingsChanged_t(
   return {};
 }
 
+/** Steam's `SteamRemotePlaySessionConnected_t` callback, id 5701. */
 export interface SteamRemotePlaySessionConnected_t {
   m_unSessionID: number;
 }
 
+/**
+ * Field offsets and total size of `SteamRemotePlaySessionConnected_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamRemotePlaySessionConnected_t_layout = {
   4: { size: 4, m_unSessionID: 0 },
   8: { size: 4, m_unSessionID: 0 },
 } as const;
 
+/** Read a `SteamRemotePlaySessionConnected_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamRemotePlaySessionConnected_t(
   bytes: Uint8Array,
 ): SteamRemotePlaySessionConnected_t {
@@ -5702,15 +7462,21 @@ export function decodeSteamRemotePlaySessionConnected_t(
   };
 }
 
+/** Steam's `SteamRemotePlaySessionDisconnected_t` callback, id 5702. */
 export interface SteamRemotePlaySessionDisconnected_t {
   m_unSessionID: number;
 }
 
+/**
+ * Field offsets and total size of `SteamRemotePlaySessionDisconnected_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamRemotePlaySessionDisconnected_t_layout = {
   4: { size: 4, m_unSessionID: 0 },
   8: { size: 4, m_unSessionID: 0 },
 } as const;
 
+/** Read a `SteamRemotePlaySessionDisconnected_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamRemotePlaySessionDisconnected_t(
   bytes: Uint8Array,
 ): SteamRemotePlaySessionDisconnected_t {
@@ -5720,15 +7486,21 @@ export function decodeSteamRemotePlaySessionDisconnected_t(
   };
 }
 
+/** Steam's `SteamRemotePlayTogetherGuestInvite_t` callback, id 5703. */
 export interface SteamRemotePlayTogetherGuestInvite_t {
   m_szConnectURL: string;
 }
 
+/**
+ * Field offsets and total size of `SteamRemotePlayTogetherGuestInvite_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamRemotePlayTogetherGuestInvite_t_layout = {
   4: { size: 1024, m_szConnectURL: 0 },
   8: { size: 1024, m_szConnectURL: 0 },
 } as const;
 
+/** Read a `SteamRemotePlayTogetherGuestInvite_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamRemotePlayTogetherGuestInvite_t(
   bytes: Uint8Array,
 ): SteamRemotePlayTogetherGuestInvite_t {
@@ -5738,6 +7510,7 @@ export function decodeSteamRemotePlayTogetherGuestInvite_t(
   };
 }
 
+/** Steam's `SteamRemotePlaySessionAvatarLoaded_t` callback, id 5704. */
 export interface SteamRemotePlaySessionAvatarLoaded_t {
   m_unSessionID: number;
   m_iImage: number;
@@ -5745,11 +7518,16 @@ export interface SteamRemotePlaySessionAvatarLoaded_t {
   m_iTall: number;
 }
 
+/**
+ * Field offsets and total size of `SteamRemotePlaySessionAvatarLoaded_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamRemotePlaySessionAvatarLoaded_t_layout = {
   4: { size: 16, m_unSessionID: 0, m_iImage: 4, m_iWide: 8, m_iTall: 12 },
   8: { size: 16, m_unSessionID: 0, m_iImage: 4, m_iWide: 8, m_iTall: 12 },
 } as const;
 
+/** Read a `SteamRemotePlaySessionAvatarLoaded_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamRemotePlaySessionAvatarLoaded_t(
   bytes: Uint8Array,
 ): SteamRemotePlaySessionAvatarLoaded_t {
@@ -5762,15 +7540,22 @@ export function decodeSteamRemotePlaySessionAvatarLoaded_t(
   };
 }
 
+/** Posted when a remote host is sending us a message, and we do not already have a session with them */
 export interface SteamNetworkingMessagesSessionRequest_t {
+  /** user who wants to talk to us */
   m_identityRemote: SteamNetworkingIdentity;
 }
 
+/**
+ * Field offsets and total size of `SteamNetworkingMessagesSessionRequest_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamNetworkingMessagesSessionRequest_t_layout = {
   4: { size: 136, m_identityRemote: 0 },
   8: { size: 136, m_identityRemote: 0 },
 } as const;
 
+/** Read a `SteamNetworkingMessagesSessionRequest_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamNetworkingMessagesSessionRequest_t(
   bytes: Uint8Array,
 ): SteamNetworkingMessagesSessionRequest_t {
@@ -5785,15 +7570,31 @@ export function decodeSteamNetworkingMessagesSessionRequest_t(
   };
 }
 
+/**
+ * Posted when we fail to establish a connection, or we detect that communications
+ * have been disrupted it an unusual way.  There is no notification when a peer proactively
+ * closes the session.  ("Closed by peer" is not a concept of UDP-style communications, and
+ * SteamNetworkingMessages is primarily intended to make porting UDP code easy.)
+ * Remember: callbacks are asynchronous.   See notes on SendMessageToUser,
+ * and k_nSteamNetworkingSend_AutoRestartBrokenSession in particular.
+ * Also, if a session times out due to inactivity, no callbacks will be posted.  The only
+ * way to detect that this is happening is that querying the session state may return
+ * none, connecting, and findingroute again.
+ */
 export interface SteamNetworkingMessagesSessionFailed_t {
   m_info: SteamNetConnectionInfo_t;
 }
 
+/**
+ * Field offsets and total size of `SteamNetworkingMessagesSessionFailed_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamNetworkingMessagesSessionFailed_t_layout = {
   4: { size: 696, m_info: 0 },
   8: { size: 696, m_info: 0 },
 } as const;
 
+/** Read a `SteamNetworkingMessagesSessionFailed_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamNetworkingMessagesSessionFailed_t(
   bytes: Uint8Array,
 ): SteamNetworkingMessagesSessionFailed_t {
@@ -5805,17 +7606,56 @@ export function decodeSteamNetworkingMessagesSessionFailed_t(
   };
 }
 
+/**
+ * This callback is posted whenever a connection is created, destroyed, or changes state.
+ * The m_info field will contain a complete description of the connection at the time the
+ * change occurred and the callback was posted.  In particular, m_eState will have the
+ * new connection state.
+ * You will usually need to listen for this callback to know when:
+ * - A new connection arrives on a listen socket.
+ * m_info.m_hListenSocket will be set, m_eOldState = k_ESteamNetworkingConnectionState_None,
+ * and m_info.m_eState = k_ESteamNetworkingConnectionState_Connecting.
+ * See ISteamNetworkigSockets::AcceptConnection.
+ * - A connection you initiated has been accepted by the remote host.
+ * m_eOldState = k_ESteamNetworkingConnectionState_Connecting, and
+ * m_info.m_eState = k_ESteamNetworkingConnectionState_Connected.
+ * Some connections might transition to k_ESteamNetworkingConnectionState_FindingRoute first.
+ * - A connection has been actively rejected or closed by the remote host.
+ * m_eOldState = k_ESteamNetworkingConnectionState_Connecting or k_ESteamNetworkingConnectionState_Connected,
+ * and m_info.m_eState = k_ESteamNetworkingConnectionState_ClosedByPeer.  m_info.m_eEndReason
+ * and m_info.m_szEndDebug will have for more details.
+ * NOTE: upon receiving this callback, you must still destroy the connection using
+ * ISteamNetworkingSockets::CloseConnection to free up local resources.  (The details
+ * passed to the function are not used in this case, since the connection is already closed.)
+ * - A problem was detected with the connection, and it has been closed by the local host.
+ * The most common failure is timeout, but other configuration or authentication failures
+ * can cause this.  m_eOldState = k_ESteamNetworkingConnectionState_Connecting or
+ * k_ESteamNetworkingConnectionState_Connected, and m_info.m_eState = k_ESteamNetworkingConnectionState_ProblemDetectedLocally.
+ * m_info.m_eEndReason and m_info.m_szEndDebug will have for more details.
+ * NOTE: upon receiving this callback, you must still destroy the connection using
+ * ISteamNetworkingSockets::CloseConnection to free up local resources.  (The details
+ * passed to the function are not used in this case, since the connection is already closed.)
+ * Remember that callbacks are posted to a queue, and networking connections can
+ * change at any time.  It is possible that the connection has already changed
+ * state by the time you process this callback.
+ * Also note that callbacks will be posted when connections are created and destroyed by your own API calls.
+ */
 export interface SteamNetConnectionStatusChangedCallback_t {
   m_hConn: number;
   m_info: SteamNetConnectionInfo_t;
   m_eOldState: ESteamNetworkingConnectionState;
 }
 
+/**
+ * Field offsets and total size of `SteamNetConnectionStatusChangedCallback_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamNetConnectionStatusChangedCallback_t_layout = {
   4: { size: 704, m_hConn: 0, m_info: 4, m_eOldState: 700 },
   8: { size: 712, m_hConn: 0, m_info: 8, m_eOldState: 704 },
 } as const;
 
+/** Read a `SteamNetConnectionStatusChangedCallback_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamNetConnectionStatusChangedCallback_t(
   bytes: Uint8Array,
 ): SteamNetConnectionStatusChangedCallback_t {
@@ -5829,16 +7669,29 @@ export function decodeSteamNetConnectionStatusChangedCallback_t(
   };
 }
 
+/**
+ * A struct used to describe our readiness to participate in authenticated,
+ * encrypted communication.  In order to do this we need:
+ * - The list of trusted CA certificates that might be relevant for this
+ * app.
+ * - A valid certificate issued by a CA.
+ * This callback is posted whenever the state of our readiness changes.
+ */
 export interface SteamNetAuthenticationStatus_t {
   m_eAvail: ESteamNetworkingAvailability;
   m_debugMsg: string;
 }
 
+/**
+ * Field offsets and total size of `SteamNetAuthenticationStatus_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamNetAuthenticationStatus_t_layout = {
   4: { size: 260, m_eAvail: 0, m_debugMsg: 4 },
   8: { size: 260, m_eAvail: 0, m_debugMsg: 4 },
 } as const;
 
+/** Read a `SteamNetAuthenticationStatus_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamNetAuthenticationStatus_t(
   bytes: Uint8Array,
 ): SteamNetAuthenticationStatus_t {
@@ -5849,6 +7702,11 @@ export function decodeSteamNetAuthenticationStatus_t(
   };
 }
 
+/**
+ * A struct used to describe our readiness to use the relay network.
+ * To do this we first need to fetch the network configuration,
+ * which describes what POPs are available.
+ */
 export interface SteamRelayNetworkStatus_t {
   m_eAvail: ESteamNetworkingAvailability;
   m_bPingMeasurementInProgress: number;
@@ -5857,6 +7715,10 @@ export interface SteamRelayNetworkStatus_t {
   m_debugMsg: string;
 }
 
+/**
+ * Field offsets and total size of `SteamRelayNetworkStatus_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamRelayNetworkStatus_t_layout = {
   4: {
     size: 272,
@@ -5876,6 +7738,7 @@ export const SteamRelayNetworkStatus_t_layout = {
   },
 } as const;
 
+/** Read a `SteamRelayNetworkStatus_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamRelayNetworkStatus_t(bytes: Uint8Array): SteamRelayNetworkStatus_t {
   const L = SteamRelayNetworkStatus_t_layout[PACK];
   return {
@@ -5887,16 +7750,24 @@ export function decodeSteamRelayNetworkStatus_t(bytes: Uint8Array): SteamRelayNe
   };
 }
 
+/** client has been approved to connect to this game server */
 export interface GSClientApprove_t {
+  /** SteamID of approved player */
   m_SteamID: bigint;
+  /** SteamID of original owner for game license */
   m_OwnerSteamID: bigint;
 }
 
+/**
+ * Field offsets and total size of `GSClientApprove_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GSClientApprove_t_layout = {
   4: { size: 16, m_SteamID: 0, m_OwnerSteamID: 8 },
   8: { size: 16, m_SteamID: 0, m_OwnerSteamID: 8 },
 } as const;
 
+/** Read a `GSClientApprove_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGSClientApprove_t(bytes: Uint8Array): GSClientApprove_t {
   const L = GSClientApprove_t_layout[PACK];
   return {
@@ -5905,17 +7776,23 @@ export function decodeGSClientApprove_t(bytes: Uint8Array): GSClientApprove_t {
   };
 }
 
+/** client has been denied to connection to this game server */
 export interface GSClientDeny_t {
   m_SteamID: bigint;
   m_eDenyReason: EDenyReason;
   m_rgchOptionalText: string;
 }
 
+/**
+ * Field offsets and total size of `GSClientDeny_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GSClientDeny_t_layout = {
   4: { size: 140, m_SteamID: 0, m_eDenyReason: 8, m_rgchOptionalText: 12 },
   8: { size: 140, m_SteamID: 0, m_eDenyReason: 8, m_rgchOptionalText: 12 },
 } as const;
 
+/** Read a `GSClientDeny_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGSClientDeny_t(bytes: Uint8Array): GSClientDeny_t {
   const L = GSClientDeny_t_layout[PACK];
   return {
@@ -5925,16 +7802,22 @@ export function decodeGSClientDeny_t(bytes: Uint8Array): GSClientDeny_t {
   };
 }
 
+/** request the game server should kick the user */
 export interface GSClientKick_t {
   m_SteamID: bigint;
   m_eDenyReason: EDenyReason;
 }
 
+/**
+ * Field offsets and total size of `GSClientKick_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GSClientKick_t_layout = {
   4: { size: 12, m_SteamID: 0, m_eDenyReason: 8 },
   8: { size: 12, m_SteamID: 0, m_eDenyReason: 8 },
 } as const;
 
+/** Read a `GSClientKick_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGSClientKick_t(bytes: Uint8Array): GSClientKick_t {
   const L = GSClientKick_t_layout[PACK];
   return {
@@ -5943,17 +7826,23 @@ export function decodeGSClientKick_t(bytes: Uint8Array): GSClientKick_t {
   };
 }
 
+/** client achievement info */
 export interface GSClientAchievementStatus_t {
   m_SteamID: bigint;
   m_pchAchievement: string;
   m_bUnlocked: boolean;
 }
 
+/**
+ * Field offsets and total size of `GSClientAchievementStatus_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GSClientAchievementStatus_t_layout = {
   4: { size: 140, m_SteamID: 0, m_pchAchievement: 8, m_bUnlocked: 136 },
   8: { size: 144, m_SteamID: 0, m_pchAchievement: 8, m_bUnlocked: 136 },
 } as const;
 
+/** Read a `GSClientAchievementStatus_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGSClientAchievementStatus_t(bytes: Uint8Array): GSClientAchievementStatus_t {
   const L = GSClientAchievementStatus_t_layout[PACK];
   return {
@@ -5963,15 +7852,24 @@ export function decodeGSClientAchievementStatus_t(bytes: Uint8Array): GSClientAc
   };
 }
 
+/**
+ * received when the game server requests to be displayed as secure (VAC protected)
+ * m_bSecure is true if the game server should display itself as secure to users, false otherwise
+ */
 export interface GSPolicyResponse_t {
   m_bSecure: number;
 }
 
+/**
+ * Field offsets and total size of `GSPolicyResponse_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GSPolicyResponse_t_layout = {
   4: { size: 1, m_bSecure: 0 },
   8: { size: 1, m_bSecure: 0 },
 } as const;
 
+/** Read a `GSPolicyResponse_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGSPolicyResponse_t(bytes: Uint8Array): GSPolicyResponse_t {
   const L = GSPolicyResponse_t_layout[PACK];
   return {
@@ -5979,18 +7877,28 @@ export function decodeGSPolicyResponse_t(bytes: Uint8Array): GSPolicyResponse_t 
   };
 }
 
+/** GS gameplay stats info */
 export interface GSGameplayStats_t {
+  /** Result of the call */
   m_eResult: EResult;
+  /** Overall rank of the server (0-based) */
   m_nRank: number;
+  /** Total number of clients who have ever connected to the server */
   m_unTotalConnects: number;
+  /** Total number of minutes ever played on the server */
   m_unTotalMinutesPlayed: number;
 }
 
+/**
+ * Field offsets and total size of `GSGameplayStats_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GSGameplayStats_t_layout = {
   4: { size: 16, m_eResult: 0, m_nRank: 4, m_unTotalConnects: 8, m_unTotalMinutesPlayed: 12 },
   8: { size: 16, m_eResult: 0, m_nRank: 4, m_unTotalConnects: 8, m_unTotalMinutesPlayed: 12 },
 } as const;
 
+/** Read a `GSGameplayStats_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGSGameplayStats_t(bytes: Uint8Array): GSGameplayStats_t {
   const L = GSGameplayStats_t_layout[PACK];
   return {
@@ -6001,6 +7909,7 @@ export function decodeGSGameplayStats_t(bytes: Uint8Array): GSGameplayStats_t {
   };
 }
 
+/** send as a reply to RequestUserGroupStatus() */
 export interface GSClientGroupStatus_t {
   m_SteamIDUser: bigint;
   m_SteamIDGroup: bigint;
@@ -6008,11 +7917,16 @@ export interface GSClientGroupStatus_t {
   m_bOfficer: boolean;
 }
 
+/**
+ * Field offsets and total size of `GSClientGroupStatus_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GSClientGroupStatus_t_layout = {
   4: { size: 18, m_SteamIDUser: 0, m_SteamIDGroup: 8, m_bMember: 16, m_bOfficer: 17 },
   8: { size: 18, m_SteamIDUser: 0, m_SteamIDGroup: 8, m_bMember: 16, m_bOfficer: 17 },
 } as const;
 
+/** Read a `GSClientGroupStatus_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGSClientGroupStatus_t(bytes: Uint8Array): GSClientGroupStatus_t {
   const L = GSClientGroupStatus_t_layout[PACK];
   return {
@@ -6023,16 +7937,28 @@ export function decodeGSClientGroupStatus_t(bytes: Uint8Array): GSClientGroupSta
   };
 }
 
+/** Sent as a reply to GetServerReputation() */
 export interface GSReputation_t {
+  /** Result of the call; */
   m_eResult: EResult;
+  /** The reputation score for the game server */
   m_unReputationScore: number;
+  /** True if the server is banned from the Steam */
   m_bBanned: boolean;
+  /** The IP of the banned server */
   m_unBannedIP: number;
+  /** The port of the banned server */
   m_usBannedPort: number;
+  /** The game ID the banned server is serving */
   m_ulBannedGameID: bigint;
+  /** Time the ban expires, expressed in the Unix epoch (seconds since 1/1/1970) */
   m_unBanExpires: number;
 }
 
+/**
+ * Field offsets and total size of `GSReputation_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GSReputation_t_layout = {
   4: {
     size: 32,
@@ -6056,6 +7982,7 @@ export const GSReputation_t_layout = {
   },
 } as const;
 
+/** Read a `GSReputation_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGSReputation_t(bytes: Uint8Array): GSReputation_t {
   const L = GSReputation_t_layout[PACK];
   return {
@@ -6069,15 +7996,22 @@ export function decodeGSReputation_t(bytes: Uint8Array): GSReputation_t {
   };
 }
 
+/** Sent as a reply to AssociateWithClan() */
 export interface AssociateWithClanResult_t {
+  /** Result of the call; */
   m_eResult: EResult;
 }
 
+/**
+ * Field offsets and total size of `AssociateWithClanResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const AssociateWithClanResult_t_layout = {
   4: { size: 4, m_eResult: 0 },
   8: { size: 4, m_eResult: 0 },
 } as const;
 
+/** Read a `AssociateWithClanResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeAssociateWithClanResult_t(bytes: Uint8Array): AssociateWithClanResult_t {
   const L = AssociateWithClanResult_t_layout[PACK];
   return {
@@ -6085,7 +8019,9 @@ export function decodeAssociateWithClanResult_t(bytes: Uint8Array): AssociateWit
   };
 }
 
+/** Sent as a reply to ComputeNewPlayerCompatibility() */
 export interface ComputeNewPlayerCompatibilityResult_t {
+  /** Result of the call; */
   m_eResult: EResult;
   m_cPlayersThatDontLikeCandidate: number;
   m_cPlayersThatCandidateDoesntLike: number;
@@ -6093,6 +8029,10 @@ export interface ComputeNewPlayerCompatibilityResult_t {
   m_SteamIDCandidate: bigint;
 }
 
+/**
+ * Field offsets and total size of `ComputeNewPlayerCompatibilityResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const ComputeNewPlayerCompatibilityResult_t_layout = {
   4: {
     size: 24,
@@ -6112,6 +8052,7 @@ export const ComputeNewPlayerCompatibilityResult_t_layout = {
   },
 } as const;
 
+/** Read a `ComputeNewPlayerCompatibilityResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeComputeNewPlayerCompatibilityResult_t(
   bytes: Uint8Array,
 ): ComputeNewPlayerCompatibilityResult_t {
@@ -6125,16 +8066,27 @@ export function decodeComputeNewPlayerCompatibilityResult_t(
   };
 }
 
+/**
+ * Purpose: called when the latests stats and achievements have been received
+ * from the server
+ */
 export interface GSStatsReceived_t {
+  /** Success / error fetching the stats */
   m_eResult: EResult;
+  /** The user for whom the stats are retrieved for */
   m_steamIDUser: bigint;
 }
 
+/**
+ * Field offsets and total size of `GSStatsReceived_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GSStatsReceived_t_layout = {
   4: { size: 12, m_eResult: 0, m_steamIDUser: 4 },
   8: { size: 12, m_eResult: 0, m_steamIDUser: 4 },
 } as const;
 
+/** Read a `GSStatsReceived_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGSStatsReceived_t(bytes: Uint8Array): GSStatsReceived_t {
   const L = GSStatsReceived_t_layout[PACK];
   return {
@@ -6143,16 +8095,24 @@ export function decodeGSStatsReceived_t(bytes: Uint8Array): GSStatsReceived_t {
   };
 }
 
+/** Purpose: result of a request to store the user stats for a game */
 export interface GSStatsStored_t {
+  /** success / error */
   m_eResult: EResult;
+  /** The user for whom the stats were stored */
   m_steamIDUser: bigint;
 }
 
+/**
+ * Field offsets and total size of `GSStatsStored_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GSStatsStored_t_layout = {
   4: { size: 12, m_eResult: 0, m_steamIDUser: 4 },
   8: { size: 12, m_eResult: 0, m_steamIDUser: 4 },
 } as const;
 
+/** Read a `GSStatsStored_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGSStatsStored_t(bytes: Uint8Array): GSStatsStored_t {
   const L = GSStatsStored_t_layout[PACK];
   return {
@@ -6161,15 +8121,25 @@ export function decodeGSStatsStored_t(bytes: Uint8Array): GSStatsStored_t {
   };
 }
 
+/**
+ * Purpose: Callback indicating that a user's stats have been unloaded.
+ * Call RequestUserStats again to access stats for this user
+ */
 export interface GSStatsUnloaded_t {
+  /** User whose stats have been unloaded */
   m_steamIDUser: bigint;
 }
 
+/**
+ * Field offsets and total size of `GSStatsUnloaded_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const GSStatsUnloaded_t_layout = {
   4: { size: 8, m_steamIDUser: 0 },
   8: { size: 8, m_steamIDUser: 0 },
 } as const;
 
+/** Read a `GSStatsUnloaded_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeGSStatsUnloaded_t(bytes: Uint8Array): GSStatsUnloaded_t {
   const L = GSStatsUnloaded_t_layout[PACK];
   return {
@@ -6177,6 +8147,12 @@ export function decodeGSStatsUnloaded_t(bytes: Uint8Array): GSStatsUnloaded_t {
   };
 }
 
+/**
+ * A struct used to describe a "fake IP" we have been assigned to
+ * use as an identifier.  This callback is posted when
+ * ISteamNetworkingSoockets::BeginAsyncRequestFakeIP completes.
+ * See also ISteamNetworkingSockets::GetFakeIP
+ */
 export interface SteamNetworkingFakeIPResult_t {
   m_eResult: EResult;
   m_identity: SteamNetworkingIdentity;
@@ -6184,11 +8160,16 @@ export interface SteamNetworkingFakeIPResult_t {
   m_unPorts: number[];
 }
 
+/**
+ * Field offsets and total size of `SteamNetworkingFakeIPResult_t`, under each struct packing.
+ * Index it with `PACK`, which is 8 on Windows and 4 elsewhere.
+ */
 export const SteamNetworkingFakeIPResult_t_layout = {
   4: { size: 160, m_eResult: 0, m_identity: 4, m_unIP: 140, m_unPorts: 144 },
   8: { size: 160, m_eResult: 0, m_identity: 4, m_unIP: 140, m_unPorts: 144 },
 } as const;
 
+/** Read a `SteamNetworkingFakeIPResult_t` out of the bytes Steam delivered, using this platform's layout. */
 export function decodeSteamNetworkingFakeIPResult_t(
   bytes: Uint8Array,
 ): SteamNetworkingFakeIPResult_t {

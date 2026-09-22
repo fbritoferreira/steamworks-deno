@@ -28,7 +28,7 @@ export function scanPacking(headers: { name: string; text: string }[]): Map<stri
     // Only one branch of a #if/#elif chain compiles, so the chain contributes at most one
     // push even though several appear in the text.
     const chains: { guarded: boolean; pushed: boolean }[] = [];
-    const lines = text.split("\n");
+    const lines = text.split(/\r?\n/);
     for (const line of lines) {
       if (/^\s*#\s*if/.test(line)) {
         chains.push({ guarded: PLATFORM_GUARD.test(line), pushed: false });

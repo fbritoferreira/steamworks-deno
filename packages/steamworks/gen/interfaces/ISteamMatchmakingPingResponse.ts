@@ -4,6 +4,10 @@ import { PACK } from "../../src/layout.ts";
 import type { CallResultHost } from "../../src/marshal.ts";
 import { decodegameserveritem_t, gameserveritem_t, gameserveritem_t_layout } from "../structs.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamMatchmakingPingResponse`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamMatchmakingPingResponse_symbols = {
   SteamAPI_ISteamMatchmakingPingResponse_ServerResponded: {
     parameters: ["pointer", "buffer"],
@@ -15,6 +19,10 @@ export const ISteamMatchmakingPingResponse_symbols = {
   },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamMatchmakingPingResponse` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamMatchmakingPingResponse {
   constructor(
     private readonly s: Deno.DynamicLibrary<
@@ -24,12 +32,14 @@ export class ISteamMatchmakingPingResponse {
     private readonly host: CallResultHost,
   ) {}
 
+  /** Server has responded successfully and has updated data */
   serverResponded(): gameserveritem_t {
     const server_buf = new Uint8Array(gameserveritem_t_layout[PACK].size);
     this.s.SteamAPI_ISteamMatchmakingPingResponse_ServerResponded(this.self, server_buf);
     return decodegameserveritem_t(server_buf);
   }
 
+  /** Server failed to respond to the ping request */
   serverFailedToRespond(): void {
     this.s.SteamAPI_ISteamMatchmakingPingResponse_ServerFailedToRespond(this.self);
   }
