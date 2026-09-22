@@ -7,13 +7,14 @@ import { assertEquals } from "@std/assert";
 import { loadSchema } from "./schema.ts";
 import { buildContext } from "./types.ts";
 import { LayoutResolver } from "./layout.ts";
+import { platformPacking } from "./testing.ts";
 
 const schema = await loadSchema(
   new URL("../fixtures/steam_api.mini.json", import.meta.url).pathname,
 );
 // CallbackMsg_t and ValvePackingSentinel_t arrive through schema_patch.ts.
 const ctx = buildContext(schema);
-const r = new LayoutResolver(schema, ctx);
+const r = new LayoutResolver(schema, ctx, platformPacking(schema));
 const offsets = (name: string, pack: 4 | 8) =>
   Object.fromEntries(r.layout(name, pack).fields.map((f) => [f.name, f.offset]));
 

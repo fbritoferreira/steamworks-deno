@@ -2,6 +2,7 @@ import { assertEquals, assertStringIncludes } from "@std/assert";
 import { loadSchema } from "../schema.ts";
 import { buildContext } from "../types.ts";
 import { LayoutResolver } from "../layout.ts";
+import { platformPacking } from "../testing.ts";
 import { emitInterface, tsMethodName } from "./interface.ts";
 import { emitStructs } from "./structs.ts";
 import { emitEnums } from "./enums.ts";
@@ -11,7 +12,7 @@ const schema = await loadSchema(
   new URL("../../fixtures/steam_api.mini.json", import.meta.url).pathname,
 );
 const ctx = buildContext(schema);
-const resolver = new LayoutResolver(schema, ctx);
+const resolver = new LayoutResolver(schema, ctx, platformPacking(schema));
 const iface = (n: string) => schema.interfaces.find((i) => i.classname === n)!;
 
 Deno.test("the symbol table types every parameter and marks the accessor optional", () => {
