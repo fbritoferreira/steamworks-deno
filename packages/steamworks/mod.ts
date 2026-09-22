@@ -21,6 +21,8 @@
  */
 export { SteamClient, type SteamClientOptions, SteamRestartRequested } from "./src/client.ts";
 export {
+  embeddedLibraryPath,
+  libraryFileName,
   LibraryHandle,
   redistributablePath,
   type ResolveLibraryOptions,

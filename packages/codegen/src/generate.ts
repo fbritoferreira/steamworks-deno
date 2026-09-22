@@ -11,6 +11,8 @@ import { emitCallbackIds } from "./emit/callback_ids.ts";
 import { emitLayoutJson } from "./emit/layout_json.ts";
 import { emitInterface } from "./emit/interface.ts";
 import { emitHarnessC } from "./emit/harness_c.ts";
+import { emitAllSymbols } from "./emit/all_symbols.ts";
+import { emitClientBase } from "./emit/client_base.ts";
 import { scanPacking } from "./packscan.ts";
 
 export interface GenerateOptions {
@@ -77,6 +79,8 @@ export async function generate(opts: GenerateOptions): Promise<string[]> {
   files.set("callback_ids.ts", h + emitCallbackIds(schema));
   files.set("layout.json", emitLayoutJson(schema, resolver));
   files.set("layout_check.cpp", emitHarnessC(schema));
+  files.set("all_symbols.ts", h + emitAllSymbols(schema));
+  files.set("client_base.ts", h + emitClientBase(schema));
 
   const names: string[] = [];
   for (const i of schema.interfaces) {

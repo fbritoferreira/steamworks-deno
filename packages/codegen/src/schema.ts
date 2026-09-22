@@ -66,7 +66,8 @@ export interface Method {
 }
 
 export interface Accessor {
-  kind: "user" | "gameserver";
+  /** `global` appears once, on ISteamNetworkingUtils. */
+  kind: "user" | "gameserver" | "global";
   name: string;
   name_flat: string;
 }

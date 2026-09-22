@@ -7,12 +7,7 @@
  * achievement schema, unlocks one achievement and waits for the two callbacks that confirm
  * it, resolves a call result, then clears the achievement again unless --keep is passed.
  */
-import {
-  CallbackId,
-  decodeUserAchievementStored_t,
-  decodeUserStatsStored_t,
-  SteamClient,
-} from "@steamworks/deno";
+import { SteamClient } from "@steamworks/deno";
 
 const keep = Deno.args.includes("--keep");
 const ACH = "ACH_WIN_ONE_GAME";
@@ -44,16 +39,14 @@ try {
     let statsDone = false;
     let achDone = false;
     const check = () => statsDone && achDone && resolve();
-    steam.on(CallbackId.UserStatsStored, (bytes) => {
-      const m = decodeUserStatsStored_t(bytes);
-      console.log(`\n<- UserStatsStored_t       gameId=${m.m_nGameID} result=${m.m_eResult}`);
+    steam.onCallback("UserStatsStored", (data) => {
+      console.log(`\n<- UserStatsStored_t       gameId=${data.m_nGameID} result=${data.m_eResult}`);
       statsDone = true;
       check();
     });
-    steam.on(CallbackId.UserAchievementStored, (bytes) => {
-      const m = decodeUserAchievementStored_t(bytes);
+    steam.onCallback("UserAchievementStored", (data) => {
       console.log(
-        `<- UserAchievementStored_t ${m.m_rgchAchievementName} ${m.m_nCurProgress}/${m.m_nMaxProgress}`,
+        `<- UserAchievementStored_t ${data.m_rgchAchievementName} ${data.m_nCurProgress}/${data.m_nMaxProgress}`,
       );
       achDone = true;
       check();
