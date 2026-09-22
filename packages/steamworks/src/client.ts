@@ -15,6 +15,7 @@ import {
 } from "../gen/structs.ts";
 import { CallbackId } from "../gen/callback_ids.ts";
 import * as G from "../gen/mod.ts";
+import { ALL_INTERFACE_SYMBOLS } from "../gen/all_symbols.ts";
 
 export interface SteamClientOptions extends ResolveLibraryOptions {
   /** Your Steam AppID. Use 480, Valve's Spacewar test app, while developing. */
@@ -34,7 +35,10 @@ export class SteamRestartRequested extends Error {
   }
 }
 
-type Core = Deno.DynamicLibrary<typeof CORE_SYMBOLS>["symbols"];
+/** Everything this package binds: lifecycle, manual dispatch and every interface. */
+const SYMBOLS = { ...CORE_SYMBOLS, ...ALL_INTERFACE_SYMBOLS } as const;
+
+type Core = Deno.DynamicLibrary<typeof SYMBOLS>["symbols"];
 
 /**
  * A connected Steam client.
@@ -71,7 +75,7 @@ export class SteamClient {
     Deno.env.set("SteamAppId", String(opts.appId));
     Deno.env.set("SteamGameId", String(opts.appId));
 
-    const core = handle.open(CORE_SYMBOLS).symbols;
+    const core = handle.open(SYMBOLS).symbols;
     try {
       if (opts.restartIfNecessary && core.SteamAPI_RestartAppIfNecessary(opts.appId)) {
         throw new SteamRestartRequested();
@@ -185,19 +189,23 @@ export class SteamClient {
   }
 
   /** Open one interface's symbol table and wrap its pointer, once. */
+  /**
+   * Wrap one interface's pointer, once. The symbols come from the single open library,
+   * never from a fresh `Deno.dlopen`.
+   */
   #iface<S extends Deno.ForeignLibraryInterface, T>(
     name: string,
-    symbols: S,
+    _symbols: S,
     accessor: string,
     make: (s: Deno.DynamicLibrary<S>["symbols"], self: Deno.PointerValue, host: SteamClient) => T,
   ): T {
     const hit = this.#interfaces.get(name);
     if (hit) return hit as T;
-    const s = this.#handle.open(symbols).symbols;
-    const get = (s as Record<string, unknown>)[accessor] as (() => Deno.PointerValue) | null;
+    const s = this.#core as unknown as Record<string, unknown>;
+    const get = s[accessor] as (() => Deno.PointerValue) | null | undefined;
     const self = get?.() ?? null;
     if (self === null) throw new SteamInterfaceError(name, accessor, G.SDK_VERSION);
-    const made = make(s, self, this);
+    const made = make(this.#core as unknown as Deno.DynamicLibrary<S>["symbols"], self, this);
     this.#interfaces.set(name, made);
     return made;
   }

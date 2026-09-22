@@ -1,3 +1,5 @@
+import { fromFileUrl } from "@std/path";
+
 /**
  * Symbol table for the subset of the Steamworks flat C API used by this package,
  * plus resolution of the native library path.
@@ -44,27 +46,35 @@ type DlOpen = <S extends Deno.ForeignLibraryInterface>(
  * interface opens only its own table, all against the same file.
  */
 export class LibraryHandle {
-  readonly #opened = new Map<
-    Deno.ForeignLibraryInterface,
-    Deno.DynamicLibrary<Deno.ForeignLibraryInterface>
-  >();
+  #lib: Deno.DynamicLibrary<Deno.ForeignLibraryInterface> | undefined;
   readonly #dlopen: DlOpen;
 
   constructor(readonly path: string, dlopen: DlOpen = Deno.dlopen) {
     this.#dlopen = dlopen;
   }
 
+  /**
+   * Open the library, once.
+   *
+   * Calling this twice is a bug, and a costly one to find: inside a binary built with
+   * `deno compile`, each `Deno.dlopen` of an embedded library extracts a separate copy,
+   * so the second instance has never run `SteamAPI_InitFlat` and every interface accessor
+   * answers null. Uncompiled, the two share state and the bug stays hidden.
+   */
   open<S extends Deno.ForeignLibraryInterface>(symbols: S): Deno.DynamicLibrary<S> {
-    const hit = this.#opened.get(symbols);
-    if (hit) return hit as Deno.DynamicLibrary<S>;
+    if (this.#lib) throw new Error("The Steam library is already open; open it once.");
     const lib = this.#dlopen(this.path, symbols);
-    this.#opened.set(symbols, lib);
+    this.#lib = lib as Deno.DynamicLibrary<Deno.ForeignLibraryInterface>;
     return lib;
   }
 
+  get isOpen(): boolean {
+    return this.#lib !== undefined;
+  }
+
   closeAll(): void {
-    for (const lib of this.#opened.values()) lib.close();
-    this.#opened.clear();
+    this.#lib?.close();
+    this.#lib = undefined;
   }
 }
 
@@ -80,7 +90,9 @@ export interface ResolveLibraryOptions {
 }
 
 /** Relative path of the redistributable library inside the SDK for a given platform. */
-export function redistributablePath(build: { os: string; arch: string }): string {
+export function redistributablePath(
+  build: { os: string; arch: string } = Deno.build,
+): string {
   const { os, arch } = build;
   if (os === "darwin") return "redistributable_bin/osx/libsteam_api.dylib";
   if (os === "linux" && arch === "x86_64") return "redistributable_bin/linux64/libsteam_api.so";
@@ -115,4 +127,31 @@ export function resolveLibraryPath(opts: ResolveLibraryOptions = {}): string {
 function join(base: string, rel: string): string {
   const sep = base.endsWith("/") || base.endsWith("\\") ? "" : "/";
   return `${base}${sep}${rel}`;
+}
+
+/** File name of the Steam library on one platform, as the SDK ships it. */
+export function libraryFileName(build: { os: string; arch: string } = Deno.build): string {
+  const rel = redistributablePath(build);
+  return rel.slice(rel.lastIndexOf("/") + 1);
+}
+
+/**
+ * Path to a Steam library embedded in a binary built with `deno compile`.
+ *
+ * `deno compile --include libsteam_api.dylib` unpacks the file next to the module that
+ * references it at run time. That module is your entry point, not a file inside this
+ * package, so pass your own `import.meta.url`:
+ *
+ * ```ts
+ * SteamClient.init({ appId: 480, libraryPath: embeddedLibraryPath(import.meta.url) });
+ * ```
+ *
+ * The path is built with `fromFileUrl` rather than by joining strings, because a
+ * forward-slash path misses the embedded file on Windows (Deno issue 31218).
+ */
+export function embeddedLibraryPath(
+  moduleUrl: string,
+  build: { os: string; arch: string } = Deno.build,
+): string {
+  return fromFileUrl(new URL(libraryFileName(build), moduleUrl));
 }

@@ -63,6 +63,28 @@ steam.shutdown();
 
 Run with `deno run --allow-ffi --allow-env --allow-read main.ts`.
 
+## Shipping with `deno compile`
+
+Include the platform library and resolve it from your own module:
+
+```ts
+import { embeddedLibraryPath, SteamClient } from "@steamworks/deno";
+
+const steam = SteamClient.init({
+  appId: 480,
+  libraryPath: embeddedLibraryPath(import.meta.url),
+});
+```
+
+```sh
+deno compile --allow-ffi --allow-env --allow-read \
+  --include libsteam_api.dylib \
+  --output mygame main.ts
+```
+
+Include the library for the target you build for, not the host: `libsteam_api.dylib` on macOS,
+`libsteam_api.so` on Linux, `steam_api64.dll` on Windows.
+
 Library lookup order: `libraryPath` option, `sdkPath` option, `STEAMWORKS_LIB_PATH`,
 `STEAMWORKS_SDK_PATH`.
 
