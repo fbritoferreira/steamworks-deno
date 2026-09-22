@@ -80,10 +80,9 @@ Deno.test("libraryFileName covers every platform Deno targets", () => {
 });
 
 Deno.test("embeddedLibraryPath resolves beside the caller's module", () => {
-  assertEquals(
-    embeddedLibraryPath("file:///app/main.ts", { os: "linux", arch: "x86_64" }),
-    "/app/libsteam_api.so",
-  );
+  const path = embeddedLibraryPath("file:///app/main.ts", { os: "linux", arch: "x86_64" });
+  // fromFileUrl follows the host, so compare with separators normalised.
+  assertEquals(path.replaceAll("\\", "/"), "/app/libsteam_api.so");
 });
 
 Deno.test("embeddedLibraryPath handles a Windows module URL", () => {
@@ -100,5 +99,5 @@ Deno.test("embeddedLibraryPath keeps the caller's directory", () => {
     os: "darwin",
     arch: "aarch64",
   });
-  assertEquals(path, "/games/mygame/libsteam_api.dylib");
+  assertEquals(path.replaceAll("\\", "/"), "/games/mygame/libsteam_api.dylib");
 });
