@@ -7,11 +7,14 @@
     "include": [
       "mod.ts",
       "src/**/*.ts",
+      "gen/**/*.ts",
       "README.md",
       "LICENSE"
     ],
     "exclude": [
-      "src/**/*_test.ts"
+      "src/**/*_test.ts",
+      "**/*_test.ts",
+      "harness"
     ]
   },
   "imports": {

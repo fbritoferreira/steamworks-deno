@@ -1,0 +1,38 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Type check
+        run: deno task check
+
+      - name: Lint and format
+        run: deno task lint
+
+      # The Steamworks SDK cannot be redistributed, so the tests that need it
+      # (the layout harness and the live client check) skip themselves here.
+      - name: Test
+        run: deno task test
+
+      - name: Publish dry run
+        run: deno publish --dry-run
+        working-directory: packages/steamworks

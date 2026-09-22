@@ -1,0 +1,40 @@
+name: publish
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      # Lets JSR mint a short-lived token for this workflow run, so no secret is
+      # stored anywhere. JSR checks the claim names this repository.
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Type check
+        run: deno task check
+
+      - name: Lint and format
+        run: deno task lint
+
+      - name: Test
+        run: deno task test
+
+      - name: Publish @steamworks/deno
+        run: deno publish
+        working-directory: packages/steamworks
+
+      - name: Publish @steamworks/codegen
+        run: deno publish
+        working-directory: packages/codegen
