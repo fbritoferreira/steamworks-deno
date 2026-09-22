@@ -8,9 +8,10 @@ import { loadSchema } from "./schema.ts";
 import { buildContext } from "./types.ts";
 import { LayoutResolver } from "./layout.ts";
 import { platformPacking } from "./testing.ts";
+import { fromFileUrl } from "@std/path";
 
 const schema = await loadSchema(
-  new URL("../fixtures/steam_api.mini.json", import.meta.url).pathname,
+  fromFileUrl(new URL("../fixtures/steam_api.mini.json", import.meta.url)),
 );
 // CallbackMsg_t and ValvePackingSentinel_t arrive through schema_patch.ts.
 const ctx = buildContext(schema);

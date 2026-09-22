@@ -2,9 +2,10 @@ import { assertEquals } from "@std/assert";
 import { loadSchema } from "./schema.ts";
 import { buildContext } from "./types.ts";
 import { classify } from "./params.ts";
+import { fromFileUrl } from "@std/path";
 
 const schema = await loadSchema(
-  new URL("../fixtures/steam_api.mini.json", import.meta.url).pathname,
+  fromFileUrl(new URL("../fixtures/steam_api.mini.json", import.meta.url)),
 );
 const ctx = buildContext(schema);
 const byName = (cls: string, name: string) =>

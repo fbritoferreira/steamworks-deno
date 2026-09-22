@@ -7,9 +7,10 @@ import { emitInterface, tsMethodName } from "./interface.ts";
 import { emitStructs } from "./structs.ts";
 import { emitEnums } from "./enums.ts";
 import { header } from "./header.ts";
+import { fromFileUrl } from "@std/path";
 
 const schema = await loadSchema(
-  new URL("../../fixtures/steam_api.mini.json", import.meta.url).pathname,
+  fromFileUrl(new URL("../../fixtures/steam_api.mini.json", import.meta.url)),
 );
 const ctx = buildContext(schema);
 const resolver = new LayoutResolver(schema, ctx, platformPacking(schema));
@@ -89,7 +90,10 @@ Deno.test("overloads are separated by the suffix in the flat name", () => {
 Deno.test("every fixture interface compiles against the runtime", async () => {
   const dir = await Deno.makeTempDir();
   await Deno.mkdir(`${dir}/gen/interfaces`, { recursive: true });
-  await Deno.symlink(new URL("../../../steamworks/src", import.meta.url).pathname, `${dir}/src`);
+  await Deno.symlink(
+    fromFileUrl(new URL("../../../steamworks/src", import.meta.url)),
+    `${dir}/src`,
+  );
   const h = header("test");
   await Deno.writeTextFile(`${dir}/gen/enums.ts`, h + emitEnums(schema));
   await Deno.writeTextFile(`${dir}/gen/structs.ts`, h + emitStructs(schema, ctx, resolver));

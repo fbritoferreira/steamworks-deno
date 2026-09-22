@@ -4,6 +4,7 @@
  *   STEAMWORKS_SDK_PATH=/path/to/sdk deno task gen
  */
 import { generate } from "./src/generate.ts";
+import { fromFileUrl } from "@std/path";
 
 const sdkPath = Deno.env.get("STEAMWORKS_SDK_PATH");
 if (!sdkPath) {
@@ -15,6 +16,6 @@ if (!sdkPath) {
   Deno.exit(2);
 }
 
-const outDir = Deno.args[0] ?? new URL("../steamworks/gen", import.meta.url).pathname;
+const outDir = Deno.args[0] ?? fromFileUrl(new URL("../steamworks/gen", import.meta.url));
 const written = await generate({ sdkPath, outDir });
 console.log(`wrote ${written.length} files to ${outDir}`);

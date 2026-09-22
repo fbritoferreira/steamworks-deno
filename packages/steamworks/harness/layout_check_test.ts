@@ -6,9 +6,10 @@
  */
 import { assertEquals, assertGreater } from "@std/assert";
 import { PACK } from "../src/layout.ts";
+import { fromFileUrl } from "@std/path";
 
 const sdk = Deno.env.get("STEAMWORKS_SDK_PATH");
-const here = new URL(".", import.meta.url).pathname;
+const here = fromFileUrl(new URL(".", import.meta.url));
 
 async function haveClang(): Promise<boolean> {
   try {

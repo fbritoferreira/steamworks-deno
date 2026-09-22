@@ -9,9 +9,10 @@ import { emitLayoutJson } from "./layout_json.ts";
 import { emitEnums } from "./enums.ts";
 import { emitConsts } from "./consts.ts";
 import { header } from "./header.ts";
+import { fromFileUrl } from "@std/path";
 
 const schema = await loadSchema(
-  new URL("../../fixtures/steam_api.mini.json", import.meta.url).pathname,
+  fromFileUrl(new URL("../../fixtures/steam_api.mini.json", import.meta.url)),
 );
 const ctx = buildContext(schema);
 const resolver = new LayoutResolver(schema, ctx, platformPacking(schema));
@@ -47,7 +48,7 @@ Deno.test("emitLayoutJson carries both packings", () => {
 
 Deno.test("generated code compiles and decodes a real callback payload", async () => {
   const dir = await Deno.makeTempDir();
-  const runtime = new URL("../../../steamworks/src", import.meta.url).pathname;
+  const runtime = fromFileUrl(new URL("../../../steamworks/src", import.meta.url));
   await Deno.mkdir(`${dir}/gen`);
   await Deno.symlink(runtime, `${dir}/src`);
   const h = header("test");

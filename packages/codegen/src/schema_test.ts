@@ -1,7 +1,8 @@
 import { assert, assertEquals, assertRejects } from "@std/assert";
 import { loadSchema } from "./schema.ts";
+import { fromFileUrl } from "@std/path";
 
-const FIXTURE = new URL("../fixtures/steam_api.mini.json", import.meta.url).pathname;
+const FIXTURE = fromFileUrl(new URL("../fixtures/steam_api.mini.json", import.meta.url));
 
 Deno.test("loadSchema reads the fixture and exposes the six top-level arrays", async () => {
   const s = await loadSchema(FIXTURE);

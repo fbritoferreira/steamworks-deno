@@ -1,9 +1,10 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { loadSchema } from "./schema.ts";
 import { buildContext, mapType } from "./types.ts";
+import { fromFileUrl } from "@std/path";
 
 const ctx = buildContext(
-  await loadSchema(new URL("../fixtures/steam_api.mini.json", import.meta.url).pathname),
+  await loadSchema(fromFileUrl(new URL("../fixtures/steam_api.mini.json", import.meta.url))),
 );
 
 Deno.test("primitives", () => {
