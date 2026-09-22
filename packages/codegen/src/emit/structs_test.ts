@@ -9,7 +9,7 @@ import { emitLayoutJson } from "./layout_json.ts";
 import { emitEnums } from "./enums.ts";
 import { emitConsts } from "./consts.ts";
 import { header } from "./header.ts";
-import { fromFileUrl } from "@std/path";
+import { fromFileUrl, toFileUrl } from "@std/path";
 
 const schema = await loadSchema(
   fromFileUrl(new URL("../../fixtures/steam_api.mini.json", import.meta.url)),
@@ -63,7 +63,8 @@ Deno.test("generated code compiles and decodes a real callback payload", async (
   }).output();
   assertEquals(check.success, true, new TextDecoder().decode(check.stderr));
 
-  const mod = await import(`${dir}/gen/structs.ts`);
+  // A dynamic import needs a URL; a bare Windows path has an unsupported "c:" scheme.
+  const mod = await import(toFileUrl(`${dir}/gen/structs.ts`).href);
   // A UserAchievementStored_t as Steam would deliver it.
   const bytes = new Uint8Array(mod.UserAchievementStored_t_layout[4].size);
   const dv = new DataView(bytes.buffer);
