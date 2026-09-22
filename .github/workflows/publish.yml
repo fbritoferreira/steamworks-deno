@@ -47,6 +47,16 @@ jobs:
         run: deno publish
         working-directory: packages/steamworks
 
+      # The generator is published so users can regenerate for a different SDK version.
+      # It is skipped until the package exists on JSR, since OIDC cannot create one.
+      - name: Does @steamworks/codegen exist on JSR?
+        id: codegen
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" \
+            https://jsr.io/api/scopes/steamworks/packages/codegen)
+          echo "exists=$([ "$code" = "200" ] && echo yes || echo no)" >> "$GITHUB_OUTPUT"
+
       - name: Publish @steamworks/codegen
+        if: steps.codegen.outputs.exists == 'yes'
         run: deno publish
         working-directory: packages/codegen
