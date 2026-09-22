@@ -8,14 +8,19 @@ identity, overlay, and the rest of the flat C API.
 > are trademarks of Valve Corporation. This repository and the published package contain no Valve
 > code or binaries.
 
+[![JSR](https://jsr.io/badges/@steamworks/deno)](https://jsr.io/@steamworks/deno)
+[![ci](https://github.com/fbritoferreira/steamworks-deno/actions/workflows/ci.yml/badge.svg)](https://github.com/fbritoferreira/steamworks-deno/actions/workflows/ci.yml)
+
 ## Status
 
-Proof of concept. What works today on macOS arm64 against a running Steam client:
+Early but working. Verified on macOS against a running Steam client:
 
-- `SteamAPI_InitFlat`, shutdown, manual callback dispatch (`SteamAPI_ManualDispatch_*`)
-- `ISteamUser`, `ISteamFriends`, `ISteamUtils`, `ISteamApps` basics
-- `ISteamUserStats` achievements and int stats, including the store callbacks
-- CallResults surfaced as Promises (`requestGlobalAchievementPercentages`)
+- `SteamAPI_InitFlat`, shutdown, and manual callback dispatch
+- identity, friends, app and achievement data through the generated interfaces
+- unsolicited callbacks delivered to listeners by id
+- call results surfaced as promises
+
+Continuous integration covers Linux, macOS and Windows.
 
 Everything else is on the roadmap: generated bindings for all 34 interfaces from `steam_api.json`,
 per-platform struct layouts (Windows packs callback structs at 8 bytes, macOS/Linux at 4), Linux and
