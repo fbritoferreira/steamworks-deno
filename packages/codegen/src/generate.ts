@@ -18,7 +18,7 @@ export interface GenerateOptions {
   sdkPath: string;
   /** Directory to write the generated files into. */
   outDir: string;
-  /** Used when the SDK's Readme.txt does not state a version. */
+  /** Overrides the version read from the SDK's Readme.txt. */
   sdkVersion?: string;
 }
 
@@ -33,19 +33,38 @@ async function readHeaders(dir: string): Promise<{ name: string; text: string }[
   return out;
 }
 
-async function detectVersion(sdkPath: string, fallback: string): Promise<string> {
+/**
+ * Read the SDK version from `Readme.txt`, the only file that states it.
+ *
+ * An explicit `sdkVersion` always wins. When neither is available this throws rather than
+ * guessing: the version is baked into every generated file and into the error a version
+ * mismatch reports, so a wrong value is worse than a refusal.
+ */
+async function detectVersion(sdkPath: string, explicit?: string): Promise<string> {
+  if (explicit) return explicit;
+  let readme: string;
   try {
-    const readme = await Deno.readTextFile(join(sdkPath, "Readme.txt"));
-    return /v(\d+\.\d+)/.exec(readme)?.[1] ?? fallback;
+    readme = await Deno.readTextFile(join(sdkPath, "Readme.txt"));
   } catch {
-    return fallback;
+    throw new Error(
+      `Cannot determine the SDK version: ${join(sdkPath, "Readme.txt")} is missing. ` +
+        `Copy it from the SDK zip, or pass the version explicitly ` +
+        `(STEAMWORKS_SDK_VERSION when using the command line).`,
+    );
   }
+  const found = /v(\d+\.\d+)/.exec(readme)?.[1];
+  if (!found) {
+    throw new Error(
+      `Cannot determine the SDK version: no "vN.N" found in ${join(sdkPath, "Readme.txt")}.`,
+    );
+  }
+  return found;
 }
 
 /** Generate every binding file. Returns the paths written, sorted. */
 export async function generate(opts: GenerateOptions): Promise<string[]> {
   const schema = await loadSchema(join(opts.sdkPath, "public", "steam", "steam_api.json"));
-  const version = await detectVersion(opts.sdkPath, opts.sdkVersion ?? "unknown");
+  const version = await detectVersion(opts.sdkPath, opts.sdkVersion);
   const ctx = buildContext(schema);
   const packing = scanPacking(await readHeaders(join(opts.sdkPath, "public", "steam")));
   const resolver = new LayoutResolver(schema, ctx, packing);

@@ -17,5 +17,9 @@ if (!sdkPath) {
 }
 
 const outDir = Deno.args[0] ?? fromFileUrl(new URL("../steamworks/gen", import.meta.url));
-const written = await generate({ sdkPath, outDir });
+const written = await generate({
+  sdkPath,
+  outDir,
+  sdkVersion: Deno.env.get("STEAMWORKS_SDK_VERSION"),
+});
 console.log(`wrote ${written.length} files to ${outDir}`);
