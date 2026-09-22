@@ -11,8 +11,9 @@ jobs:
 
     permissions:
       contents: read
-      # Lets JSR mint a short-lived token for this workflow run, so no secret is
-      # stored anywhere. JSR checks the claim names this repository.
+      # Lets JSR mint a short-lived token for this run through GitHub's OIDC provider,
+      # so no registry secret is stored. JSR checks that the claim names this repository,
+      # which is why each package must be linked to it in its JSR settings.
       id-token: write
 
     steps:
@@ -21,6 +22,17 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
+
+      - name: Check the tag matches the package version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pkg=$(deno eval 'console.log(JSON.parse(Deno.readTextFileSync("packages/steamworks/deno.json")).version)')
+          if [ "$tag" != "$pkg" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match version $pkg in packages/steamworks/deno.json"
+            exit 1
+          fi
+          echo "Publishing version $pkg"
 
       - name: Type check
         run: deno task check
