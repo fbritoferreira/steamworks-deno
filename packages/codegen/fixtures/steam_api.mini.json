@@ -1,0 +1,4234 @@
+{
+  "typedefs": [
+    {
+      "typedef": "uint8",
+      "type": "unsigned char"
+    },
+    {
+      "typedef": "int8",
+      "type": "signed char"
+    },
+    {
+      "typedef": "int16",
+      "type": "short"
+    },
+    {
+      "typedef": "uint16",
+      "type": "unsigned short"
+    },
+    {
+      "typedef": "int32",
+      "type": "int"
+    },
+    {
+      "typedef": "uint32",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "int64",
+      "type": "long long"
+    },
+    {
+      "typedef": "uint64",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "lint64",
+      "type": "long long"
+    },
+    {
+      "typedef": "ulint64",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "intp",
+      "type": "long long"
+    },
+    {
+      "typedef": "uintp",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "AppId_t",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "DepotId_t",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "RTime32",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "SteamAPICall_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "AccountID_t",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "PartyBeaconID_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "HAuthTicket",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "PFNPreMinidumpCallback",
+      "type": "void (*)(void *)"
+    },
+    {
+      "typedef": "HSteamPipe",
+      "type": "int"
+    },
+    {
+      "typedef": "HSteamUser",
+      "type": "int"
+    },
+    {
+      "typedef": "SteamErrMsg",
+      "type": "char [1024]"
+    },
+    {
+      "typedef": "FriendsGroupID_t",
+      "type": "short"
+    },
+    {
+      "typedef": "HServerListRequest",
+      "type": "void *"
+    },
+    {
+      "typedef": "HServerQuery",
+      "type": "int"
+    },
+    {
+      "typedef": "UGCHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "PublishedFileUpdateHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "PublishedFileId_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "UGCFileWriteStreamHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "SteamLeaderboard_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "SteamLeaderboardEntries_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "SNetSocket_t",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "SNetListenSocket_t",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "ScreenshotHandle",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "HTTPRequestHandle",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "HTTPCookieContainerHandle",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "InputHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "InputActionSetHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "InputDigitalActionHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "InputAnalogActionHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "SteamInputActionEventCallbackPointer",
+      "type": "void (*)(SteamInputActionEvent_t *)"
+    },
+    {
+      "typedef": "ControllerHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "ControllerActionSetHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "ControllerDigitalActionHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "ControllerAnalogActionHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "UGCQueryHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "UGCUpdateHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "HHTMLBrowser",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "SteamItemInstanceID_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "SteamItemDef_t",
+      "type": "int"
+    },
+    {
+      "typedef": "SteamInventoryResult_t",
+      "type": "int"
+    },
+    {
+      "typedef": "SteamInventoryUpdateHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "TimelineEventHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "RemotePlaySessionID_t",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "RemotePlayCursorID_t",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "FnSteamNetConnectionStatusChanged",
+      "type": "void (*)(SteamNetConnectionStatusChangedCallback_t *)"
+    },
+    {
+      "typedef": "FnSteamNetAuthenticationStatusChanged",
+      "type": "void (*)(SteamNetAuthenticationStatus_t *)"
+    },
+    {
+      "typedef": "FnSteamRelayNetworkStatusChanged",
+      "type": "void (*)(SteamRelayNetworkStatus_t *)"
+    },
+    {
+      "typedef": "FnSteamNetworkingMessagesSessionRequest",
+      "type": "void (*)(SteamNetworkingMessagesSessionRequest_t *)"
+    },
+    {
+      "typedef": "FnSteamNetworkingMessagesSessionFailed",
+      "type": "void (*)(SteamNetworkingMessagesSessionFailed_t *)"
+    },
+    {
+      "typedef": "FnSteamNetworkingFakeIPResult",
+      "type": "void (*)(SteamNetworkingFakeIPResult_t *)"
+    },
+    {
+      "typedef": "HSteamNetConnection",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "HSteamListenSocket",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "HSteamNetPollGroup",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "SteamNetworkingErrMsg",
+      "type": "char [1024]"
+    },
+    {
+      "typedef": "SteamNetworkingPOPID",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "SteamNetworkingMicroseconds",
+      "type": "long long"
+    },
+    {
+      "typedef": "FSteamNetworkingSocketsDebugOutput",
+      "type": "void (*)(ESteamNetworkingSocketsDebugOutputType, const char *)"
+    }
+  ],
+  "consts": [
+    {
+      "constname": "k_uAppIdInvalid",
+      "consttype": "AppId_t",
+      "constval": "0x0"
+    },
+    {
+      "constname": "k_uAPICallInvalid",
+      "consttype": "SteamAPICall_t",
+      "constval": "0x0"
+    },
+    {
+      "constname": "k_unSteamAccountIDMask",
+      "consttype": "unsigned int",
+      "constval": "0xFFFFFFFF"
+    },
+    {
+      "constname": "k_cchMaxSteamErrMsg",
+      "consttype": "int",
+      "constval": "1024"
+    },
+    {
+      "constname": "k_unMaxCloudFileChunkSize",
+      "consttype": "uint32",
+      "constval": "100 * 1024 * 1024"
+    },
+    {
+      "constname": "k_UGCHandleInvalid",
+      "consttype": "UGCHandle_t",
+      "constval": "0xffffffffffffffffull"
+    },
+    {
+      "constname": "k_cchPublishedDocumentTitleMax",
+      "consttype": "uint32",
+      "constval": "128 + 1"
+    },
+    {
+      "constname": "k_SteamItemInstanceIDInvalid",
+      "consttype": "SteamItemInstanceID_t",
+      "constval": "( SteamItemInstanceID_t ) ~ 0"
+    },
+    {
+      "constname": "k_SteamInventoryResultInvalid",
+      "consttype": "SteamInventoryResult_t",
+      "constval": "- 1"
+    }
+  ],
+  "enums": [
+    {
+      "enumname": "EUniverse",
+      "values": [
+        {
+          "name": "k_EUniverseInvalid",
+          "value": "0"
+        },
+        {
+          "name": "k_EUniversePublic",
+          "value": "1"
+        },
+        {
+          "name": "k_EUniverseBeta",
+          "value": "2"
+        },
+        {
+          "name": "k_EUniverseInternal",
+          "value": "3"
+        },
+        {
+          "name": "k_EUniverseDev",
+          "value": "4"
+        },
+        {
+          "name": "k_EUniverseMax",
+          "value": "5"
+        }
+      ]
+    },
+    {
+      "enumname": "EResult",
+      "values": [
+        {
+          "name": "k_EResultNone",
+          "value": "0"
+        },
+        {
+          "name": "k_EResultOK",
+          "value": "1"
+        },
+        {
+          "name": "k_EResultFail",
+          "value": "2"
+        },
+        {
+          "name": "k_EResultNoConnection",
+          "value": "3"
+        },
+        {
+          "name": "k_EResultInvalidPassword",
+          "value": "5"
+        },
+        {
+          "name": "k_EResultLoggedInElsewhere",
+          "value": "6"
+        },
+        {
+          "name": "k_EResultInvalidProtocolVer",
+          "value": "7"
+        },
+        {
+          "name": "k_EResultInvalidParam",
+          "value": "8"
+        },
+        {
+          "name": "k_EResultFileNotFound",
+          "value": "9"
+        },
+        {
+          "name": "k_EResultBusy",
+          "value": "10"
+        },
+        {
+          "name": "k_EResultInvalidState",
+          "value": "11"
+        },
+        {
+          "name": "k_EResultInvalidName",
+          "value": "12"
+        },
+        {
+          "name": "k_EResultInvalidEmail",
+          "value": "13"
+        },
+        {
+          "name": "k_EResultDuplicateName",
+          "value": "14"
+        },
+        {
+          "name": "k_EResultAccessDenied",
+          "value": "15"
+        },
+        {
+          "name": "k_EResultTimeout",
+          "value": "16"
+        },
+        {
+          "name": "k_EResultBanned",
+          "value": "17"
+        },
+        {
+          "name": "k_EResultAccountNotFound",
+          "value": "18"
+        },
+        {
+          "name": "k_EResultInvalidSteamID",
+          "value": "19"
+        },
+        {
+          "name": "k_EResultServiceUnavailable",
+          "value": "20"
+        },
+        {
+          "name": "k_EResultNotLoggedOn",
+          "value": "21"
+        },
+        {
+          "name": "k_EResultPending",
+          "value": "22"
+        },
+        {
+          "name": "k_EResultEncryptionFailure",
+          "value": "23"
+        },
+        {
+          "name": "k_EResultInsufficientPrivilege",
+          "value": "24"
+        },
+        {
+          "name": "k_EResultLimitExceeded",
+          "value": "25"
+        },
+        {
+          "name": "k_EResultRevoked",
+          "value": "26"
+        },
+        {
+          "name": "k_EResultExpired",
+          "value": "27"
+        },
+        {
+          "name": "k_EResultAlreadyRedeemed",
+          "value": "28"
+        },
+        {
+          "name": "k_EResultDuplicateRequest",
+          "value": "29"
+        },
+        {
+          "name": "k_EResultAlreadyOwned",
+          "value": "30"
+        },
+        {
+          "name": "k_EResultIPNotFound",
+          "value": "31"
+        },
+        {
+          "name": "k_EResultPersistFailed",
+          "value": "32"
+        },
+        {
+          "name": "k_EResultLockingFailed",
+          "value": "33"
+        },
+        {
+          "name": "k_EResultLogonSessionReplaced",
+          "value": "34"
+        },
+        {
+          "name": "k_EResultConnectFailed",
+          "value": "35"
+        },
+        {
+          "name": "k_EResultHandshakeFailed",
+          "value": "36"
+        },
+        {
+          "name": "k_EResultIOFailure",
+          "value": "37"
+        },
+        {
+          "name": "k_EResultRemoteDisconnect",
+          "value": "38"
+        },
+        {
+          "name": "k_EResultShoppingCartNotFound",
+          "value": "39"
+        },
+        {
+          "name": "k_EResultBlocked",
+          "value": "40"
+        },
+        {
+          "name": "k_EResultIgnored",
+          "value": "41"
+        },
+        {
+          "name": "k_EResultNoMatch",
+          "value": "42"
+        },
+        {
+          "name": "k_EResultAccountDisabled",
+          "value": "43"
+        },
+        {
+          "name": "k_EResultServiceReadOnly",
+          "value": "44"
+        },
+        {
+          "name": "k_EResultAccountNotFeatured",
+          "value": "45"
+        },
+        {
+          "name": "k_EResultAdministratorOK",
+          "value": "46"
+        },
+        {
+          "name": "k_EResultContentVersion",
+          "value": "47"
+        },
+        {
+          "name": "k_EResultTryAnotherCM",
+          "value": "48"
+        },
+        {
+          "name": "k_EResultPasswordRequiredToKickSession",
+          "value": "49"
+        },
+        {
+          "name": "k_EResultAlreadyLoggedInElsewhere",
+          "value": "50"
+        },
+        {
+          "name": "k_EResultSuspended",
+          "value": "51"
+        },
+        {
+          "name": "k_EResultCancelled",
+          "value": "52"
+        },
+        {
+          "name": "k_EResultDataCorruption",
+          "value": "53"
+        },
+        {
+          "name": "k_EResultDiskFull",
+          "value": "54"
+        },
+        {
+          "name": "k_EResultRemoteCallFailed",
+          "value": "55"
+        },
+        {
+          "name": "k_EResultPasswordUnset",
+          "value": "56"
+        },
+        {
+          "name": "k_EResultExternalAccountUnlinked",
+          "value": "57"
+        },
+        {
+          "name": "k_EResultPSNTicketInvalid",
+          "value": "58"
+        },
+        {
+          "name": "k_EResultExternalAccountAlreadyLinked",
+          "value": "59"
+        },
+        {
+          "name": "k_EResultRemoteFileConflict",
+          "value": "60"
+        },
+        {
+          "name": "k_EResultIllegalPassword",
+          "value": "61"
+        },
+        {
+          "name": "k_EResultSameAsPreviousValue",
+          "value": "62"
+        },
+        {
+          "name": "k_EResultAccountLogonDenied",
+          "value": "63"
+        },
+        {
+          "name": "k_EResultCannotUseOldPassword",
+          "value": "64"
+        },
+        {
+          "name": "k_EResultInvalidLoginAuthCode",
+          "value": "65"
+        },
+        {
+          "name": "k_EResultAccountLogonDeniedNoMail",
+          "value": "66"
+        },
+        {
+          "name": "k_EResultHardwareNotCapableOfIPT",
+          "value": "67"
+        },
+        {
+          "name": "k_EResultIPTInitError",
+          "value": "68"
+        },
+        {
+          "name": "k_EResultParentalControlRestricted",
+          "value": "69"
+        },
+        {
+          "name": "k_EResultFacebookQueryError",
+          "value": "70"
+        },
+        {
+          "name": "k_EResultExpiredLoginAuthCode",
+          "value": "71"
+        },
+        {
+          "name": "k_EResultIPLoginRestrictionFailed",
+          "value": "72"
+        },
+        {
+          "name": "k_EResultAccountLockedDown",
+          "value": "73"
+        },
+        {
+          "name": "k_EResultAccountLogonDeniedVerifiedEmailRequired",
+          "value": "74"
+        },
+        {
+          "name": "k_EResultNoMatchingURL",
+          "value": "75"
+        },
+        {
+          "name": "k_EResultBadResponse",
+          "value": "76"
+        },
+        {
+          "name": "k_EResultRequirePasswordReEntry",
+          "value": "77"
+        },
+        {
+          "name": "k_EResultValueOutOfRange",
+          "value": "78"
+        },
+        {
+          "name": "k_EResultUnexpectedError",
+          "value": "79"
+        },
+        {
+          "name": "k_EResultDisabled",
+          "value": "80"
+        },
+        {
+          "name": "k_EResultInvalidCEGSubmission",
+          "value": "81"
+        },
+        {
+          "name": "k_EResultRestrictedDevice",
+          "value": "82"
+        },
+        {
+          "name": "k_EResultRegionLocked",
+          "value": "83"
+        },
+        {
+          "name": "k_EResultRateLimitExceeded",
+          "value": "84"
+        },
+        {
+          "name": "k_EResultAccountLoginDeniedNeedTwoFactor",
+          "value": "85"
+        },
+        {
+          "name": "k_EResultItemDeleted",
+          "value": "86"
+        },
+        {
+          "name": "k_EResultAccountLoginDeniedThrottle",
+          "value": "87"
+        },
+        {
+          "name": "k_EResultTwoFactorCodeMismatch",
+          "value": "88"
+        },
+        {
+          "name": "k_EResultTwoFactorActivationCodeMismatch",
+          "value": "89"
+        },
+        {
+          "name": "k_EResultAccountAssociatedToMultiplePartners",
+          "value": "90"
+        },
+        {
+          "name": "k_EResultNotModified",
+          "value": "91"
+        },
+        {
+          "name": "k_EResultNoMobileDevice",
+          "value": "92"
+        },
+        {
+          "name": "k_EResultTimeNotSynced",
+          "value": "93"
+        },
+        {
+          "name": "k_EResultSmsCodeFailed",
+          "value": "94"
+        },
+        {
+          "name": "k_EResultAccountLimitExceeded",
+          "value": "95"
+        },
+        {
+          "name": "k_EResultAccountActivityLimitExceeded",
+          "value": "96"
+        },
+        {
+          "name": "k_EResultPhoneActivityLimitExceeded",
+          "value": "97"
+        },
+        {
+          "name": "k_EResultRefundToWallet",
+          "value": "98"
+        },
+        {
+          "name": "k_EResultEmailSendFailure",
+          "value": "99"
+        },
+        {
+          "name": "k_EResultNotSettled",
+          "value": "100"
+        },
+        {
+          "name": "k_EResultNeedCaptcha",
+          "value": "101"
+        },
+        {
+          "name": "k_EResultGSLTDenied",
+          "value": "102"
+        },
+        {
+          "name": "k_EResultGSOwnerDenied",
+          "value": "103"
+        },
+        {
+          "name": "k_EResultInvalidItemType",
+          "value": "104"
+        },
+        {
+          "name": "k_EResultIPBanned",
+          "value": "105"
+        },
+        {
+          "name": "k_EResultGSLTExpired",
+          "value": "106"
+        },
+        {
+          "name": "k_EResultInsufficientFunds",
+          "value": "107"
+        },
+        {
+          "name": "k_EResultTooManyPending",
+          "value": "108"
+        },
+        {
+          "name": "k_EResultNoSiteLicensesFound",
+          "value": "109"
+        },
+        {
+          "name": "k_EResultWGNetworkSendExceeded",
+          "value": "110"
+        },
+        {
+          "name": "k_EResultAccountNotFriends",
+          "value": "111"
+        },
+        {
+          "name": "k_EResultLimitedUserAccount",
+          "value": "112"
+        },
+        {
+          "name": "k_EResultCantRemoveItem",
+          "value": "113"
+        },
+        {
+          "name": "k_EResultAccountDeleted",
+          "value": "114"
+        },
+        {
+          "name": "k_EResultExistingUserCancelledLicense",
+          "value": "115"
+        },
+        {
+          "name": "k_EResultCommunityCooldown",
+          "value": "116"
+        },
+        {
+          "name": "k_EResultNoLauncherSpecified",
+          "value": "117"
+        },
+        {
+          "name": "k_EResultMustAgreeToSSA",
+          "value": "118"
+        },
+        {
+          "name": "k_EResultLauncherMigrated",
+          "value": "119"
+        },
+        {
+          "name": "k_EResultSteamRealmMismatch",
+          "value": "120"
+        },
+        {
+          "name": "k_EResultInvalidSignature",
+          "value": "121"
+        },
+        {
+          "name": "k_EResultParseFailure",
+          "value": "122"
+        },
+        {
+          "name": "k_EResultNoVerifiedPhone",
+          "value": "123"
+        },
+        {
+          "name": "k_EResultInsufficientBattery",
+          "value": "124"
+        },
+        {
+          "name": "k_EResultChargerRequired",
+          "value": "125"
+        },
+        {
+          "name": "k_EResultCachedCredentialInvalid",
+          "value": "126"
+        },
+        {
+          "name": "K_EResultPhoneNumberIsVOIP",
+          "value": "127"
+        },
+        {
+          "name": "k_EResultNotSupported",
+          "value": "128"
+        },
+        {
+          "name": "k_EResultFamilySizeLimitExceeded",
+          "value": "129"
+        },
+        {
+          "name": "k_EResultOfflineAppCacheInvalid",
+          "value": "130"
+        },
+        {
+          "name": "k_EResultTryLater",
+          "value": "131"
+        }
+      ]
+    },
+    {
+      "enumname": "EPersonaState",
+      "values": [
+        {
+          "name": "k_EPersonaStateOffline",
+          "value": "0"
+        },
+        {
+          "name": "k_EPersonaStateOnline",
+          "value": "1"
+        },
+        {
+          "name": "k_EPersonaStateBusy",
+          "value": "2"
+        },
+        {
+          "name": "k_EPersonaStateAway",
+          "value": "3"
+        },
+        {
+          "name": "k_EPersonaStateSnooze",
+          "value": "4"
+        },
+        {
+          "name": "k_EPersonaStateLookingToTrade",
+          "value": "5"
+        },
+        {
+          "name": "k_EPersonaStateLookingToPlay",
+          "value": "6"
+        },
+        {
+          "name": "k_EPersonaStateInvisible",
+          "value": "7"
+        },
+        {
+          "name": "k_EPersonaStateMax",
+          "value": "8"
+        }
+      ]
+    },
+    {
+      "enumname": "ESteamAPIInitResult",
+      "values": [
+        {
+          "name": "k_ESteamAPIInitResult_OK",
+          "value": "0"
+        },
+        {
+          "name": "k_ESteamAPIInitResult_FailedGeneric",
+          "value": "1"
+        },
+        {
+          "name": "k_ESteamAPIInitResult_NoSteamClient",
+          "value": "2"
+        },
+        {
+          "name": "k_ESteamAPIInitResult_VersionMismatch",
+          "value": "3"
+        }
+      ]
+    }
+  ],
+  "structs": [
+    {
+      "fields": [
+        {
+          "fieldname": "m_gameID",
+          "fieldtype": "CGameID"
+        },
+        {
+          "fieldname": "m_unGameIP",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_usGamePort",
+          "fieldtype": "uint16"
+        },
+        {
+          "fieldname": "m_usQueryPort",
+          "fieldtype": "uint16"
+        },
+        {
+          "fieldname": "m_steamIDLobby",
+          "fieldtype": "CSteamID"
+        }
+      ],
+      "struct": "FriendGameInfo_t"
+    }
+  ],
+  "callback_structs": [
+    {
+      "callback_id": 101,
+      "fields": [],
+      "struct": "SteamServersConnected_t"
+    },
+    {
+      "callback_id": 331,
+      "fields": [
+        {
+          "fieldname": "m_bActive",
+          "fieldtype": "uint8"
+        },
+        {
+          "fieldname": "m_bUserInitiated",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_nAppID",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_dwOverlayPID",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "GameOverlayActivated_t"
+    },
+    {
+      "callback_id": 703,
+      "fields": [
+        {
+          "fieldname": "m_hAsyncCall",
+          "fieldtype": "SteamAPICall_t"
+        },
+        {
+          "fieldname": "m_iCallback",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_cubParam",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "SteamAPICallCompleted_t"
+    },
+    {
+      "callback_id": 1314,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nResultsReturned",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_nTotalResultCount",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_rgPublishedFileId",
+          "fieldtype": "PublishedFileId_t [50]"
+        },
+        {
+          "fieldname": "m_rgRTimeSubscribed",
+          "fieldtype": "uint32 [50]"
+        }
+      ],
+      "struct": "RemoteStorageEnumerateUserSubscribedFilesResult_t"
+    },
+    {
+      "callback_id": 1101,
+      "fields": [
+        {
+          "fieldname": "m_nGameID",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_steamIDUser",
+          "fieldtype": "CSteamID"
+        }
+      ],
+      "struct": "UserStatsReceived_t"
+    },
+    {
+      "callback_id": 1102,
+      "fields": [
+        {
+          "fieldname": "m_nGameID",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        }
+      ],
+      "struct": "UserStatsStored_t"
+    },
+    {
+      "callback_id": 1103,
+      "fields": [
+        {
+          "fieldname": "m_nGameID",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_bGroupAchievement",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_rgchAchievementName",
+          "fieldtype": "char [128]"
+        },
+        {
+          "fieldname": "m_nCurProgress",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_nMaxProgress",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "UserAchievementStored_t"
+    },
+    {
+      "callback_id": 1110,
+      "fields": [
+        {
+          "fieldname": "m_nGameID",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        }
+      ],
+      "struct": "GlobalAchievementPercentagesReady_t"
+    }
+  ],
+  "interfaces": [
+    {
+      "accessors": [
+        {
+          "kind": "user",
+          "name": "SteamUser",
+          "name_flat": "SteamAPI_SteamUser_v023"
+        }
+      ],
+      "classname": "ISteamUser",
+      "fields": [],
+      "methods": [
+        {
+          "methodname": "GetHSteamUser",
+          "methodname_flat": "SteamAPI_ISteamUser_GetHSteamUser",
+          "params": [],
+          "returntype": "HSteamUser"
+        },
+        {
+          "methodname": "BLoggedOn",
+          "methodname_flat": "SteamAPI_ISteamUser_BLoggedOn",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetSteamID",
+          "methodname_flat": "SteamAPI_ISteamUser_GetSteamID",
+          "params": [],
+          "returntype": "CSteamID",
+          "returntype_flat": "uint64_steamid"
+        },
+        {
+          "methodname": "InitiateGameConnection_DEPRECATED",
+          "methodname_flat": "SteamAPI_ISteamUser_InitiateGameConnection_DEPRECATED",
+          "params": [
+            {
+              "paramname": "pAuthBlob",
+              "paramtype": "void *"
+            },
+            {
+              "paramname": "cbMaxAuthBlob",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "steamIDGameServer",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "unIPServer",
+              "paramtype": "uint32"
+            },
+            {
+              "paramname": "usPortServer",
+              "paramtype": "uint16"
+            },
+            {
+              "paramname": "bSecure",
+              "paramtype": "bool"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "TerminateGameConnection_DEPRECATED",
+          "methodname_flat": "SteamAPI_ISteamUser_TerminateGameConnection_DEPRECATED",
+          "params": [
+            {
+              "paramname": "unIPServer",
+              "paramtype": "uint32"
+            },
+            {
+              "paramname": "usPortServer",
+              "paramtype": "uint16"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "TrackAppUsageEvent",
+          "methodname_flat": "SteamAPI_ISteamUser_TrackAppUsageEvent",
+          "params": [
+            {
+              "paramname": "gameID",
+              "paramtype": "CGameID",
+              "paramtype_flat": "uint64_gameid"
+            },
+            {
+              "paramname": "eAppUsageEvent",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "pchExtraInfo",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "GetUserDataFolder",
+          "methodname_flat": "SteamAPI_ISteamUser_GetUserDataFolder",
+          "params": [
+            {
+              "paramname": "pchBuffer",
+              "paramtype": "char *"
+            },
+            {
+              "paramname": "cubBuffer",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "StartVoiceRecording",
+          "methodname_flat": "SteamAPI_ISteamUser_StartVoiceRecording",
+          "params": [],
+          "returntype": "void"
+        },
+        {
+          "methodname": "StopVoiceRecording",
+          "methodname_flat": "SteamAPI_ISteamUser_StopVoiceRecording",
+          "params": [],
+          "returntype": "void"
+        },
+        {
+          "methodname": "GetAvailableVoice",
+          "methodname_flat": "SteamAPI_ISteamUser_GetAvailableVoice",
+          "params": [
+            {
+              "paramname": "pcbCompressed",
+              "paramtype": "uint32 *"
+            },
+            {
+              "paramname": "pcbUncompressed_Deprecated",
+              "paramtype": "uint32 *"
+            },
+            {
+              "paramname": "nUncompressedVoiceDesiredSampleRate_Deprecated",
+              "paramtype": "uint32"
+            }
+          ],
+          "returntype": "EVoiceResult"
+        },
+        {
+          "methodname": "GetVoice",
+          "methodname_flat": "SteamAPI_ISteamUser_GetVoice",
+          "params": [
+            {
+              "paramname": "bWantCompressed",
+              "paramtype": "bool"
+            },
+            {
+              "paramname": "pDestBuffer",
+              "paramtype": "void *"
+            },
+            {
+              "paramname": "cbDestBufferSize",
+              "paramtype": "uint32"
+            },
+            {
+              "paramname": "nBytesWritten",
+              "paramtype": "uint32 *"
+            },
+            {
+              "paramname": "bWantUncompressed_Deprecated",
+              "paramtype": "bool"
+            },
+            {
+              "paramname": "pUncompressedDestBuffer_Deprecated",
+              "paramtype": "void *"
+            },
+            {
+              "paramname": "cbUncompressedDestBufferSize_Deprecated",
+              "paramtype": "uint32"
+            },
+            {
+              "paramname": "nUncompressBytesWritten_Deprecated",
+              "paramtype": "uint32 *"
+            },
+            {
+              "paramname": "nUncompressedVoiceDesiredSampleRate_Deprecated",
+              "paramtype": "uint32"
+            }
+          ],
+          "returntype": "EVoiceResult"
+        },
+        {
+          "methodname": "DecompressVoice",
+          "methodname_flat": "SteamAPI_ISteamUser_DecompressVoice",
+          "params": [
+            {
+              "paramname": "pCompressed",
+              "paramtype": "const void *"
+            },
+            {
+              "paramname": "cbCompressed",
+              "paramtype": "uint32"
+            },
+            {
+              "paramname": "pDestBuffer",
+              "paramtype": "void *"
+            },
+            {
+              "paramname": "cbDestBufferSize",
+              "paramtype": "uint32"
+            },
+            {
+              "paramname": "nBytesWritten",
+              "paramtype": "uint32 *"
+            },
+            {
+              "paramname": "nDesiredSampleRate",
+              "paramtype": "uint32"
+            }
+          ],
+          "returntype": "EVoiceResult"
+        },
+        {
+          "methodname": "GetVoiceOptimalSampleRate",
+          "methodname_flat": "SteamAPI_ISteamUser_GetVoiceOptimalSampleRate",
+          "params": [],
+          "returntype": "uint32"
+        },
+        {
+          "methodname": "GetAuthSessionTicket",
+          "methodname_flat": "SteamAPI_ISteamUser_GetAuthSessionTicket",
+          "params": [
+            {
+              "paramname": "pTicket",
+              "paramtype": "void *"
+            },
+            {
+              "paramname": "cbMaxTicket",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "pcbTicket",
+              "paramtype": "uint32 *"
+            },
+            {
+              "paramname": "pSteamNetworkingIdentity",
+              "paramtype": "const SteamNetworkingIdentity *"
+            }
+          ],
+          "returntype": "HAuthTicket"
+        },
+        {
+          "methodname": "GetAuthTicketForWebApi",
+          "methodname_flat": "SteamAPI_ISteamUser_GetAuthTicketForWebApi",
+          "params": [
+            {
+              "paramname": "pchIdentity",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "HAuthTicket"
+        },
+        {
+          "methodname": "BeginAuthSession",
+          "methodname_flat": "SteamAPI_ISteamUser_BeginAuthSession",
+          "params": [
+            {
+              "paramname": "pAuthTicket",
+              "paramtype": "const void *"
+            },
+            {
+              "paramname": "cbAuthTicket",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "steamID",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "EBeginAuthSessionResult"
+        },
+        {
+          "methodname": "EndAuthSession",
+          "methodname_flat": "SteamAPI_ISteamUser_EndAuthSession",
+          "params": [
+            {
+              "paramname": "steamID",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "CancelAuthTicket",
+          "methodname_flat": "SteamAPI_ISteamUser_CancelAuthTicket",
+          "params": [
+            {
+              "paramname": "hAuthTicket",
+              "paramtype": "HAuthTicket"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "UserHasLicenseForApp",
+          "methodname_flat": "SteamAPI_ISteamUser_UserHasLicenseForApp",
+          "params": [
+            {
+              "paramname": "steamID",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "appID",
+              "paramtype": "AppId_t"
+            }
+          ],
+          "returntype": "EUserHasLicenseForAppResult"
+        },
+        {
+          "methodname": "BIsBehindNAT",
+          "methodname_flat": "SteamAPI_ISteamUser_BIsBehindNAT",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "AdvertiseGame",
+          "methodname_flat": "SteamAPI_ISteamUser_AdvertiseGame",
+          "params": [
+            {
+              "paramname": "steamIDGameServer",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "unIPServer",
+              "paramtype": "uint32"
+            },
+            {
+              "paramname": "usPortServer",
+              "paramtype": "uint16"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "callresult": "EncryptedAppTicketResponse_t",
+          "methodname": "RequestEncryptedAppTicket",
+          "methodname_flat": "SteamAPI_ISteamUser_RequestEncryptedAppTicket",
+          "params": [
+            {
+              "paramname": "pDataToInclude",
+              "paramtype": "void *"
+            },
+            {
+              "paramname": "cbDataToInclude",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "methodname": "GetEncryptedAppTicket",
+          "methodname_flat": "SteamAPI_ISteamUser_GetEncryptedAppTicket",
+          "params": [
+            {
+              "paramname": "pTicket",
+              "paramtype": "void *"
+            },
+            {
+              "paramname": "cbMaxTicket",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "pcbTicket",
+              "paramtype": "uint32 *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetGameBadgeLevel",
+          "methodname_flat": "SteamAPI_ISteamUser_GetGameBadgeLevel",
+          "params": [
+            {
+              "paramname": "nSeries",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "bFoil",
+              "paramtype": "bool"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetPlayerSteamLevel",
+          "methodname_flat": "SteamAPI_ISteamUser_GetPlayerSteamLevel",
+          "params": [],
+          "returntype": "int"
+        },
+        {
+          "callresult": "StoreAuthURLResponse_t",
+          "methodname": "RequestStoreAuthURL",
+          "methodname_flat": "SteamAPI_ISteamUser_RequestStoreAuthURL",
+          "params": [
+            {
+              "paramname": "pchRedirectURL",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "methodname": "BIsPhoneVerified",
+          "methodname_flat": "SteamAPI_ISteamUser_BIsPhoneVerified",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "BIsTwoFactorEnabled",
+          "methodname_flat": "SteamAPI_ISteamUser_BIsTwoFactorEnabled",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "BIsPhoneIdentifying",
+          "methodname_flat": "SteamAPI_ISteamUser_BIsPhoneIdentifying",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "BIsPhoneRequiringVerification",
+          "methodname_flat": "SteamAPI_ISteamUser_BIsPhoneRequiringVerification",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "callresult": "MarketEligibilityResponse_t",
+          "methodname": "GetMarketEligibility",
+          "methodname_flat": "SteamAPI_ISteamUser_GetMarketEligibility",
+          "params": [],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "callresult": "DurationControl_t",
+          "methodname": "GetDurationControl",
+          "methodname_flat": "SteamAPI_ISteamUser_GetDurationControl",
+          "params": [],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "methodname": "BSetDurationControlOnlineState",
+          "methodname_flat": "SteamAPI_ISteamUser_BSetDurationControlOnlineState",
+          "params": [
+            {
+              "paramname": "eNewState",
+              "paramtype": "EDurationControlOnlineState"
+            }
+          ],
+          "returntype": "bool"
+        }
+      ],
+      "version_string": "SteamUser023"
+    },
+    {
+      "accessors": [
+        {
+          "kind": "user",
+          "name": "SteamFriends",
+          "name_flat": "SteamAPI_SteamFriends_v018"
+        }
+      ],
+      "classname": "ISteamFriends",
+      "fields": [],
+      "methods": [
+        {
+          "methodname": "GetPersonaName",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetPersonaName",
+          "params": [],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "GetPersonaState",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetPersonaState",
+          "params": [],
+          "returntype": "EPersonaState"
+        },
+        {
+          "methodname": "GetFriendCount",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendCount",
+          "params": [
+            {
+              "paramname": "iFriendFlags",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetFriendByIndex",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendByIndex",
+          "params": [
+            {
+              "paramname": "iFriend",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "iFriendFlags",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "CSteamID",
+          "returntype_flat": "uint64_steamid"
+        },
+        {
+          "methodname": "GetFriendRelationship",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendRelationship",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "EFriendRelationship"
+        },
+        {
+          "methodname": "GetFriendPersonaState",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendPersonaState",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "EPersonaState"
+        },
+        {
+          "methodname": "GetFriendPersonaName",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendPersonaName",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "GetFriendGamePlayed",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendGamePlayed",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "out_struct": "",
+              "paramname": "pFriendGameInfo",
+              "paramtype": "FriendGameInfo_t *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetFriendPersonaNameHistory",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendPersonaNameHistory",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "iPersonaName",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "GetFriendSteamLevel",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendSteamLevel",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetPlayerNickname",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetPlayerNickname",
+          "params": [
+            {
+              "paramname": "steamIDPlayer",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "GetFriendsGroupCount",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendsGroupCount",
+          "params": [],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetFriendsGroupIDByIndex",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendsGroupIDByIndex",
+          "params": [
+            {
+              "paramname": "iFG",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "FriendsGroupID_t"
+        },
+        {
+          "methodname": "GetFriendsGroupName",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendsGroupName",
+          "params": [
+            {
+              "paramname": "friendsGroupID",
+              "paramtype": "FriendsGroupID_t"
+            }
+          ],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "GetFriendsGroupMembersCount",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendsGroupMembersCount",
+          "params": [
+            {
+              "paramname": "friendsGroupID",
+              "paramtype": "FriendsGroupID_t"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetFriendsGroupMembersList",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendsGroupMembersList",
+          "params": [
+            {
+              "paramname": "friendsGroupID",
+              "paramtype": "FriendsGroupID_t"
+            },
+            {
+              "out_array_call": "nMembersCount,GetFriendsGroupMembersCount,friendsGroupID",
+              "paramname": "pOutSteamIDMembers",
+              "paramtype": "CSteamID *"
+            },
+            {
+              "paramname": "nMembersCount",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "HasFriend",
+          "methodname_flat": "SteamAPI_ISteamFriends_HasFriend",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "iFriendFlags",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetClanCount",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetClanCount",
+          "params": [],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetClanByIndex",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetClanByIndex",
+          "params": [
+            {
+              "paramname": "iClan",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "CSteamID",
+          "returntype_flat": "uint64_steamid"
+        },
+        {
+          "methodname": "GetClanName",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetClanName",
+          "params": [
+            {
+              "paramname": "steamIDClan",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "GetClanTag",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetClanTag",
+          "params": [
+            {
+              "paramname": "steamIDClan",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "GetClanActivityCounts",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetClanActivityCounts",
+          "params": [
+            {
+              "paramname": "steamIDClan",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "pnOnline",
+              "paramtype": "int *"
+            },
+            {
+              "paramname": "pnInGame",
+              "paramtype": "int *"
+            },
+            {
+              "paramname": "pnChatting",
+              "paramtype": "int *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "callresult": "DownloadClanActivityCountsResult_t",
+          "methodname": "DownloadClanActivityCounts",
+          "methodname_flat": "SteamAPI_ISteamFriends_DownloadClanActivityCounts",
+          "params": [
+            {
+              "array_count": "cClansToRequest",
+              "paramname": "psteamIDClans",
+              "paramtype": "CSteamID *"
+            },
+            {
+              "paramname": "cClansToRequest",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "methodname": "GetFriendCountFromSource",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendCountFromSource",
+          "params": [
+            {
+              "paramname": "steamIDSource",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetFriendFromSourceByIndex",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendFromSourceByIndex",
+          "params": [
+            {
+              "paramname": "steamIDSource",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "iFriend",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "CSteamID",
+          "returntype_flat": "uint64_steamid"
+        },
+        {
+          "methodname": "IsUserInSource",
+          "methodname_flat": "SteamAPI_ISteamFriends_IsUserInSource",
+          "params": [
+            {
+              "paramname": "steamIDUser",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "steamIDSource",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "SetInGameVoiceSpeaking",
+          "methodname_flat": "SteamAPI_ISteamFriends_SetInGameVoiceSpeaking",
+          "params": [
+            {
+              "paramname": "steamIDUser",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "bSpeaking",
+              "paramtype": "bool"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "ActivateGameOverlay",
+          "methodname_flat": "SteamAPI_ISteamFriends_ActivateGameOverlay",
+          "params": [
+            {
+              "paramname": "pchDialog",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "ActivateGameOverlayToUser",
+          "methodname_flat": "SteamAPI_ISteamFriends_ActivateGameOverlayToUser",
+          "params": [
+            {
+              "paramname": "pchDialog",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "steamID",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "ActivateGameOverlayToWebPage",
+          "methodname_flat": "SteamAPI_ISteamFriends_ActivateGameOverlayToWebPage",
+          "params": [
+            {
+              "paramname": "pchURL",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "eMode",
+              "paramtype": "EActivateGameOverlayToWebPageMode"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "ActivateGameOverlayToStore",
+          "methodname_flat": "SteamAPI_ISteamFriends_ActivateGameOverlayToStore",
+          "params": [
+            {
+              "paramname": "nAppID",
+              "paramtype": "AppId_t"
+            },
+            {
+              "paramname": "eFlag",
+              "paramtype": "EOverlayToStoreFlag"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "SetPlayedWith",
+          "methodname_flat": "SteamAPI_ISteamFriends_SetPlayedWith",
+          "params": [
+            {
+              "paramname": "steamIDUserPlayedWith",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "ActivateGameOverlayInviteDialog",
+          "methodname_flat": "SteamAPI_ISteamFriends_ActivateGameOverlayInviteDialog",
+          "params": [
+            {
+              "paramname": "steamIDLobby",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "GetSmallFriendAvatar",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetSmallFriendAvatar",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetMediumFriendAvatar",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetMediumFriendAvatar",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetLargeFriendAvatar",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetLargeFriendAvatar",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "RequestUserInformation",
+          "methodname_flat": "SteamAPI_ISteamFriends_RequestUserInformation",
+          "params": [
+            {
+              "paramname": "steamIDUser",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "bRequireNameOnly",
+              "paramtype": "bool"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "callresult": "ClanOfficerListResponse_t",
+          "methodname": "RequestClanOfficerList",
+          "methodname_flat": "SteamAPI_ISteamFriends_RequestClanOfficerList",
+          "params": [
+            {
+              "paramname": "steamIDClan",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "methodname": "GetClanOwner",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetClanOwner",
+          "params": [
+            {
+              "paramname": "steamIDClan",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "CSteamID",
+          "returntype_flat": "uint64_steamid"
+        },
+        {
+          "methodname": "GetClanOfficerCount",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetClanOfficerCount",
+          "params": [
+            {
+              "paramname": "steamIDClan",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetClanOfficerByIndex",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetClanOfficerByIndex",
+          "params": [
+            {
+              "paramname": "steamIDClan",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "iOfficer",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "CSteamID",
+          "returntype_flat": "uint64_steamid"
+        },
+        {
+          "methodname": "SetRichPresence",
+          "methodname_flat": "SteamAPI_ISteamFriends_SetRichPresence",
+          "params": [
+            {
+              "paramname": "pchKey",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "pchValue",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "ClearRichPresence",
+          "methodname_flat": "SteamAPI_ISteamFriends_ClearRichPresence",
+          "params": [],
+          "returntype": "void"
+        },
+        {
+          "methodname": "GetFriendRichPresence",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendRichPresence",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "pchKey",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "GetFriendRichPresenceKeyCount",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendRichPresenceKeyCount",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetFriendRichPresenceKeyByIndex",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendRichPresenceKeyByIndex",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "iKey",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "RequestFriendRichPresence",
+          "methodname_flat": "SteamAPI_ISteamFriends_RequestFriendRichPresence",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "InviteUserToGame",
+          "methodname_flat": "SteamAPI_ISteamFriends_InviteUserToGame",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "pchConnectString",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetCoplayFriendCount",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetCoplayFriendCount",
+          "params": [],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetCoplayFriend",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetCoplayFriend",
+          "params": [
+            {
+              "paramname": "iCoplayFriend",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "CSteamID",
+          "returntype_flat": "uint64_steamid"
+        },
+        {
+          "methodname": "GetFriendCoplayTime",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendCoplayTime",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetFriendCoplayGame",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendCoplayGame",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "AppId_t"
+        },
+        {
+          "callresult": "JoinClanChatRoomCompletionResult_t",
+          "methodname": "JoinClanChatRoom",
+          "methodname_flat": "SteamAPI_ISteamFriends_JoinClanChatRoom",
+          "params": [
+            {
+              "paramname": "steamIDClan",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "methodname": "LeaveClanChatRoom",
+          "methodname_flat": "SteamAPI_ISteamFriends_LeaveClanChatRoom",
+          "params": [
+            {
+              "paramname": "steamIDClan",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetClanChatMemberCount",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetClanChatMemberCount",
+          "params": [
+            {
+              "paramname": "steamIDClan",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetChatMemberByIndex",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetChatMemberByIndex",
+          "params": [
+            {
+              "paramname": "steamIDClan",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "iUser",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "CSteamID",
+          "returntype_flat": "uint64_steamid"
+        },
+        {
+          "methodname": "SendClanChatMessage",
+          "methodname_flat": "SteamAPI_ISteamFriends_SendClanChatMessage",
+          "params": [
+            {
+              "paramname": "steamIDClanChat",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "pchText",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetClanChatMessage",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetClanChatMessage",
+          "params": [
+            {
+              "paramname": "steamIDClanChat",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "iMessage",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "prgchText",
+              "paramtype": "void *"
+            },
+            {
+              "paramname": "cchTextMax",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "peChatEntryType",
+              "paramtype": "EChatEntryType *"
+            },
+            {
+              "out_struct": "",
+              "paramname": "psteamidChatter",
+              "paramtype": "CSteamID *"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "IsClanChatAdmin",
+          "methodname_flat": "SteamAPI_ISteamFriends_IsClanChatAdmin",
+          "params": [
+            {
+              "paramname": "steamIDClanChat",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "steamIDUser",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "IsClanChatWindowOpenInSteam",
+          "methodname_flat": "SteamAPI_ISteamFriends_IsClanChatWindowOpenInSteam",
+          "params": [
+            {
+              "paramname": "steamIDClanChat",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "OpenClanChatWindowInSteam",
+          "methodname_flat": "SteamAPI_ISteamFriends_OpenClanChatWindowInSteam",
+          "params": [
+            {
+              "paramname": "steamIDClanChat",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "CloseClanChatWindowInSteam",
+          "methodname_flat": "SteamAPI_ISteamFriends_CloseClanChatWindowInSteam",
+          "params": [
+            {
+              "paramname": "steamIDClanChat",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "SetListenForFriendsMessages",
+          "methodname_flat": "SteamAPI_ISteamFriends_SetListenForFriendsMessages",
+          "params": [
+            {
+              "paramname": "bInterceptEnabled",
+              "paramtype": "bool"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "ReplyToFriendMessage",
+          "methodname_flat": "SteamAPI_ISteamFriends_ReplyToFriendMessage",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "pchMsgToSend",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetFriendMessage",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFriendMessage",
+          "params": [
+            {
+              "paramname": "steamIDFriend",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "iMessageID",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "pvData",
+              "paramtype": "void *"
+            },
+            {
+              "paramname": "cubData",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "peChatEntryType",
+              "paramtype": "EChatEntryType *"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "callresult": "FriendsGetFollowerCount_t",
+          "methodname": "GetFollowerCount",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetFollowerCount",
+          "params": [
+            {
+              "paramname": "steamID",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "callresult": "FriendsIsFollowing_t",
+          "methodname": "IsFollowing",
+          "methodname_flat": "SteamAPI_ISteamFriends_IsFollowing",
+          "params": [
+            {
+              "paramname": "steamID",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "callresult": "FriendsEnumerateFollowingList_t",
+          "methodname": "EnumerateFollowingList",
+          "methodname_flat": "SteamAPI_ISteamFriends_EnumerateFollowingList",
+          "params": [
+            {
+              "paramname": "unStartIndex",
+              "paramtype": "uint32"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "methodname": "IsClanPublic",
+          "methodname_flat": "SteamAPI_ISteamFriends_IsClanPublic",
+          "params": [
+            {
+              "paramname": "steamIDClan",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "IsClanOfficialGameGroup",
+          "methodname_flat": "SteamAPI_ISteamFriends_IsClanOfficialGameGroup",
+          "params": [
+            {
+              "paramname": "steamIDClan",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetNumChatsWithUnreadPriorityMessages",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetNumChatsWithUnreadPriorityMessages",
+          "params": [],
+          "returntype": "int"
+        },
+        {
+          "methodname": "ActivateGameOverlayRemotePlayTogetherInviteDialog",
+          "methodname_flat": "SteamAPI_ISteamFriends_ActivateGameOverlayRemotePlayTogetherInviteDialog",
+          "params": [
+            {
+              "paramname": "steamIDLobby",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "RegisterProtocolInOverlayBrowser",
+          "methodname_flat": "SteamAPI_ISteamFriends_RegisterProtocolInOverlayBrowser",
+          "params": [
+            {
+              "paramname": "pchProtocol",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "ActivateGameOverlayInviteDialogConnectString",
+          "methodname_flat": "SteamAPI_ISteamFriends_ActivateGameOverlayInviteDialogConnectString",
+          "params": [
+            {
+              "paramname": "pchConnectString",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "callresult": "EquippedProfileItems_t",
+          "methodname": "RequestEquippedProfileItems",
+          "methodname_flat": "SteamAPI_ISteamFriends_RequestEquippedProfileItems",
+          "params": [
+            {
+              "paramname": "steamID",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "methodname": "BHasEquippedProfileItem",
+          "methodname_flat": "SteamAPI_ISteamFriends_BHasEquippedProfileItem",
+          "params": [
+            {
+              "paramname": "steamID",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "itemType",
+              "paramtype": "ECommunityProfileItemType"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetProfileItemPropertyString",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetProfileItemPropertyString",
+          "params": [
+            {
+              "paramname": "steamID",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "itemType",
+              "paramtype": "ECommunityProfileItemType"
+            },
+            {
+              "paramname": "prop",
+              "paramtype": "ECommunityProfileItemProperty"
+            }
+          ],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "GetProfileItemPropertyUint",
+          "methodname_flat": "SteamAPI_ISteamFriends_GetProfileItemPropertyUint",
+          "params": [
+            {
+              "paramname": "steamID",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "itemType",
+              "paramtype": "ECommunityProfileItemType"
+            },
+            {
+              "paramname": "prop",
+              "paramtype": "ECommunityProfileItemProperty"
+            }
+          ],
+          "returntype": "uint32"
+        }
+      ],
+      "version_string": "SteamFriends018"
+    },
+    {
+      "accessors": [
+        {
+          "kind": "user",
+          "name": "SteamUtils",
+          "name_flat": "SteamAPI_SteamUtils_v011"
+        },
+        {
+          "kind": "gameserver",
+          "name": "SteamGameServerUtils",
+          "name_flat": "SteamAPI_SteamGameServerUtils_v011"
+        }
+      ],
+      "classname": "ISteamUtils",
+      "fields": [],
+      "methods": [
+        {
+          "methodname": "GetSecondsSinceAppActive",
+          "methodname_flat": "SteamAPI_ISteamUtils_GetSecondsSinceAppActive",
+          "params": [],
+          "returntype": "uint32"
+        },
+        {
+          "methodname": "GetSecondsSinceComputerActive",
+          "methodname_flat": "SteamAPI_ISteamUtils_GetSecondsSinceComputerActive",
+          "params": [],
+          "returntype": "uint32"
+        },
+        {
+          "methodname": "GetConnectedUniverse",
+          "methodname_flat": "SteamAPI_ISteamUtils_GetConnectedUniverse",
+          "params": [],
+          "returntype": "EUniverse"
+        },
+        {
+          "methodname": "GetServerRealTime",
+          "methodname_flat": "SteamAPI_ISteamUtils_GetServerRealTime",
+          "params": [],
+          "returntype": "uint32"
+        },
+        {
+          "methodname": "GetIPCountry",
+          "methodname_flat": "SteamAPI_ISteamUtils_GetIPCountry",
+          "params": [],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "GetImageSize",
+          "methodname_flat": "SteamAPI_ISteamUtils_GetImageSize",
+          "params": [
+            {
+              "paramname": "iImage",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "pnWidth",
+              "paramtype": "uint32 *"
+            },
+            {
+              "paramname": "pnHeight",
+              "paramtype": "uint32 *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetImageRGBA",
+          "methodname_flat": "SteamAPI_ISteamUtils_GetImageRGBA",
+          "params": [
+            {
+              "paramname": "iImage",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "pubDest",
+              "paramtype": "uint8 *"
+            },
+            {
+              "paramname": "nDestBufferSize",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetCurrentBatteryPower",
+          "methodname_flat": "SteamAPI_ISteamUtils_GetCurrentBatteryPower",
+          "params": [],
+          "returntype": "uint8"
+        },
+        {
+          "methodname": "GetAppID",
+          "methodname_flat": "SteamAPI_ISteamUtils_GetAppID",
+          "params": [],
+          "returntype": "uint32"
+        },
+        {
+          "methodname": "SetOverlayNotificationPosition",
+          "methodname_flat": "SteamAPI_ISteamUtils_SetOverlayNotificationPosition",
+          "params": [
+            {
+              "paramname": "eNotificationPosition",
+              "paramtype": "ENotificationPosition"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "IsAPICallCompleted",
+          "methodname_flat": "SteamAPI_ISteamUtils_IsAPICallCompleted",
+          "params": [
+            {
+              "paramname": "hSteamAPICall",
+              "paramtype": "SteamAPICall_t"
+            },
+            {
+              "paramname": "pbFailed",
+              "paramtype": "bool *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetAPICallFailureReason",
+          "methodname_flat": "SteamAPI_ISteamUtils_GetAPICallFailureReason",
+          "params": [
+            {
+              "paramname": "hSteamAPICall",
+              "paramtype": "SteamAPICall_t"
+            }
+          ],
+          "returntype": "ESteamAPICallFailure"
+        },
+        {
+          "methodname": "GetAPICallResult",
+          "methodname_flat": "SteamAPI_ISteamUtils_GetAPICallResult",
+          "params": [
+            {
+              "paramname": "hSteamAPICall",
+              "paramtype": "SteamAPICall_t"
+            },
+            {
+              "paramname": "pCallback",
+              "paramtype": "void *"
+            },
+            {
+              "paramname": "cubCallback",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "iCallbackExpected",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "pbFailed",
+              "paramtype": "bool *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetIPCCallCount",
+          "methodname_flat": "SteamAPI_ISteamUtils_GetIPCCallCount",
+          "params": [],
+          "returntype": "uint32"
+        },
+        {
+          "methodname": "SetWarningMessageHook",
+          "methodname_flat": "SteamAPI_ISteamUtils_SetWarningMessageHook",
+          "params": [
+            {
+              "paramname": "pFunction",
+              "paramtype": "SteamAPIWarningMessageHook_t"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "IsOverlayEnabled",
+          "methodname_flat": "SteamAPI_ISteamUtils_IsOverlayEnabled",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "BOverlayNeedsPresent",
+          "methodname_flat": "SteamAPI_ISteamUtils_BOverlayNeedsPresent",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "callresult": "CheckFileSignature_t",
+          "methodname": "CheckFileSignature",
+          "methodname_flat": "SteamAPI_ISteamUtils_CheckFileSignature",
+          "params": [
+            {
+              "paramname": "szFileName",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "methodname": "ShowGamepadTextInput",
+          "methodname_flat": "SteamAPI_ISteamUtils_ShowGamepadTextInput",
+          "params": [
+            {
+              "paramname": "eInputMode",
+              "paramtype": "EGamepadTextInputMode"
+            },
+            {
+              "paramname": "eLineInputMode",
+              "paramtype": "EGamepadTextInputLineMode"
+            },
+            {
+              "paramname": "pchDescription",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "unCharMax",
+              "paramtype": "uint32"
+            },
+            {
+              "paramname": "pchExistingText",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetEnteredGamepadTextLength",
+          "methodname_flat": "SteamAPI_ISteamUtils_GetEnteredGamepadTextLength",
+          "params": [],
+          "returntype": "uint32"
+        },
+        {
+          "methodname": "GetEnteredGamepadTextInput",
+          "methodname_flat": "SteamAPI_ISteamUtils_GetEnteredGamepadTextInput",
+          "params": [
+            {
+              "paramname": "pchText",
+              "paramtype": "char *"
+            },
+            {
+              "paramname": "cchText",
+              "paramtype": "uint32"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetSteamUILanguage",
+          "methodname_flat": "SteamAPI_ISteamUtils_GetSteamUILanguage",
+          "params": [],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "IsSteamRunningInVR",
+          "methodname_flat": "SteamAPI_ISteamUtils_IsSteamRunningInVR",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "SetOverlayNotificationInset",
+          "methodname_flat": "SteamAPI_ISteamUtils_SetOverlayNotificationInset",
+          "params": [
+            {
+              "paramname": "nHorizontalInset",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "nVerticalInset",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "IsSteamInBigPictureMode",
+          "methodname_flat": "SteamAPI_ISteamUtils_IsSteamInBigPictureMode",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "StartVRDashboard",
+          "methodname_flat": "SteamAPI_ISteamUtils_StartVRDashboard",
+          "params": [],
+          "returntype": "void"
+        },
+        {
+          "methodname": "IsVRHeadsetStreamingEnabled",
+          "methodname_flat": "SteamAPI_ISteamUtils_IsVRHeadsetStreamingEnabled",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "SetVRHeadsetStreamingEnabled",
+          "methodname_flat": "SteamAPI_ISteamUtils_SetVRHeadsetStreamingEnabled",
+          "params": [
+            {
+              "paramname": "bEnabled",
+              "paramtype": "bool"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "IsSteamChinaLauncher",
+          "methodname_flat": "SteamAPI_ISteamUtils_IsSteamChinaLauncher",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "InitFilterText",
+          "methodname_flat": "SteamAPI_ISteamUtils_InitFilterText",
+          "params": [
+            {
+              "paramname": "unFilterOptions",
+              "paramtype": "uint32"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "FilterText",
+          "methodname_flat": "SteamAPI_ISteamUtils_FilterText",
+          "params": [
+            {
+              "paramname": "eContext",
+              "paramtype": "ETextFilteringContext"
+            },
+            {
+              "paramname": "sourceSteamID",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "pchInputMessage",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "pchOutFilteredText",
+              "paramtype": "char *"
+            },
+            {
+              "paramname": "nByteSizeOutFilteredText",
+              "paramtype": "uint32"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetIPv6ConnectivityState",
+          "methodname_flat": "SteamAPI_ISteamUtils_GetIPv6ConnectivityState",
+          "params": [
+            {
+              "paramname": "eProtocol",
+              "paramtype": "ESteamIPv6ConnectivityProtocol"
+            }
+          ],
+          "returntype": "ESteamIPv6ConnectivityState"
+        },
+        {
+          "methodname": "ShowFloatingGamepadTextInput",
+          "methodname_flat": "SteamAPI_ISteamUtils_ShowFloatingGamepadTextInput",
+          "params": [
+            {
+              "paramname": "eKeyboardMode",
+              "paramtype": "EFloatingGamepadTextInputMode"
+            },
+            {
+              "paramname": "nTextFieldXPosition",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "nTextFieldYPosition",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "nTextFieldWidth",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "nTextFieldHeight",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "SetGameLauncherMode",
+          "methodname_flat": "SteamAPI_ISteamUtils_SetGameLauncherMode",
+          "params": [
+            {
+              "paramname": "bLauncherMode",
+              "paramtype": "bool"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "DismissFloatingGamepadTextInput",
+          "methodname_flat": "SteamAPI_ISteamUtils_DismissFloatingGamepadTextInput",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "DismissGamepadTextInput",
+          "methodname_flat": "SteamAPI_ISteamUtils_DismissGamepadTextInput",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "IsRunningOnSteamHardware",
+          "methodname_flat": "SteamAPI_ISteamUtils_IsRunningOnSteamHardware",
+          "params": [],
+          "returntype": "ESteamHardwareType"
+        },
+        {
+          "methodname": "GetSteamHardwareDefaultConfig",
+          "methodname_flat": "SteamAPI_ISteamUtils_GetSteamHardwareDefaultConfig",
+          "params": [],
+          "returntype": "ESteamHardwareDefaultConfig"
+        },
+        {
+          "methodname": "IsRunningUnderProton",
+          "methodname_flat": "SteamAPI_ISteamUtils_IsRunningUnderProton",
+          "params": [],
+          "returntype": "bool"
+        }
+      ],
+      "version_string": "SteamUtils011"
+    },
+    {
+      "accessors": [
+        {
+          "kind": "user",
+          "name": "SteamUserStats",
+          "name_flat": "SteamAPI_SteamUserStats_v013"
+        }
+      ],
+      "classname": "ISteamUserStats",
+      "fields": [],
+      "methods": [
+        {
+          "methodname": "GetStat",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetStatInt32",
+          "params": [
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "pData",
+              "paramtype": "int32 *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetStat",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetStatFloat",
+          "params": [
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "pData",
+              "paramtype": "float *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "SetStat",
+          "methodname_flat": "SteamAPI_ISteamUserStats_SetStatInt32",
+          "params": [
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "nData",
+              "paramtype": "int32"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "SetStat",
+          "methodname_flat": "SteamAPI_ISteamUserStats_SetStatFloat",
+          "params": [
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "fData",
+              "paramtype": "float"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "UpdateAvgRateStat",
+          "methodname_flat": "SteamAPI_ISteamUserStats_UpdateAvgRateStat",
+          "params": [
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "flCountThisSession",
+              "paramtype": "float"
+            },
+            {
+              "paramname": "dSessionLength",
+              "paramtype": "double"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetAchievement",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetAchievement",
+          "params": [
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "pbAchieved",
+              "paramtype": "bool *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "SetAchievement",
+          "methodname_flat": "SteamAPI_ISteamUserStats_SetAchievement",
+          "params": [
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "ClearAchievement",
+          "methodname_flat": "SteamAPI_ISteamUserStats_ClearAchievement",
+          "params": [
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetAchievementAndUnlockTime",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetAchievementAndUnlockTime",
+          "params": [
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "pbAchieved",
+              "paramtype": "bool *"
+            },
+            {
+              "paramname": "punUnlockTime",
+              "paramtype": "uint32 *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "StoreStats",
+          "methodname_flat": "SteamAPI_ISteamUserStats_StoreStats",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetAchievementIcon",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetAchievementIcon",
+          "params": [
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetAchievementDisplayAttribute",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetAchievementDisplayAttribute",
+          "params": [
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "pchKey",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "IndicateAchievementProgress",
+          "methodname_flat": "SteamAPI_ISteamUserStats_IndicateAchievementProgress",
+          "params": [
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "nCurProgress",
+              "paramtype": "uint32"
+            },
+            {
+              "paramname": "nMaxProgress",
+              "paramtype": "uint32"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetNumAchievements",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetNumAchievements",
+          "params": [],
+          "returntype": "uint32"
+        },
+        {
+          "methodname": "GetAchievementName",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetAchievementName",
+          "params": [
+            {
+              "paramname": "iAchievement",
+              "paramtype": "uint32"
+            }
+          ],
+          "returntype": "const char *"
+        },
+        {
+          "callresult": "UserStatsReceived_t",
+          "methodname": "RequestUserStats",
+          "methodname_flat": "SteamAPI_ISteamUserStats_RequestUserStats",
+          "params": [
+            {
+              "paramname": "steamIDUser",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "methodname": "GetUserStat",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetUserStatInt32",
+          "params": [
+            {
+              "paramname": "steamIDUser",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "pData",
+              "paramtype": "int32 *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetUserStat",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetUserStatFloat",
+          "params": [
+            {
+              "paramname": "steamIDUser",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "pData",
+              "paramtype": "float *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetUserAchievement",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetUserAchievement",
+          "params": [
+            {
+              "paramname": "steamIDUser",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "pbAchieved",
+              "paramtype": "bool *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetUserAchievementAndUnlockTime",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetUserAchievementAndUnlockTime",
+          "params": [
+            {
+              "paramname": "steamIDUser",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            },
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "pbAchieved",
+              "paramtype": "bool *"
+            },
+            {
+              "paramname": "punUnlockTime",
+              "paramtype": "uint32 *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "ResetAllStats",
+          "methodname_flat": "SteamAPI_ISteamUserStats_ResetAllStats",
+          "params": [
+            {
+              "paramname": "bAchievementsToo",
+              "paramtype": "bool"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "callresult": "LeaderboardFindResult_t",
+          "methodname": "FindOrCreateLeaderboard",
+          "methodname_flat": "SteamAPI_ISteamUserStats_FindOrCreateLeaderboard",
+          "params": [
+            {
+              "paramname": "pchLeaderboardName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "eLeaderboardSortMethod",
+              "paramtype": "ELeaderboardSortMethod"
+            },
+            {
+              "paramname": "eLeaderboardDisplayType",
+              "paramtype": "ELeaderboardDisplayType"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "callresult": "LeaderboardFindResult_t",
+          "methodname": "FindLeaderboard",
+          "methodname_flat": "SteamAPI_ISteamUserStats_FindLeaderboard",
+          "params": [
+            {
+              "paramname": "pchLeaderboardName",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "methodname": "GetLeaderboardName",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetLeaderboardName",
+          "params": [
+            {
+              "paramname": "hSteamLeaderboard",
+              "paramtype": "SteamLeaderboard_t"
+            }
+          ],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "GetLeaderboardEntryCount",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetLeaderboardEntryCount",
+          "params": [
+            {
+              "paramname": "hSteamLeaderboard",
+              "paramtype": "SteamLeaderboard_t"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetLeaderboardSortMethod",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetLeaderboardSortMethod",
+          "params": [
+            {
+              "paramname": "hSteamLeaderboard",
+              "paramtype": "SteamLeaderboard_t"
+            }
+          ],
+          "returntype": "ELeaderboardSortMethod"
+        },
+        {
+          "methodname": "GetLeaderboardDisplayType",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetLeaderboardDisplayType",
+          "params": [
+            {
+              "paramname": "hSteamLeaderboard",
+              "paramtype": "SteamLeaderboard_t"
+            }
+          ],
+          "returntype": "ELeaderboardDisplayType"
+        },
+        {
+          "callresult": "LeaderboardScoresDownloaded_t",
+          "methodname": "DownloadLeaderboardEntries",
+          "methodname_flat": "SteamAPI_ISteamUserStats_DownloadLeaderboardEntries",
+          "params": [
+            {
+              "paramname": "hSteamLeaderboard",
+              "paramtype": "SteamLeaderboard_t"
+            },
+            {
+              "paramname": "eLeaderboardDataRequest",
+              "paramtype": "ELeaderboardDataRequest"
+            },
+            {
+              "paramname": "nRangeStart",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "nRangeEnd",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "callresult": "LeaderboardScoresDownloaded_t",
+          "methodname": "DownloadLeaderboardEntriesForUsers",
+          "methodname_flat": "SteamAPI_ISteamUserStats_DownloadLeaderboardEntriesForUsers",
+          "params": [
+            {
+              "paramname": "hSteamLeaderboard",
+              "paramtype": "SteamLeaderboard_t"
+            },
+            {
+              "array_count": "cUsers",
+              "desc": "Array of users to retrieve",
+              "paramname": "prgUsers",
+              "paramtype": "CSteamID *"
+            },
+            {
+              "paramname": "cUsers",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "methodname": "GetDownloadedLeaderboardEntry",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetDownloadedLeaderboardEntry",
+          "params": [
+            {
+              "paramname": "hSteamLeaderboardEntries",
+              "paramtype": "SteamLeaderboardEntries_t"
+            },
+            {
+              "paramname": "index",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "pLeaderboardEntry",
+              "paramtype": "LeaderboardEntry_t *"
+            },
+            {
+              "paramname": "pDetails",
+              "paramtype": "int32 *"
+            },
+            {
+              "paramname": "cDetailsMax",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "callresult": "LeaderboardScoreUploaded_t",
+          "methodname": "UploadLeaderboardScore",
+          "methodname_flat": "SteamAPI_ISteamUserStats_UploadLeaderboardScore",
+          "params": [
+            {
+              "paramname": "hSteamLeaderboard",
+              "paramtype": "SteamLeaderboard_t"
+            },
+            {
+              "paramname": "eLeaderboardUploadScoreMethod",
+              "paramtype": "ELeaderboardUploadScoreMethod"
+            },
+            {
+              "paramname": "nScore",
+              "paramtype": "int32"
+            },
+            {
+              "paramname": "pScoreDetails",
+              "paramtype": "const int32 *"
+            },
+            {
+              "paramname": "cScoreDetailsCount",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "callresult": "LeaderboardUGCSet_t",
+          "methodname": "AttachLeaderboardUGC",
+          "methodname_flat": "SteamAPI_ISteamUserStats_AttachLeaderboardUGC",
+          "params": [
+            {
+              "paramname": "hSteamLeaderboard",
+              "paramtype": "SteamLeaderboard_t"
+            },
+            {
+              "paramname": "hUGC",
+              "paramtype": "UGCHandle_t"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "callresult": "NumberOfCurrentPlayers_t",
+          "methodname": "GetNumberOfCurrentPlayers",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetNumberOfCurrentPlayers",
+          "params": [],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "callresult": "GlobalAchievementPercentagesReady_t",
+          "methodname": "RequestGlobalAchievementPercentages",
+          "methodname_flat": "SteamAPI_ISteamUserStats_RequestGlobalAchievementPercentages",
+          "params": [],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "methodname": "GetMostAchievedAchievementInfo",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetMostAchievedAchievementInfo",
+          "params": [
+            {
+              "paramname": "pchName",
+              "paramtype": "char *"
+            },
+            {
+              "paramname": "unNameBufLen",
+              "paramtype": "uint32"
+            },
+            {
+              "paramname": "pflPercent",
+              "paramtype": "float *"
+            },
+            {
+              "paramname": "pbAchieved",
+              "paramtype": "bool *"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetNextMostAchievedAchievementInfo",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetNextMostAchievedAchievementInfo",
+          "params": [
+            {
+              "paramname": "iIteratorPrevious",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "pchName",
+              "paramtype": "char *"
+            },
+            {
+              "paramname": "unNameBufLen",
+              "paramtype": "uint32"
+            },
+            {
+              "paramname": "pflPercent",
+              "paramtype": "float *"
+            },
+            {
+              "paramname": "pbAchieved",
+              "paramtype": "bool *"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetAchievementAchievedPercent",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetAchievementAchievedPercent",
+          "params": [
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "pflPercent",
+              "paramtype": "float *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "callresult": "GlobalStatsReceived_t",
+          "methodname": "RequestGlobalStats",
+          "methodname_flat": "SteamAPI_ISteamUserStats_RequestGlobalStats",
+          "params": [
+            {
+              "paramname": "nHistoryDays",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "methodname": "GetGlobalStat",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetGlobalStatInt64",
+          "params": [
+            {
+              "paramname": "pchStatName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "pData",
+              "paramtype": "int64 *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetGlobalStat",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetGlobalStatDouble",
+          "params": [
+            {
+              "paramname": "pchStatName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "pData",
+              "paramtype": "double *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetGlobalStatHistory",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetGlobalStatHistoryInt64",
+          "params": [
+            {
+              "paramname": "pchStatName",
+              "paramtype": "const char *"
+            },
+            {
+              "array_count": "cubData",
+              "paramname": "pData",
+              "paramtype": "int64 *"
+            },
+            {
+              "paramname": "cubData",
+              "paramtype": "uint32"
+            }
+          ],
+          "returntype": "int32"
+        },
+        {
+          "methodname": "GetGlobalStatHistory",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetGlobalStatHistoryDouble",
+          "params": [
+            {
+              "paramname": "pchStatName",
+              "paramtype": "const char *"
+            },
+            {
+              "array_count": "cubData",
+              "paramname": "pData",
+              "paramtype": "double *"
+            },
+            {
+              "paramname": "cubData",
+              "paramtype": "uint32"
+            }
+          ],
+          "returntype": "int32"
+        },
+        {
+          "methodname": "GetAchievementProgressLimits",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetAchievementProgressLimitsInt32",
+          "params": [
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "pnMinProgress",
+              "paramtype": "int32 *"
+            },
+            {
+              "paramname": "pnMaxProgress",
+              "paramtype": "int32 *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetAchievementProgressLimits",
+          "methodname_flat": "SteamAPI_ISteamUserStats_GetAchievementProgressLimitsFloat",
+          "params": [
+            {
+              "paramname": "pchName",
+              "paramtype": "const char *"
+            },
+            {
+              "paramname": "pfMinProgress",
+              "paramtype": "float *"
+            },
+            {
+              "paramname": "pfMaxProgress",
+              "paramtype": "float *"
+            }
+          ],
+          "returntype": "bool"
+        }
+      ],
+      "version_string": "STEAMUSERSTATS_INTERFACE_VERSION013"
+    },
+    {
+      "accessors": [
+        {
+          "kind": "user",
+          "name": "SteamApps",
+          "name_flat": "SteamAPI_SteamApps_v009"
+        }
+      ],
+      "classname": "ISteamApps",
+      "fields": [],
+      "methods": [
+        {
+          "methodname": "BIsSubscribed",
+          "methodname_flat": "SteamAPI_ISteamApps_BIsSubscribed",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "BIsLowViolence",
+          "methodname_flat": "SteamAPI_ISteamApps_BIsLowViolence",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "BIsCybercafe",
+          "methodname_flat": "SteamAPI_ISteamApps_BIsCybercafe",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "BIsVACBanned",
+          "methodname_flat": "SteamAPI_ISteamApps_BIsVACBanned",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetCurrentGameLanguage",
+          "methodname_flat": "SteamAPI_ISteamApps_GetCurrentGameLanguage",
+          "params": [],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "GetAvailableGameLanguages",
+          "methodname_flat": "SteamAPI_ISteamApps_GetAvailableGameLanguages",
+          "params": [],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "BIsSubscribedApp",
+          "methodname_flat": "SteamAPI_ISteamApps_BIsSubscribedApp",
+          "params": [
+            {
+              "paramname": "appID",
+              "paramtype": "AppId_t"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "BIsDlcInstalled",
+          "methodname_flat": "SteamAPI_ISteamApps_BIsDlcInstalled",
+          "params": [
+            {
+              "paramname": "appID",
+              "paramtype": "AppId_t"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetEarliestPurchaseUnixTime",
+          "methodname_flat": "SteamAPI_ISteamApps_GetEarliestPurchaseUnixTime",
+          "params": [
+            {
+              "paramname": "nAppID",
+              "paramtype": "AppId_t"
+            }
+          ],
+          "returntype": "uint32"
+        },
+        {
+          "methodname": "BIsSubscribedFromFreeWeekend",
+          "methodname_flat": "SteamAPI_ISteamApps_BIsSubscribedFromFreeWeekend",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetDLCCount",
+          "methodname_flat": "SteamAPI_ISteamApps_GetDLCCount",
+          "params": [],
+          "returntype": "int"
+        },
+        {
+          "methodname": "BGetDLCDataByIndex",
+          "methodname_flat": "SteamAPI_ISteamApps_BGetDLCDataByIndex",
+          "params": [
+            {
+              "paramname": "iDLC",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "pAppID",
+              "paramtype": "AppId_t *"
+            },
+            {
+              "paramname": "pbAvailable",
+              "paramtype": "bool *"
+            },
+            {
+              "paramname": "pchName",
+              "paramtype": "char *"
+            },
+            {
+              "paramname": "cchNameBufferSize",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "InstallDLC",
+          "methodname_flat": "SteamAPI_ISteamApps_InstallDLC",
+          "params": [
+            {
+              "paramname": "nAppID",
+              "paramtype": "AppId_t"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "UninstallDLC",
+          "methodname_flat": "SteamAPI_ISteamApps_UninstallDLC",
+          "params": [
+            {
+              "paramname": "nAppID",
+              "paramtype": "AppId_t"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "RequestAppProofOfPurchaseKey",
+          "methodname_flat": "SteamAPI_ISteamApps_RequestAppProofOfPurchaseKey",
+          "params": [
+            {
+              "paramname": "nAppID",
+              "paramtype": "AppId_t"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "GetCurrentBetaName",
+          "methodname_flat": "SteamAPI_ISteamApps_GetCurrentBetaName",
+          "params": [
+            {
+              "paramname": "pchName",
+              "paramtype": "char *"
+            },
+            {
+              "paramname": "cchNameBufferSize",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "MarkContentCorrupt",
+          "methodname_flat": "SteamAPI_ISteamApps_MarkContentCorrupt",
+          "params": [
+            {
+              "paramname": "bMissingFilesOnly",
+              "paramtype": "bool"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetInstalledDepots",
+          "methodname_flat": "SteamAPI_ISteamApps_GetInstalledDepots",
+          "params": [
+            {
+              "paramname": "appID",
+              "paramtype": "AppId_t"
+            },
+            {
+              "paramname": "pvecDepots",
+              "paramtype": "DepotId_t *"
+            },
+            {
+              "paramname": "cMaxDepots",
+              "paramtype": "uint32"
+            }
+          ],
+          "returntype": "uint32"
+        },
+        {
+          "methodname": "GetAppInstallDir",
+          "methodname_flat": "SteamAPI_ISteamApps_GetAppInstallDir",
+          "params": [
+            {
+              "paramname": "appID",
+              "paramtype": "AppId_t"
+            },
+            {
+              "paramname": "pchFolder",
+              "paramtype": "char *"
+            },
+            {
+              "paramname": "cchFolderBufferSize",
+              "paramtype": "uint32"
+            }
+          ],
+          "returntype": "uint32"
+        },
+        {
+          "methodname": "BIsAppInstalled",
+          "methodname_flat": "SteamAPI_ISteamApps_BIsAppInstalled",
+          "params": [
+            {
+              "paramname": "appID",
+              "paramtype": "AppId_t"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetAppOwner",
+          "methodname_flat": "SteamAPI_ISteamApps_GetAppOwner",
+          "params": [],
+          "returntype": "CSteamID",
+          "returntype_flat": "uint64_steamid"
+        },
+        {
+          "methodname": "GetLaunchQueryParam",
+          "methodname_flat": "SteamAPI_ISteamApps_GetLaunchQueryParam",
+          "params": [
+            {
+              "paramname": "pchKey",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "GetDlcDownloadProgress",
+          "methodname_flat": "SteamAPI_ISteamApps_GetDlcDownloadProgress",
+          "params": [
+            {
+              "paramname": "nAppID",
+              "paramtype": "AppId_t"
+            },
+            {
+              "paramname": "punBytesDownloaded",
+              "paramtype": "uint64 *"
+            },
+            {
+              "paramname": "punBytesTotal",
+              "paramtype": "uint64 *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetAppBuildId",
+          "methodname_flat": "SteamAPI_ISteamApps_GetAppBuildId",
+          "params": [],
+          "returntype": "int"
+        },
+        {
+          "methodname": "RequestAllProofOfPurchaseKeys",
+          "methodname_flat": "SteamAPI_ISteamApps_RequestAllProofOfPurchaseKeys",
+          "params": [],
+          "returntype": "void"
+        },
+        {
+          "callresult": "FileDetailsResult_t",
+          "methodname": "GetFileDetails",
+          "methodname_flat": "SteamAPI_ISteamApps_GetFileDetails",
+          "params": [
+            {
+              "paramname": "pszFileName",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "SteamAPICall_t"
+        },
+        {
+          "methodname": "GetLaunchCommandLine",
+          "methodname_flat": "SteamAPI_ISteamApps_GetLaunchCommandLine",
+          "params": [
+            {
+              "paramname": "pszCommandLine",
+              "paramtype": "char *"
+            },
+            {
+              "paramname": "cubCommandLine",
+              "paramtype": "int"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "BIsSubscribedFromFamilySharing",
+          "methodname_flat": "SteamAPI_ISteamApps_BIsSubscribedFromFamilySharing",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "BIsTimedTrial",
+          "methodname_flat": "SteamAPI_ISteamApps_BIsTimedTrial",
+          "params": [
+            {
+              "paramname": "punSecondsAllowed",
+              "paramtype": "uint32 *"
+            },
+            {
+              "paramname": "punSecondsPlayed",
+              "paramtype": "uint32 *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "SetDlcContext",
+          "methodname_flat": "SteamAPI_ISteamApps_SetDlcContext",
+          "params": [
+            {
+              "paramname": "nAppID",
+              "paramtype": "AppId_t"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetNumBetas",
+          "methodname_flat": "SteamAPI_ISteamApps_GetNumBetas",
+          "params": [
+            {
+              "paramname": "pnAvailable",
+              "paramtype": "int *"
+            },
+            {
+              "paramname": "pnPrivate",
+              "paramtype": "int *"
+            }
+          ],
+          "returntype": "int"
+        },
+        {
+          "methodname": "GetBetaInfo",
+          "methodname_flat": "SteamAPI_ISteamApps_GetBetaInfo",
+          "params": [
+            {
+              "paramname": "iBetaIndex",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "punFlags",
+              "paramtype": "uint32 *"
+            },
+            {
+              "paramname": "punBuildID",
+              "paramtype": "uint32 *"
+            },
+            {
+              "paramname": "pchBetaName",
+              "paramtype": "char *"
+            },
+            {
+              "paramname": "cchBetaName",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "pchDescription",
+              "paramtype": "char *"
+            },
+            {
+              "paramname": "cchDescription",
+              "paramtype": "int"
+            },
+            {
+              "paramname": "punLastUpdated",
+              "paramtype": "uint32 *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "SetActiveBeta",
+          "methodname_flat": "SteamAPI_ISteamApps_SetActiveBeta",
+          "params": [
+            {
+              "paramname": "pchBetaName",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "SetGamePerformanceSetting",
+          "methodname_flat": "SteamAPI_ISteamApps_SetGamePerformanceSetting",
+          "params": [
+            {
+              "paramname": "setting",
+              "paramtype": "EGamePerformanceSetting"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "SetGameRenderResolution",
+          "methodname_flat": "SteamAPI_ISteamApps_SetGameRenderResolution",
+          "params": [
+            {
+              "paramname": "unWidth",
+              "paramtype": "uint32"
+            },
+            {
+              "paramname": "unHeight",
+              "paramtype": "uint32"
+            }
+          ],
+          "returntype": "void"
+        }
+      ],
+      "version_string": "STEAMAPPS_INTERFACE_VERSION009"
+    }
+  ]
+}
