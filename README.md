@@ -113,6 +113,16 @@ deno compile --allow-ffi --allow-env --allow-read \
 Include the library for the target you build for, not the host: `libsteam_api.dylib` on macOS,
 `libsteam_api.so` on Linux, `steam_api64.dll` on Windows.
 
+### Two things about `deno compile` worth knowing
+
+An included file keeps the path it had when you included it. A library included from a temporary
+directory does not land beside your module, so `import.meta.url` will not find it. Copy it next to
+the module first.
+
+An embedded library can be opened but not inspected: it lives in the binary's virtual file system,
+so `Deno.statSync` reports it missing while `Deno.dlopen` loads it. Code that checks the file exists
+before opening it rejects exactly the case that matters. Try the open and catch the failure instead.
+
 Library lookup order: `libraryPath` option, `sdkPath` option, `STEAMWORKS_LIB_PATH`,
 `STEAMWORKS_SDK_PATH`.
 

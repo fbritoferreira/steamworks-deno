@@ -1,0 +1,9 @@
+{
+  "name": "@steamworks/game-example",
+  "version": "0.0.0",
+  "exports": "./main.ts",
+  "imports": {
+    "@std/path": "jsr:@std/path@1",
+    "@std/assert": "jsr:@std/assert@1"
+  }
+}

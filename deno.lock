@@ -25,6 +25,12 @@
   },
   "workspace": {
     "members": {
+      "examples/game": {
+        "dependencies": [
+          "jsr:@std/assert@1",
+          "jsr:@std/path@1"
+        ]
+      },
       "packages/codegen": {
         "dependencies": [
           "jsr:@std/assert@1",
