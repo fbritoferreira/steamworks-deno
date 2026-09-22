@@ -98,3 +98,14 @@ Deno.test("consts evaluate C expressions", () => {
   assertStringIncludes(out, "export const k_unMaxCloudFileChunkSize = 104857600;");
   assertStringIncludes(out, "export const k_SteamInventoryResultInvalid = -1;");
 });
+
+Deno.test("emitCallbackIds writes a name to struct type map", () => {
+  const out = emitCallbackIds(schema);
+  assertStringIncludes(out, "export interface CallbackMap {");
+  assertStringIncludes(out, "  UserStatsStored: UserStatsStored_t;");
+  assertStringIncludes(out, "  UserAchievementStored: UserAchievementStored_t;");
+  // Every name in CallbackId has an entry in CallbackMap.
+  const ids = [...out.matchAll(/^  (\w+): \d+,$/gm)].map((m) => m[1]);
+  const mapped = [...out.matchAll(/^  (\w+): \w+_t;$/gm)].map((m) => m[1]);
+  assertEquals(new Set(ids).size, new Set(mapped).size);
+});

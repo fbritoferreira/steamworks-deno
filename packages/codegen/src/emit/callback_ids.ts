@@ -10,9 +10,14 @@ export function emitCallbackIds(schema: SteamApiJson): string {
   const names = unique.map((c) => `  ${strip(c.struct)}: ${c.callback_id},`).join("\n");
   const decoders = unique.map((c) => `  ${c.callback_id}: decode${c.struct},`).join("\n");
   const imports = unique.map((c) => `  decode${c.struct},`).join("\n");
-  return `import {\n${imports}\n} from "./structs.ts";\n\n` +
+  const typeImports = unique.map((c) => `  ${c.struct},`).join("\n");
+  const mapEntries = unique.map((c) => `  ${strip(c.struct)}: ${c.struct};`).join("\n");
+  return `import {\n${imports}\n} from "./structs.ts";\n` +
+    `import type {\n${typeImports}\n} from "./structs.ts";\n\n` +
     `/** Callback ids from steam_api.json, keyed by struct name without its _t suffix. */\n` +
     `export const CallbackId = {\n${names}\n} as const;\n\n` +
     `/** Decoder for each callback id, for dispatching a raw callback payload. */\n` +
-    `export const CallbackDecoders: Record<number, (bytes: Uint8Array) => unknown> = {\n${decoders}\n};\n`;
+    `export const CallbackDecoders: Record<number, (bytes: Uint8Array) => unknown> = {\n${decoders}\n};\n\n` +
+    `/** The struct each callback name decodes to. */\n` +
+    `export interface CallbackMap {\n${mapEntries}\n}\n`;
 }

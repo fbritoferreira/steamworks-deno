@@ -13,7 +13,7 @@ import {
   decodeCallbackMsg_t,
   decodeSteamAPICallCompleted_t,
 } from "../gen/structs.ts";
-import { CallbackId } from "../gen/callback_ids.ts";
+import { CallbackDecoders, CallbackId, type CallbackMap } from "../gen/callback_ids.ts";
 import * as G from "../gen/mod.ts";
 import { ALL_INTERFACE_SYMBOLS } from "../gen/all_symbols.ts";
 import { SteamInterfaces } from "../gen/client_base.ts";
@@ -102,6 +102,26 @@ export class SteamClient extends SteamInterfaces {
   /** Subscribe to one callback id. Returns a function that unsubscribes. */
   on(callbackId: number, listener: CallbackListener): () => void {
     return this.#dispatcher.on(callbackId, listener);
+  }
+
+  /**
+   * Subscribe to a callback by name and receive it decoded.
+   *
+   * ```ts
+   * steam.onCallback("UserAchievementStored", (data) => {
+   *   console.log(data.m_rgchAchievementName);
+   * });
+   * ```
+   *
+   * Use {@link on} when you want the raw bytes instead.
+   */
+  onCallback<K extends keyof CallbackMap>(
+    name: K,
+    listener: (data: CallbackMap[K]) => void,
+  ): () => void {
+    const id = CallbackId[name as keyof typeof CallbackId] as number;
+    const decode = CallbackDecoders[id] as (bytes: Uint8Array) => CallbackMap[K];
+    return this.#dispatcher.on(id, (bytes) => listener(decode(bytes)));
   }
 
   /** Observe every callback that arrives, whatever its id. */
