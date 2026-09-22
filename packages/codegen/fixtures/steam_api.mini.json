@@ -1,280 +1,3400 @@
 {
-  "typedefs": [
-    {
-      "typedef": "uint8",
-      "type": "unsigned char"
-    },
-    {
-      "typedef": "int8",
-      "type": "signed char"
-    },
-    {
-      "typedef": "int16",
-      "type": "short"
-    },
-    {
-      "typedef": "uint16",
-      "type": "unsigned short"
-    },
-    {
-      "typedef": "int32",
-      "type": "int"
-    },
-    {
-      "typedef": "uint32",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "int64",
-      "type": "long long"
-    },
-    {
-      "typedef": "uint64",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "lint64",
-      "type": "long long"
-    },
-    {
-      "typedef": "ulint64",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "intp",
-      "type": "long long"
-    },
-    {
-      "typedef": "uintp",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "AppId_t",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "DepotId_t",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "RTime32",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "SteamAPICall_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "AccountID_t",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "PartyBeaconID_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "HAuthTicket",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "PFNPreMinidumpCallback",
-      "type": "void (*)(void *)"
-    },
-    {
-      "typedef": "HSteamPipe",
-      "type": "int"
-    },
-    {
-      "typedef": "HSteamUser",
-      "type": "int"
-    },
-    {
-      "typedef": "SteamErrMsg",
-      "type": "char [1024]"
-    },
-    {
-      "typedef": "FriendsGroupID_t",
-      "type": "short"
-    },
-    {
-      "typedef": "HServerListRequest",
-      "type": "void *"
-    },
-    {
-      "typedef": "HServerQuery",
-      "type": "int"
-    },
-    {
-      "typedef": "UGCHandle_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "PublishedFileUpdateHandle_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "PublishedFileId_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "UGCFileWriteStreamHandle_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "SteamLeaderboard_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "SteamLeaderboardEntries_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "SNetSocket_t",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "SNetListenSocket_t",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "ScreenshotHandle",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "HTTPRequestHandle",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "HTTPCookieContainerHandle",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "InputHandle_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "InputActionSetHandle_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "InputDigitalActionHandle_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "InputAnalogActionHandle_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "SteamInputActionEventCallbackPointer",
-      "type": "void (*)(SteamInputActionEvent_t *)"
-    },
-    {
-      "typedef": "ControllerHandle_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "ControllerActionSetHandle_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "ControllerDigitalActionHandle_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "ControllerAnalogActionHandle_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "UGCQueryHandle_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "UGCUpdateHandle_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "HHTMLBrowser",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "SteamItemInstanceID_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "SteamItemDef_t",
-      "type": "int"
-    },
-    {
-      "typedef": "SteamInventoryResult_t",
-      "type": "int"
-    },
-    {
-      "typedef": "SteamInventoryUpdateHandle_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "TimelineEventHandle_t",
-      "type": "unsigned long long"
-    },
-    {
-      "typedef": "RemotePlaySessionID_t",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "RemotePlayCursorID_t",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "FnSteamNetConnectionStatusChanged",
-      "type": "void (*)(SteamNetConnectionStatusChangedCallback_t *)"
-    },
-    {
-      "typedef": "FnSteamNetAuthenticationStatusChanged",
-      "type": "void (*)(SteamNetAuthenticationStatus_t *)"
-    },
-    {
-      "typedef": "FnSteamRelayNetworkStatusChanged",
-      "type": "void (*)(SteamRelayNetworkStatus_t *)"
-    },
-    {
-      "typedef": "FnSteamNetworkingMessagesSessionRequest",
-      "type": "void (*)(SteamNetworkingMessagesSessionRequest_t *)"
-    },
-    {
-      "typedef": "FnSteamNetworkingMessagesSessionFailed",
-      "type": "void (*)(SteamNetworkingMessagesSessionFailed_t *)"
-    },
-    {
-      "typedef": "FnSteamNetworkingFakeIPResult",
-      "type": "void (*)(SteamNetworkingFakeIPResult_t *)"
-    },
-    {
-      "typedef": "HSteamNetConnection",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "HSteamListenSocket",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "HSteamNetPollGroup",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "SteamNetworkingErrMsg",
-      "type": "char [1024]"
-    },
-    {
-      "typedef": "SteamNetworkingPOPID",
-      "type": "unsigned int"
-    },
-    {
-      "typedef": "SteamNetworkingMicroseconds",
-      "type": "long long"
-    },
-    {
-      "typedef": "FSteamNetworkingSocketsDebugOutput",
-      "type": "void (*)(ESteamNetworkingSocketsDebugOutputType, const char *)"
+  "callback_structs": [
+    {
+      "callback_id": 101,
+      "fields": [],
+      "struct": "SteamServersConnected_t"
+    },
+    {
+      "callback_id": 102,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_bStillRetrying",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "SteamServerConnectFailure_t"
+    },
+    {
+      "callback_id": 103,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        }
+      ],
+      "struct": "SteamServersDisconnected_t"
+    },
+    {
+      "callback_id": 113,
+      "fields": [
+        {
+          "fieldname": "m_uAppID",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_unGameServerIP",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_usGameServerPort",
+          "fieldtype": "uint16"
+        },
+        {
+          "fieldname": "m_bSecure",
+          "fieldtype": "uint16"
+        },
+        {
+          "fieldname": "m_uReason",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "ClientGameServerDeny_t"
+    },
+    {
+      "callback_id": 117,
+      "enums": [
+        {
+          "enumname": "EFailureType",
+          "fqname": "IPCFailure_t::EFailureType",
+          "values": [
+            {
+              "name": "k_EFailureFlushedCallbackQueue",
+              "value": "0"
+            },
+            {
+              "name": "k_EFailurePipeFail",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "fields": [
+        {
+          "fieldname": "m_eFailureType",
+          "fieldtype": "uint8"
+        }
+      ],
+      "struct": "IPCFailure_t"
+    },
+    {
+      "callback_id": 125,
+      "fields": [],
+      "struct": "LicensesUpdated_t"
+    },
+    {
+      "callback_id": 143,
+      "fields": [
+        {
+          "fieldname": "m_SteamID",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_eAuthSessionResponse",
+          "fieldtype": "EAuthSessionResponse"
+        },
+        {
+          "fieldname": "m_OwnerSteamID",
+          "fieldtype": "CSteamID"
+        }
+      ],
+      "struct": "ValidateAuthTicketResponse_t"
+    },
+    {
+      "callback_id": 152,
+      "fields": [
+        {
+          "fieldname": "m_unAppID",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_ulOrderID",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_bAuthorized",
+          "fieldtype": "uint8"
+        }
+      ],
+      "struct": "MicroTxnAuthorizationResponse_t"
+    },
+    {
+      "callback_id": 154,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        }
+      ],
+      "struct": "EncryptedAppTicketResponse_t"
+    },
+    {
+      "callback_id": 163,
+      "fields": [
+        {
+          "fieldname": "m_hAuthTicket",
+          "fieldtype": "HAuthTicket"
+        },
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        }
+      ],
+      "struct": "GetAuthSessionTicketResponse_t"
+    },
+    {
+      "callback_id": 164,
+      "fields": [
+        {
+          "fieldname": "m_szURL",
+          "fieldtype": "char [256]"
+        }
+      ],
+      "struct": "GameWebCallback_t"
+    },
+    {
+      "callback_id": 165,
+      "fields": [
+        {
+          "fieldname": "m_szURL",
+          "fieldtype": "char [512]"
+        }
+      ],
+      "struct": "StoreAuthURLResponse_t"
+    },
+    {
+      "callback_id": 166,
+      "fields": [
+        {
+          "fieldname": "m_bAllowed",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_eNotAllowedReason",
+          "fieldtype": "EMarketNotAllowedReasonFlags"
+        },
+        {
+          "fieldname": "m_rtAllowedAtTime",
+          "fieldtype": "RTime32"
+        },
+        {
+          "fieldname": "m_cdaySteamGuardRequiredDays",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_cdayNewDeviceCooldown",
+          "fieldtype": "int"
+        }
+      ],
+      "struct": "MarketEligibilityResponse_t"
+    },
+    {
+      "callback_id": 167,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_appid",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_bApplicable",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_csecsLast5h",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_progress",
+          "fieldtype": "EDurationControlProgress"
+        },
+        {
+          "fieldname": "m_notification",
+          "fieldtype": "EDurationControlNotification"
+        },
+        {
+          "fieldname": "m_csecsToday",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_csecsRemaining",
+          "fieldtype": "int32"
+        }
+      ],
+      "struct": "DurationControl_t"
+    },
+    {
+      "callback_id": 168,
+      "fields": [
+        {
+          "fieldname": "m_hAuthTicket",
+          "fieldtype": "HAuthTicket"
+        },
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_cubTicket",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_rgubTicket",
+          "fieldtype": "uint8 [2560]"
+        }
+      ],
+      "struct": "GetTicketForWebApiResponse_t"
+    },
+    {
+      "callback_id": 304,
+      "fields": [
+        {
+          "fieldname": "m_ulSteamID",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_nChangeFlags",
+          "fieldtype": "int"
+        }
+      ],
+      "struct": "PersonaStateChange_t"
+    },
+    {
+      "callback_id": 331,
+      "fields": [
+        {
+          "fieldname": "m_bActive",
+          "fieldtype": "uint8"
+        },
+        {
+          "fieldname": "m_bUserInitiated",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_nAppID",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_dwOverlayPID",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "GameOverlayActivated_t"
+    },
+    {
+      "callback_id": 332,
+      "fields": [
+        {
+          "fieldname": "m_rgchServer",
+          "fieldtype": "char [64]"
+        },
+        {
+          "fieldname": "m_rgchPassword",
+          "fieldtype": "char [64]"
+        }
+      ],
+      "struct": "GameServerChangeRequested_t"
+    },
+    {
+      "callback_id": 333,
+      "fields": [
+        {
+          "fieldname": "m_steamIDLobby",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_steamIDFriend",
+          "fieldtype": "CSteamID"
+        }
+      ],
+      "struct": "GameLobbyJoinRequested_t"
+    },
+    {
+      "callback_id": 334,
+      "fields": [
+        {
+          "fieldname": "m_steamID",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_iImage",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_iWide",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_iTall",
+          "fieldtype": "int"
+        }
+      ],
+      "struct": "AvatarImageLoaded_t"
+    },
+    {
+      "callback_id": 335,
+      "fields": [
+        {
+          "fieldname": "m_steamIDClan",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_cOfficers",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_bSuccess",
+          "fieldtype": "uint8"
+        }
+      ],
+      "struct": "ClanOfficerListResponse_t"
+    },
+    {
+      "callback_id": 336,
+      "fields": [
+        {
+          "fieldname": "m_steamIDFriend",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_nAppID",
+          "fieldtype": "AppId_t"
+        }
+      ],
+      "struct": "FriendRichPresenceUpdate_t"
+    },
+    {
+      "callback_id": 337,
+      "fields": [
+        {
+          "fieldname": "m_steamIDFriend",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_rgchConnect",
+          "fieldtype": "char [256]"
+        }
+      ],
+      "struct": "GameRichPresenceJoinRequested_t"
+    },
+    {
+      "callback_id": 338,
+      "fields": [
+        {
+          "fieldname": "m_steamIDClanChat",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_steamIDUser",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_iMessageID",
+          "fieldtype": "int"
+        }
+      ],
+      "struct": "GameConnectedClanChatMsg_t"
+    },
+    {
+      "callback_id": 339,
+      "fields": [
+        {
+          "fieldname": "m_steamIDClanChat",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_steamIDUser",
+          "fieldtype": "CSteamID"
+        }
+      ],
+      "struct": "GameConnectedChatJoin_t"
+    },
+    {
+      "callback_id": 340,
+      "fields": [
+        {
+          "fieldname": "m_steamIDClanChat",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_steamIDUser",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_bKicked",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_bDropped",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "GameConnectedChatLeave_t"
+    },
+    {
+      "callback_id": 341,
+      "fields": [
+        {
+          "fieldname": "m_bSuccess",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "DownloadClanActivityCountsResult_t"
+    },
+    {
+      "callback_id": 342,
+      "fields": [
+        {
+          "fieldname": "m_steamIDClanChat",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_eChatRoomEnterResponse",
+          "fieldtype": "EChatRoomEnterResponse"
+        }
+      ],
+      "struct": "JoinClanChatRoomCompletionResult_t"
+    },
+    {
+      "callback_id": 343,
+      "fields": [
+        {
+          "fieldname": "m_steamIDUser",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_iMessageID",
+          "fieldtype": "int"
+        }
+      ],
+      "struct": "GameConnectedFriendChatMsg_t"
+    },
+    {
+      "callback_id": 344,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_steamID",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_nCount",
+          "fieldtype": "int"
+        }
+      ],
+      "struct": "FriendsGetFollowerCount_t"
+    },
+    {
+      "callback_id": 345,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_steamID",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_bIsFollowing",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "FriendsIsFollowing_t"
+    },
+    {
+      "callback_id": 346,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_rgSteamID",
+          "fieldtype": "CSteamID [50]"
+        },
+        {
+          "fieldname": "m_nResultsReturned",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_nTotalResultCount",
+          "fieldtype": "int32"
+        }
+      ],
+      "struct": "FriendsEnumerateFollowingList_t"
+    },
+    {
+      "callback_id": 348,
+      "fields": [],
+      "struct": "UnreadChatMessagesChanged_t"
+    },
+    {
+      "callback_id": 349,
+      "fields": [
+        {
+          "fieldname": "rgchURI",
+          "fieldtype": "char [1024]"
+        }
+      ],
+      "struct": "OverlayBrowserProtocolNavigation_t"
+    },
+    {
+      "callback_id": 350,
+      "fields": [
+        {
+          "fieldname": "m_steamID",
+          "fieldtype": "CSteamID"
+        }
+      ],
+      "struct": "EquippedProfileItemsChanged_t"
+    },
+    {
+      "callback_id": 351,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_steamID",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_bHasAnimatedAvatar",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_bHasAvatarFrame",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_bHasProfileModifier",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_bHasProfileBackground",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_bHasMiniProfileBackground",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_bFromCache",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "EquippedProfileItems_t"
+    },
+    {
+      "callback_id": 701,
+      "fields": [],
+      "struct": "IPCountry_t"
+    },
+    {
+      "callback_id": 702,
+      "fields": [
+        {
+          "fieldname": "m_nMinutesBatteryLeft",
+          "fieldtype": "uint8"
+        }
+      ],
+      "struct": "LowBatteryPower_t"
+    },
+    {
+      "callback_id": 703,
+      "fields": [
+        {
+          "fieldname": "m_hAsyncCall",
+          "fieldtype": "SteamAPICall_t"
+        },
+        {
+          "fieldname": "m_iCallback",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_cubParam",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "SteamAPICallCompleted_t"
+    },
+    {
+      "callback_id": 704,
+      "fields": [],
+      "struct": "SteamShutdown_t"
+    },
+    {
+      "callback_id": 705,
+      "fields": [
+        {
+          "fieldname": "m_eCheckFileSignature",
+          "fieldtype": "ECheckFileSignature"
+        }
+      ],
+      "struct": "CheckFileSignature_t"
+    },
+    {
+      "callback_id": 714,
+      "fields": [
+        {
+          "fieldname": "m_bSubmitted",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_unSubmittedText",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_unAppID",
+          "fieldtype": "AppId_t"
+        }
+      ],
+      "struct": "GamepadTextInputDismissed_t"
+    },
+    {
+      "callback_id": 736,
+      "fields": [],
+      "struct": "AppResumingFromSuspend_t"
+    },
+    {
+      "callback_id": 738,
+      "fields": [],
+      "struct": "FloatingGamepadTextInputDismissed_t"
+    },
+    {
+      "callback_id": 739,
+      "fields": [
+        {
+          "fieldname": "m_eLanguage",
+          "fieldtype": "int"
+        }
+      ],
+      "struct": "FilterTextDictionaryChanged_t"
+    },
+    {
+      "callback_id": 502,
+      "fields": [
+        {
+          "fieldname": "m_nIP",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_nQueryPort",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_nConnPort",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_nAppID",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_nFlags",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_bAdd",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_unAccountId",
+          "fieldtype": "AccountID_t"
+        }
+      ],
+      "struct": "FavoritesListChanged_t"
+    },
+    {
+      "callback_id": 503,
+      "fields": [
+        {
+          "fieldname": "m_ulSteamIDUser",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_ulSteamIDLobby",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_ulGameID",
+          "fieldtype": "uint64"
+        }
+      ],
+      "struct": "LobbyInvite_t"
+    },
+    {
+      "callback_id": 504,
+      "fields": [
+        {
+          "fieldname": "m_ulSteamIDLobby",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_rgfChatPermissions",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_bLocked",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_EChatRoomEnterResponse",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "LobbyEnter_t"
+    },
+    {
+      "callback_id": 505,
+      "fields": [
+        {
+          "fieldname": "m_ulSteamIDLobby",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_ulSteamIDMember",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_bSuccess",
+          "fieldtype": "uint8"
+        }
+      ],
+      "struct": "LobbyDataUpdate_t"
+    },
+    {
+      "callback_id": 506,
+      "fields": [
+        {
+          "fieldname": "m_ulSteamIDLobby",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_ulSteamIDUserChanged",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_ulSteamIDMakingChange",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_rgfChatMemberStateChange",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "LobbyChatUpdate_t"
+    },
+    {
+      "callback_id": 507,
+      "fields": [
+        {
+          "fieldname": "m_ulSteamIDLobby",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_ulSteamIDUser",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_eChatEntryType",
+          "fieldtype": "uint8"
+        },
+        {
+          "fieldname": "m_iChatID",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "LobbyChatMsg_t"
+    },
+    {
+      "callback_id": 509,
+      "fields": [
+        {
+          "fieldname": "m_ulSteamIDLobby",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_ulSteamIDGameServer",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_unIP",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_usPort",
+          "fieldtype": "uint16"
+        }
+      ],
+      "struct": "LobbyGameCreated_t"
+    },
+    {
+      "callback_id": 510,
+      "fields": [
+        {
+          "fieldname": "m_nLobbiesMatching",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "LobbyMatchList_t"
+    },
+    {
+      "callback_id": 512,
+      "fields": [
+        {
+          "fieldname": "m_ulSteamIDLobby",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_ulSteamIDAdmin",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_bKickedDueToDisconnect",
+          "fieldtype": "uint8"
+        }
+      ],
+      "struct": "LobbyKicked_t"
+    },
+    {
+      "callback_id": 513,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_ulSteamIDLobby",
+          "fieldtype": "uint64"
+        }
+      ],
+      "struct": "LobbyCreated_t"
+    },
+    {
+      "callback_id": 516,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        }
+      ],
+      "struct": "FavoritesListAccountsUpdated_t"
+    },
+    {
+      "callback_id": 5301,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_ulBeaconID",
+          "fieldtype": "PartyBeaconID_t"
+        },
+        {
+          "fieldname": "m_SteamIDBeaconOwner",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_rgchConnectString",
+          "fieldtype": "char [256]"
+        }
+      ],
+      "struct": "JoinPartyCallback_t"
+    },
+    {
+      "callback_id": 5302,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_ulBeaconID",
+          "fieldtype": "PartyBeaconID_t"
+        }
+      ],
+      "struct": "CreateBeaconCallback_t"
+    },
+    {
+      "callback_id": 5303,
+      "fields": [
+        {
+          "fieldname": "m_ulBeaconID",
+          "fieldtype": "PartyBeaconID_t"
+        },
+        {
+          "fieldname": "m_steamIDJoiner",
+          "fieldtype": "CSteamID"
+        }
+      ],
+      "struct": "ReservationNotificationCallback_t"
+    },
+    {
+      "callback_id": 5304,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        }
+      ],
+      "struct": "ChangeNumOpenSlotsCallback_t"
+    },
+    {
+      "callback_id": 5305,
+      "fields": [],
+      "struct": "AvailableBeaconLocationsUpdated_t"
+    },
+    {
+      "callback_id": 5306,
+      "fields": [],
+      "struct": "ActiveBeaconsUpdated_t"
+    },
+    {
+      "callback_id": 1307,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_hFile",
+          "fieldtype": "UGCHandle_t"
+        },
+        {
+          "fieldname": "m_rgchFilename",
+          "fieldtype": "char [260]"
+        }
+      ],
+      "struct": "RemoteStorageFileShareResult_t"
+    },
+    {
+      "callback_id": 1309,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_bUserNeedsToAcceptWorkshopLegalAgreement",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "RemoteStoragePublishFileResult_t"
+    },
+    {
+      "callback_id": 1311,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        }
+      ],
+      "struct": "RemoteStorageDeletePublishedFileResult_t"
+    },
+    {
+      "callback_id": 1312,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nResultsReturned",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_nTotalResultCount",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_rgPublishedFileId",
+          "fieldtype": "PublishedFileId_t [50]"
+        }
+      ],
+      "struct": "RemoteStorageEnumerateUserPublishedFilesResult_t"
+    },
+    {
+      "callback_id": 1313,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        }
+      ],
+      "struct": "RemoteStorageSubscribePublishedFileResult_t"
+    },
+    {
+      "callback_id": 1314,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nResultsReturned",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_nTotalResultCount",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_rgPublishedFileId",
+          "fieldtype": "PublishedFileId_t [50]"
+        },
+        {
+          "fieldname": "m_rgRTimeSubscribed",
+          "fieldtype": "uint32 [50]"
+        }
+      ],
+      "struct": "RemoteStorageEnumerateUserSubscribedFilesResult_t"
+    },
+    {
+      "callback_id": 1315,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        }
+      ],
+      "struct": "RemoteStorageUnsubscribePublishedFileResult_t"
+    },
+    {
+      "callback_id": 1316,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_bUserNeedsToAcceptWorkshopLegalAgreement",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "RemoteStorageUpdatePublishedFileResult_t"
+    },
+    {
+      "callback_id": 1317,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_hFile",
+          "fieldtype": "UGCHandle_t"
+        },
+        {
+          "fieldname": "m_nAppID",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_nSizeInBytes",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_pchFileName",
+          "fieldtype": "char [260]"
+        },
+        {
+          "fieldname": "m_ulSteamIDOwner",
+          "fieldtype": "uint64"
+        }
+      ],
+      "struct": "RemoteStorageDownloadUGCResult_t"
+    },
+    {
+      "callback_id": 1318,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_nCreatorAppID",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_nConsumerAppID",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_rgchTitle",
+          "fieldtype": "char [129]"
+        },
+        {
+          "fieldname": "m_rgchDescription",
+          "fieldtype": "char [8000]"
+        },
+        {
+          "fieldname": "m_hFile",
+          "fieldtype": "UGCHandle_t"
+        },
+        {
+          "fieldname": "m_hPreviewFile",
+          "fieldtype": "UGCHandle_t"
+        },
+        {
+          "fieldname": "m_ulSteamIDOwner",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_rtimeCreated",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_rtimeUpdated",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_eVisibility",
+          "fieldtype": "ERemoteStoragePublishedFileVisibility"
+        },
+        {
+          "fieldname": "m_bBanned",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_rgchTags",
+          "fieldtype": "char [1025]"
+        },
+        {
+          "fieldname": "m_bTagsTruncated",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_pchFileName",
+          "fieldtype": "char [260]"
+        },
+        {
+          "fieldname": "m_nFileSize",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_nPreviewFileSize",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_rgchURL",
+          "fieldtype": "char [256]"
+        },
+        {
+          "fieldname": "m_eFileType",
+          "fieldtype": "EWorkshopFileType"
+        },
+        {
+          "fieldname": "m_bAcceptedForUse",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "RemoteStorageGetPublishedFileDetailsResult_t"
+    },
+    {
+      "callback_id": 1319,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nResultsReturned",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_nTotalResultCount",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_rgPublishedFileId",
+          "fieldtype": "PublishedFileId_t [50]"
+        },
+        {
+          "fieldname": "m_rgScore",
+          "fieldtype": "float [50]"
+        },
+        {
+          "fieldname": "m_nAppId",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_unStartIndex",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "RemoteStorageEnumerateWorkshopFilesResult_t"
+    },
+    {
+      "callback_id": 1320,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_unPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_nVotesFor",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_nVotesAgainst",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_nReports",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_fScore",
+          "fieldtype": "float"
+        }
+      ],
+      "struct": "RemoteStorageGetPublishedItemVoteDetailsResult_t"
+    },
+    {
+      "callback_id": 1321,
+      "fields": [
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_nAppID",
+          "fieldtype": "AppId_t"
+        }
+      ],
+      "struct": "RemoteStoragePublishedFileSubscribed_t"
+    },
+    {
+      "callback_id": 1322,
+      "fields": [
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_nAppID",
+          "fieldtype": "AppId_t"
+        }
+      ],
+      "struct": "RemoteStoragePublishedFileUnsubscribed_t"
+    },
+    {
+      "callback_id": 1323,
+      "fields": [
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_nAppID",
+          "fieldtype": "AppId_t"
+        }
+      ],
+      "struct": "RemoteStoragePublishedFileDeleted_t"
+    },
+    {
+      "callback_id": 1324,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        }
+      ],
+      "struct": "RemoteStorageUpdateUserPublishedItemVoteResult_t"
+    },
+    {
+      "callback_id": 1325,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_eVote",
+          "fieldtype": "EWorkshopVote"
+        }
+      ],
+      "struct": "RemoteStorageUserVoteDetails_t"
+    },
+    {
+      "callback_id": 1326,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nResultsReturned",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_nTotalResultCount",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_rgPublishedFileId",
+          "fieldtype": "PublishedFileId_t [50]"
+        }
+      ],
+      "struct": "RemoteStorageEnumerateUserSharedWorkshopFilesResult_t"
+    },
+    {
+      "callback_id": 1327,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_eAction",
+          "fieldtype": "EWorkshopFileAction"
+        }
+      ],
+      "struct": "RemoteStorageSetUserPublishedFileActionResult_t"
+    },
+    {
+      "callback_id": 1328,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_eAction",
+          "fieldtype": "EWorkshopFileAction"
+        },
+        {
+          "fieldname": "m_nResultsReturned",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_nTotalResultCount",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_rgPublishedFileId",
+          "fieldtype": "PublishedFileId_t [50]"
+        },
+        {
+          "fieldname": "m_rgRTimeUpdated",
+          "fieldtype": "uint32 [50]"
+        }
+      ],
+      "struct": "RemoteStorageEnumeratePublishedFilesByUserActionResult_t"
+    },
+    {
+      "callback_id": 1329,
+      "fields": [
+        {
+          "fieldname": "m_dPercentFile",
+          "fieldtype": "double"
+        },
+        {
+          "fieldname": "m_bPreview",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "RemoteStoragePublishFileProgress_t"
+    },
+    {
+      "callback_id": 1330,
+      "fields": [
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_nAppID",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_ulUnused",
+          "fieldtype": "uint64"
+        }
+      ],
+      "struct": "RemoteStoragePublishedFileUpdated_t"
+    },
+    {
+      "callback_id": 1331,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        }
+      ],
+      "struct": "RemoteStorageFileWriteAsyncComplete_t"
+    },
+    {
+      "callback_id": 1332,
+      "fields": [
+        {
+          "fieldname": "m_hFileReadAsync",
+          "fieldtype": "SteamAPICall_t"
+        },
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nOffset",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_cubRead",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "RemoteStorageFileReadAsyncComplete_t"
+    },
+    {
+      "callback_id": 1333,
+      "fields": [],
+      "struct": "RemoteStorageLocalFileChange_t"
+    },
+    {
+      "callback_id": 1101,
+      "fields": [
+        {
+          "fieldname": "m_nGameID",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_steamIDUser",
+          "fieldtype": "CSteamID"
+        }
+      ],
+      "struct": "UserStatsReceived_t"
+    },
+    {
+      "callback_id": 1102,
+      "fields": [
+        {
+          "fieldname": "m_nGameID",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        }
+      ],
+      "struct": "UserStatsStored_t"
+    },
+    {
+      "callback_id": 1103,
+      "fields": [
+        {
+          "fieldname": "m_nGameID",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_bGroupAchievement",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_rgchAchievementName",
+          "fieldtype": "char [128]"
+        },
+        {
+          "fieldname": "m_nCurProgress",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_nMaxProgress",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "UserAchievementStored_t"
+    },
+    {
+      "callback_id": 1104,
+      "fields": [
+        {
+          "fieldname": "m_hSteamLeaderboard",
+          "fieldtype": "SteamLeaderboard_t"
+        },
+        {
+          "fieldname": "m_bLeaderboardFound",
+          "fieldtype": "uint8"
+        }
+      ],
+      "struct": "LeaderboardFindResult_t"
+    },
+    {
+      "callback_id": 1105,
+      "fields": [
+        {
+          "fieldname": "m_hSteamLeaderboard",
+          "fieldtype": "SteamLeaderboard_t"
+        },
+        {
+          "fieldname": "m_hSteamLeaderboardEntries",
+          "fieldtype": "SteamLeaderboardEntries_t"
+        },
+        {
+          "fieldname": "m_cEntryCount",
+          "fieldtype": "int"
+        }
+      ],
+      "struct": "LeaderboardScoresDownloaded_t"
+    },
+    {
+      "callback_id": 1106,
+      "fields": [
+        {
+          "fieldname": "m_bSuccess",
+          "fieldtype": "uint8"
+        },
+        {
+          "fieldname": "m_hSteamLeaderboard",
+          "fieldtype": "SteamLeaderboard_t"
+        },
+        {
+          "fieldname": "m_nScore",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_bScoreChanged",
+          "fieldtype": "uint8"
+        },
+        {
+          "fieldname": "m_nGlobalRankNew",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_nGlobalRankPrevious",
+          "fieldtype": "int"
+        }
+      ],
+      "struct": "LeaderboardScoreUploaded_t"
+    },
+    {
+      "callback_id": 1107,
+      "fields": [
+        {
+          "fieldname": "m_bSuccess",
+          "fieldtype": "uint8"
+        },
+        {
+          "fieldname": "m_cPlayers",
+          "fieldtype": "int32"
+        }
+      ],
+      "struct": "NumberOfCurrentPlayers_t"
+    },
+    {
+      "callback_id": 1108,
+      "fields": [
+        {
+          "fieldname": "m_steamIDUser",
+          "fieldtype": "CSteamID"
+        }
+      ],
+      "struct": "UserStatsUnloaded_t"
+    },
+    {
+      "callback_id": 1109,
+      "fields": [
+        {
+          "fieldname": "m_nGameID",
+          "fieldtype": "CGameID"
+        },
+        {
+          "fieldname": "m_rgchAchievementName",
+          "fieldtype": "char [128]"
+        },
+        {
+          "fieldname": "m_bAchieved",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_nIconHandle",
+          "fieldtype": "int"
+        }
+      ],
+      "struct": "UserAchievementIconFetched_t"
+    },
+    {
+      "callback_id": 1110,
+      "fields": [
+        {
+          "fieldname": "m_nGameID",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        }
+      ],
+      "struct": "GlobalAchievementPercentagesReady_t"
+    },
+    {
+      "callback_id": 1111,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_hSteamLeaderboard",
+          "fieldtype": "SteamLeaderboard_t"
+        }
+      ],
+      "struct": "LeaderboardUGCSet_t"
+    },
+    {
+      "callback_id": 1112,
+      "fields": [
+        {
+          "fieldname": "m_nGameID",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        }
+      ],
+      "struct": "GlobalStatsReceived_t"
+    },
+    {
+      "callback_id": 1005,
+      "fields": [
+        {
+          "fieldname": "m_nAppID",
+          "fieldtype": "AppId_t"
+        }
+      ],
+      "struct": "DlcInstalled_t"
+    },
+    {
+      "callback_id": 1014,
+      "fields": [],
+      "struct": "NewUrlLaunchParameters_t"
+    },
+    {
+      "callback_id": 1021,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nAppID",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_cchKeyLength",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_rgchKey",
+          "fieldtype": "char [240]"
+        }
+      ],
+      "struct": "AppProofOfPurchaseKeyResponse_t"
+    },
+    {
+      "callback_id": 1023,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_ulFileSize",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_FileSHA",
+          "fieldtype": "uint8 [20]"
+        },
+        {
+          "fieldname": "m_unFlags",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "FileDetailsResult_t"
+    },
+    {
+      "callback_id": 1030,
+      "fields": [
+        {
+          "fieldname": "m_unAppID",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_bIsOffline",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_unSecondsAllowed",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_unSecondsPlayed",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "TimedTrialStatus_t"
+    },
+    {
+      "callback_id": 1202,
+      "fields": [
+        {
+          "fieldname": "m_steamIDRemote",
+          "fieldtype": "CSteamID"
+        }
+      ],
+      "struct": "P2PSessionRequest_t"
+    },
+    {
+      "callback_id": 1203,
+      "fields": [
+        {
+          "fieldname": "m_steamIDRemote",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_eP2PSessionError",
+          "fieldtype": "uint8"
+        }
+      ],
+      "struct": "P2PSessionConnectFail_t"
+    },
+    {
+      "callback_id": 1201,
+      "fields": [
+        {
+          "fieldname": "m_hSocket",
+          "fieldtype": "SNetSocket_t"
+        },
+        {
+          "fieldname": "m_hListenSocket",
+          "fieldtype": "SNetListenSocket_t"
+        },
+        {
+          "fieldname": "m_steamIDRemote",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_eSNetSocketState",
+          "fieldtype": "int"
+        }
+      ],
+      "struct": "SocketStatusCallback_t"
+    },
+    {
+      "callback_id": 2301,
+      "fields": [
+        {
+          "fieldname": "m_hLocal",
+          "fieldtype": "ScreenshotHandle"
+        },
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        }
+      ],
+      "struct": "ScreenshotReady_t"
+    },
+    {
+      "callback_id": 2302,
+      "fields": [],
+      "struct": "ScreenshotRequested_t"
+    },
+    {
+      "callback_id": 4001,
+      "fields": [],
+      "struct": "PlaybackStatusHasChanged_t"
+    },
+    {
+      "callback_id": 4002,
+      "fields": [
+        {
+          "fieldname": "m_flNewVolume",
+          "fieldtype": "float"
+        }
+      ],
+      "struct": "VolumeHasChanged_t"
+    },
+    {
+      "callback_id": 2101,
+      "fields": [
+        {
+          "fieldname": "m_hRequest",
+          "fieldtype": "HTTPRequestHandle"
+        },
+        {
+          "fieldname": "m_ulContextValue",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_bRequestSuccessful",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_eStatusCode",
+          "fieldtype": "EHTTPStatusCode"
+        },
+        {
+          "fieldname": "m_unBodySize",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "HTTPRequestCompleted_t"
+    },
+    {
+      "callback_id": 2102,
+      "fields": [
+        {
+          "fieldname": "m_hRequest",
+          "fieldtype": "HTTPRequestHandle"
+        },
+        {
+          "fieldname": "m_ulContextValue",
+          "fieldtype": "uint64"
+        }
+      ],
+      "struct": "HTTPRequestHeadersReceived_t"
+    },
+    {
+      "callback_id": 2103,
+      "fields": [
+        {
+          "fieldname": "m_hRequest",
+          "fieldtype": "HTTPRequestHandle"
+        },
+        {
+          "fieldname": "m_ulContextValue",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_cOffset",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_cBytesReceived",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "HTTPRequestDataReceived_t"
+    },
+    {
+      "callback_id": 2801,
+      "fields": [
+        {
+          "fieldname": "m_ulConnectedDeviceHandle",
+          "fieldtype": "InputHandle_t"
+        }
+      ],
+      "struct": "SteamInputDeviceConnected_t"
+    },
+    {
+      "callback_id": 2802,
+      "fields": [
+        {
+          "fieldname": "m_ulDisconnectedDeviceHandle",
+          "fieldtype": "InputHandle_t"
+        }
+      ],
+      "struct": "SteamInputDeviceDisconnected_t"
+    },
+    {
+      "callback_id": 2803,
+      "fields": [
+        {
+          "fieldname": "m_unAppID",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_ulDeviceHandle",
+          "fieldtype": "InputHandle_t"
+        },
+        {
+          "fieldname": "m_ulMappingCreator",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_unMajorRevision",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_unMinorRevision",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_bUsesSteamInputAPI",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_bUsesGamepadAPI",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "SteamInputConfigurationLoaded_t"
+    },
+    {
+      "callback_id": 2804,
+      "fields": [
+        {
+          "fieldname": "m_unAppID",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_ulDeviceHandle",
+          "fieldtype": "InputHandle_t"
+        },
+        {
+          "fieldname": "m_eDeviceType",
+          "fieldtype": "ESteamInputType"
+        },
+        {
+          "fieldname": "m_nOldGamepadSlot",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_nNewGamepadSlot",
+          "fieldtype": "int"
+        }
+      ],
+      "struct": "SteamInputGamepadSlotChange_t"
+    },
+    {
+      "callback_id": 3401,
+      "fields": [
+        {
+          "fieldname": "m_handle",
+          "fieldtype": "UGCQueryHandle_t"
+        },
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_unNumResultsReturned",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_unTotalMatchingResults",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_bCachedData",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_rgchNextCursor",
+          "fieldtype": "char [256]"
+        }
+      ],
+      "struct": "SteamUGCQueryCompleted_t"
+    },
+    {
+      "callback_id": 3402,
+      "fields": [
+        {
+          "fieldname": "m_details",
+          "fieldtype": "SteamUGCDetails_t"
+        },
+        {
+          "fieldname": "m_bCachedData",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "SteamUGCRequestUGCDetailsResult_t"
+    },
+    {
+      "callback_id": 3403,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_bUserNeedsToAcceptWorkshopLegalAgreement",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "CreateItemResult_t"
+    },
+    {
+      "callback_id": 3404,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_bUserNeedsToAcceptWorkshopLegalAgreement",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        }
+      ],
+      "struct": "SubmitItemUpdateResult_t"
+    },
+    {
+      "callback_id": 3405,
+      "fields": [
+        {
+          "fieldname": "m_unAppID",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_hLegacyContent",
+          "fieldtype": "UGCHandle_t"
+        },
+        {
+          "fieldname": "m_unManifestID",
+          "fieldtype": "uint64"
+        }
+      ],
+      "struct": "ItemInstalled_t"
+    },
+    {
+      "callback_id": 3406,
+      "fields": [
+        {
+          "fieldname": "m_unAppID",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        }
+      ],
+      "struct": "DownloadItemResult_t"
+    },
+    {
+      "callback_id": 3407,
+      "fields": [
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_bWasAddRequest",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "UserFavoriteItemsListChanged_t"
+    },
+    {
+      "callback_id": 3408,
+      "fields": [
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_bVoteUp",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "SetUserItemVoteResult_t"
+    },
+    {
+      "callback_id": 3409,
+      "fields": [
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_bVotedUp",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_bVotedDown",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_bVoteSkipped",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "GetUserItemVoteResult_t"
+    },
+    {
+      "callback_id": 3410,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        }
+      ],
+      "struct": "StartPlaytimeTrackingResult_t"
+    },
+    {
+      "callback_id": 3411,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        }
+      ],
+      "struct": "StopPlaytimeTrackingResult_t"
+    },
+    {
+      "callback_id": 3412,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_nChildPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        }
+      ],
+      "struct": "AddUGCDependencyResult_t"
+    },
+    {
+      "callback_id": 3413,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_nChildPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        }
+      ],
+      "struct": "RemoveUGCDependencyResult_t"
+    },
+    {
+      "callback_id": 3414,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_nAppID",
+          "fieldtype": "AppId_t"
+        }
+      ],
+      "struct": "AddAppDependencyResult_t"
+    },
+    {
+      "callback_id": 3415,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_nAppID",
+          "fieldtype": "AppId_t"
+        }
+      ],
+      "struct": "RemoveAppDependencyResult_t"
+    },
+    {
+      "callback_id": 3416,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_rgAppIDs",
+          "fieldtype": "AppId_t [32]"
+        },
+        {
+          "fieldname": "m_nNumAppDependencies",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_nTotalNumAppDependencies",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "GetAppDependenciesResult_t"
+    },
+    {
+      "callback_id": 3417,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        }
+      ],
+      "struct": "DeleteItemResult_t"
+    },
+    {
+      "callback_id": 3418,
+      "fields": [
+        {
+          "fieldname": "m_nAppID",
+          "fieldtype": "AppId_t"
+        }
+      ],
+      "struct": "UserSubscribedItemsListChanged_t"
+    },
+    {
+      "callback_id": 3420,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nAppID",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_unVersion",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_rtAction",
+          "fieldtype": "RTime32"
+        },
+        {
+          "fieldname": "m_bAccepted",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_bNeedsAction",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "WorkshopEULAStatus_t"
+    },
+    {
+      "callback_id": 4501,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        }
+      ],
+      "struct": "HTML_BrowserReady_t"
+    },
+    {
+      "callback_id": 4502,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "pBGRA",
+          "fieldtype": "const char *"
+        },
+        {
+          "fieldname": "unWide",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "unTall",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "unUpdateX",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "unUpdateY",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "unUpdateWide",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "unUpdateTall",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "unScrollX",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "unScrollY",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "flPageScale",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "unPageSerial",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "HTML_NeedsPaint_t"
+    },
+    {
+      "callback_id": 4503,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "pchURL",
+          "fieldtype": "const char *"
+        },
+        {
+          "fieldname": "pchTarget",
+          "fieldtype": "const char *"
+        },
+        {
+          "fieldname": "pchPostData",
+          "fieldtype": "const char *"
+        },
+        {
+          "fieldname": "bIsRedirect",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "HTML_StartRequest_t"
+    },
+    {
+      "callback_id": 4504,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        }
+      ],
+      "struct": "HTML_CloseBrowser_t"
+    },
+    {
+      "callback_id": 4505,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "pchURL",
+          "fieldtype": "const char *"
+        },
+        {
+          "fieldname": "pchPostData",
+          "fieldtype": "const char *"
+        },
+        {
+          "fieldname": "bIsRedirect",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "pchPageTitle",
+          "fieldtype": "const char *"
+        },
+        {
+          "fieldname": "bNewNavigation",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "HTML_URLChanged_t"
+    },
+    {
+      "callback_id": 4506,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "pchURL",
+          "fieldtype": "const char *"
+        },
+        {
+          "fieldname": "pchPageTitle",
+          "fieldtype": "const char *"
+        }
+      ],
+      "struct": "HTML_FinishedRequest_t"
+    },
+    {
+      "callback_id": 4507,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "pchURL",
+          "fieldtype": "const char *"
+        }
+      ],
+      "struct": "HTML_OpenLinkInNewTab_t"
+    },
+    {
+      "callback_id": 4508,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "pchTitle",
+          "fieldtype": "const char *"
+        }
+      ],
+      "struct": "HTML_ChangedTitle_t"
+    },
+    {
+      "callback_id": 4509,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "unResults",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "unCurrentMatch",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "HTML_SearchResults_t"
+    },
+    {
+      "callback_id": 4510,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "bCanGoBack",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "bCanGoForward",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "HTML_CanGoBackAndForward_t"
+    },
+    {
+      "callback_id": 4511,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "unScrollMax",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "unScrollCurrent",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "flPageScale",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "bVisible",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "unPageSize",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "HTML_HorizontalScroll_t"
+    },
+    {
+      "callback_id": 4512,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "unScrollMax",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "unScrollCurrent",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "flPageScale",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "bVisible",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "unPageSize",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "HTML_VerticalScroll_t"
+    },
+    {
+      "callback_id": 4513,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "x",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "y",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "pchURL",
+          "fieldtype": "const char *"
+        },
+        {
+          "fieldname": "bInput",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "bLiveLink",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "HTML_LinkAtPosition_t"
+    },
+    {
+      "callback_id": 4514,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "pchMessage",
+          "fieldtype": "const char *"
+        }
+      ],
+      "struct": "HTML_JSAlert_t"
+    },
+    {
+      "callback_id": 4515,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "pchMessage",
+          "fieldtype": "const char *"
+        }
+      ],
+      "struct": "HTML_JSConfirm_t"
+    },
+    {
+      "callback_id": 4516,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "pchTitle",
+          "fieldtype": "const char *"
+        },
+        {
+          "fieldname": "pchInitialFile",
+          "fieldtype": "const char *"
+        }
+      ],
+      "struct": "HTML_FileOpenDialog_t"
+    },
+    {
+      "callback_id": 4521,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "pchURL",
+          "fieldtype": "const char *"
+        },
+        {
+          "fieldname": "unX",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "unY",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "unWide",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "unTall",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "unNewWindow_BrowserHandle_IGNORE",
+          "fieldtype": "HHTMLBrowser"
+        }
+      ],
+      "struct": "HTML_NewWindow_t"
+    },
+    {
+      "callback_id": 4522,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "eMouseCursor",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "HTML_SetCursor_t"
+    },
+    {
+      "callback_id": 4523,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "pchMsg",
+          "fieldtype": "const char *"
+        }
+      ],
+      "struct": "HTML_StatusText_t"
+    },
+    {
+      "callback_id": 4524,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "pchMsg",
+          "fieldtype": "const char *"
+        }
+      ],
+      "struct": "HTML_ShowToolTip_t"
+    },
+    {
+      "callback_id": 4525,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "pchMsg",
+          "fieldtype": "const char *"
+        }
+      ],
+      "struct": "HTML_UpdateToolTip_t"
+    },
+    {
+      "callback_id": 4526,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        }
+      ],
+      "struct": "HTML_HideToolTip_t"
+    },
+    {
+      "callback_id": 4527,
+      "fields": [
+        {
+          "fieldname": "unBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        },
+        {
+          "fieldname": "unOldBrowserHandle",
+          "fieldtype": "HHTMLBrowser"
+        }
+      ],
+      "struct": "HTML_BrowserRestarted_t"
+    },
+    {
+      "callback_id": 4700,
+      "fields": [
+        {
+          "fieldname": "m_handle",
+          "fieldtype": "SteamInventoryResult_t"
+        },
+        {
+          "fieldname": "m_result",
+          "fieldtype": "EResult"
+        }
+      ],
+      "struct": "SteamInventoryResultReady_t"
+    },
+    {
+      "callback_id": 4701,
+      "fields": [
+        {
+          "fieldname": "m_handle",
+          "fieldtype": "SteamInventoryResult_t"
+        }
+      ],
+      "struct": "SteamInventoryFullUpdate_t"
+    },
+    {
+      "callback_id": 4702,
+      "fields": [],
+      "struct": "SteamInventoryDefinitionUpdate_t"
+    },
+    {
+      "callback_id": 4703,
+      "fields": [
+        {
+          "fieldname": "m_result",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_steamID",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_numEligiblePromoItemDefs",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_bCachedData",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "SteamInventoryEligiblePromoItemDefIDs_t"
+    },
+    {
+      "callback_id": 4704,
+      "fields": [
+        {
+          "fieldname": "m_result",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_ulOrderID",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_ulTransID",
+          "fieldtype": "uint64"
+        }
+      ],
+      "struct": "SteamInventoryStartPurchaseResult_t"
+    },
+    {
+      "callback_id": 4705,
+      "fields": [
+        {
+          "fieldname": "m_result",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_rgchCurrency",
+          "fieldtype": "char [4]"
+        }
+      ],
+      "struct": "SteamInventoryRequestPricesResult_t"
+    },
+    {
+      "callback_id": 6001,
+      "fields": [
+        {
+          "fieldname": "m_rgchPhaseID",
+          "fieldtype": "char [64]"
+        },
+        {
+          "fieldname": "m_ulRecordingMS",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_ulLongestClipMS",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_unClipCount",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_unScreenshotCount",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "SteamTimelineGamePhaseRecordingExists_t"
+    },
+    {
+      "callback_id": 6002,
+      "fields": [
+        {
+          "fieldname": "m_ulEventID",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_bRecordingExists",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "SteamTimelineEventRecordingExists_t"
+    },
+    {
+      "callback_id": 4611,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_unVideoAppID",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_rgchURL",
+          "fieldtype": "char [256]"
+        }
+      ],
+      "struct": "GetVideoURLResult_t"
+    },
+    {
+      "callback_id": 4624,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_unVideoAppID",
+          "fieldtype": "AppId_t"
+        }
+      ],
+      "struct": "GetOPFSettingsResult_t"
+    },
+    {
+      "callback_id": 4604,
+      "fields": [
+        {
+          "fieldname": "m_bIsRTMP",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "BroadcastUploadStart_t"
+    },
+    {
+      "callback_id": 4605,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EBroadcastUploadResult"
+        }
+      ],
+      "struct": "BroadcastUploadStop_t"
+    },
+    {
+      "callback_id": 5001,
+      "fields": [],
+      "struct": "SteamParentalSettingsChanged_t"
+    },
+    {
+      "callback_id": 5701,
+      "fields": [
+        {
+          "fieldname": "m_unSessionID",
+          "fieldtype": "RemotePlaySessionID_t"
+        }
+      ],
+      "struct": "SteamRemotePlaySessionConnected_t"
+    },
+    {
+      "callback_id": 5702,
+      "fields": [
+        {
+          "fieldname": "m_unSessionID",
+          "fieldtype": "RemotePlaySessionID_t"
+        }
+      ],
+      "struct": "SteamRemotePlaySessionDisconnected_t"
+    },
+    {
+      "callback_id": 5703,
+      "fields": [
+        {
+          "fieldname": "m_szConnectURL",
+          "fieldtype": "char [1024]"
+        }
+      ],
+      "struct": "SteamRemotePlayTogetherGuestInvite_t"
+    },
+    {
+      "callback_id": 5704,
+      "fields": [
+        {
+          "fieldname": "m_unSessionID",
+          "fieldtype": "RemotePlaySessionID_t"
+        },
+        {
+          "fieldname": "m_iImage",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_iWide",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_iTall",
+          "fieldtype": "int"
+        }
+      ],
+      "struct": "SteamRemotePlaySessionAvatarLoaded_t"
+    },
+    {
+      "callback_id": 1251,
+      "fields": [
+        {
+          "fieldname": "m_identityRemote",
+          "fieldtype": "SteamNetworkingIdentity"
+        }
+      ],
+      "struct": "SteamNetworkingMessagesSessionRequest_t"
+    },
+    {
+      "callback_id": 1252,
+      "fields": [
+        {
+          "fieldname": "m_info",
+          "fieldtype": "SteamNetConnectionInfo_t"
+        }
+      ],
+      "struct": "SteamNetworkingMessagesSessionFailed_t"
+    },
+    {
+      "callback_id": 1221,
+      "fields": [
+        {
+          "fieldname": "m_hConn",
+          "fieldtype": "HSteamNetConnection"
+        },
+        {
+          "fieldname": "m_info",
+          "fieldtype": "SteamNetConnectionInfo_t"
+        },
+        {
+          "fieldname": "m_eOldState",
+          "fieldtype": "ESteamNetworkingConnectionState"
+        }
+      ],
+      "struct": "SteamNetConnectionStatusChangedCallback_t"
+    },
+    {
+      "callback_id": 1222,
+      "fields": [
+        {
+          "fieldname": "m_eAvail",
+          "fieldtype": "ESteamNetworkingAvailability"
+        },
+        {
+          "fieldname": "m_debugMsg",
+          "fieldtype": "char [256]"
+        }
+      ],
+      "struct": "SteamNetAuthenticationStatus_t"
+    },
+    {
+      "callback_id": 1281,
+      "fields": [
+        {
+          "fieldname": "m_eAvail",
+          "fieldtype": "ESteamNetworkingAvailability"
+        },
+        {
+          "fieldname": "m_bPingMeasurementInProgress",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_eAvailNetworkConfig",
+          "fieldtype": "ESteamNetworkingAvailability"
+        },
+        {
+          "fieldname": "m_eAvailAnyRelay",
+          "fieldtype": "ESteamNetworkingAvailability"
+        },
+        {
+          "fieldname": "m_debugMsg",
+          "fieldtype": "char [256]"
+        }
+      ],
+      "struct": "SteamRelayNetworkStatus_t"
+    },
+    {
+      "callback_id": 201,
+      "fields": [
+        {
+          "fieldname": "m_SteamID",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_OwnerSteamID",
+          "fieldtype": "CSteamID"
+        }
+      ],
+      "struct": "GSClientApprove_t"
+    },
+    {
+      "callback_id": 202,
+      "fields": [
+        {
+          "fieldname": "m_SteamID",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_eDenyReason",
+          "fieldtype": "EDenyReason"
+        },
+        {
+          "fieldname": "m_rgchOptionalText",
+          "fieldtype": "char [128]"
+        }
+      ],
+      "struct": "GSClientDeny_t"
+    },
+    {
+      "callback_id": 203,
+      "fields": [
+        {
+          "fieldname": "m_SteamID",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_eDenyReason",
+          "fieldtype": "EDenyReason"
+        }
+      ],
+      "struct": "GSClientKick_t"
+    },
+    {
+      "callback_id": 206,
+      "fields": [
+        {
+          "fieldname": "m_SteamID",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_pchAchievement",
+          "fieldtype": "char [128]"
+        },
+        {
+          "fieldname": "m_bUnlocked",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "GSClientAchievementStatus_t"
+    },
+    {
+      "callback_id": 115,
+      "fields": [
+        {
+          "fieldname": "m_bSecure",
+          "fieldtype": "uint8"
+        }
+      ],
+      "struct": "GSPolicyResponse_t"
+    },
+    {
+      "callback_id": 207,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_nRank",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_unTotalConnects",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_unTotalMinutesPlayed",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "GSGameplayStats_t"
+    },
+    {
+      "callback_id": 208,
+      "fields": [
+        {
+          "fieldname": "m_SteamIDUser",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_SteamIDGroup",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_bMember",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_bOfficer",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "GSClientGroupStatus_t"
+    },
+    {
+      "callback_id": 209,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_unReputationScore",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_bBanned",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_unBannedIP",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_usBannedPort",
+          "fieldtype": "uint16"
+        },
+        {
+          "fieldname": "m_ulBannedGameID",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_unBanExpires",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "GSReputation_t"
+    },
+    {
+      "callback_id": 210,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        }
+      ],
+      "struct": "AssociateWithClanResult_t"
+    },
+    {
+      "callback_id": 211,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_cPlayersThatDontLikeCandidate",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_cPlayersThatCandidateDoesntLike",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_cClanPlayersThatDontLikeCandidate",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_SteamIDCandidate",
+          "fieldtype": "CSteamID"
+        }
+      ],
+      "struct": "ComputeNewPlayerCompatibilityResult_t"
+    },
+    {
+      "callback_id": 1800,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_steamIDUser",
+          "fieldtype": "CSteamID"
+        }
+      ],
+      "struct": "GSStatsReceived_t"
+    },
+    {
+      "callback_id": 1801,
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_steamIDUser",
+          "fieldtype": "CSteamID"
+        }
+      ],
+      "struct": "GSStatsStored_t"
+    },
+    {
+      "callback_id": 1108,
+      "fields": [
+        {
+          "fieldname": "m_steamIDUser",
+          "fieldtype": "CSteamID"
+        }
+      ],
+      "struct": "GSStatsUnloaded_t"
+    },
+    {
+      "callback_id": 1223,
+      "consts": [
+        {
+          "constname": "k_nMaxReturnPorts",
+          "consttype": "int",
+          "constval": "8"
+        }
+      ],
+      "fields": [
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_identity",
+          "fieldtype": "SteamNetworkingIdentity"
+        },
+        {
+          "fieldname": "m_unIP",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_unPorts",
+          "fieldtype": "uint16 [8]"
+        }
+      ],
+      "struct": "SteamNetworkingFakeIPResult_t"
     }
   ],
   "consts": [
@@ -284,9 +3404,29 @@
       "constval": "0x0"
     },
     {
+      "constname": "k_uDepotIdInvalid",
+      "consttype": "DepotId_t",
+      "constval": "0x0"
+    },
+    {
       "constname": "k_uAPICallInvalid",
       "consttype": "SteamAPICall_t",
       "constval": "0x0"
+    },
+    {
+      "constname": "k_uAccountIdInvalid",
+      "consttype": "AccountID_t",
+      "constval": "0"
+    },
+    {
+      "constname": "k_ulPartyBeaconIdInvalid",
+      "consttype": "PartyBeaconID_t",
+      "constval": "0"
+    },
+    {
+      "constname": "k_HAuthTicketInvalid",
+      "consttype": "HAuthTicket",
+      "constval": "0"
     },
     {
       "constname": "k_unSteamAccountIDMask",
@@ -294,9 +3434,109 @@
       "constval": "0xFFFFFFFF"
     },
     {
+      "constname": "k_unSteamAccountInstanceMask",
+      "consttype": "unsigned int",
+      "constval": "0x000FFFFF"
+    },
+    {
+      "constname": "k_unSteamUserDefaultInstance",
+      "consttype": "unsigned int",
+      "constval": "1"
+    },
+    {
+      "constname": "k_cchGameExtraInfoMax",
+      "consttype": "int",
+      "constval": "64"
+    },
+    {
       "constname": "k_cchMaxSteamErrMsg",
       "consttype": "int",
       "constval": "1024"
+    },
+    {
+      "constname": "k_cchMaxFriendsGroupName",
+      "consttype": "int",
+      "constval": "64"
+    },
+    {
+      "constname": "k_cFriendsGroupLimit",
+      "consttype": "int",
+      "constval": "100"
+    },
+    {
+      "constname": "k_FriendsGroupID_Invalid",
+      "consttype": "FriendsGroupID_t",
+      "constval": "- 1"
+    },
+    {
+      "constname": "k_cEnumerateFollowersMax",
+      "consttype": "int",
+      "constval": "50"
+    },
+    {
+      "constname": "k_usFriendGameInfoQueryPort_NotInitialized",
+      "consttype": "uint16",
+      "constval": "0xFFFF"
+    },
+    {
+      "constname": "k_usFriendGameInfoQueryPort_Error",
+      "consttype": "uint16",
+      "constval": "0xFFFE"
+    },
+    {
+      "constname": "k_cubChatMetadataMax",
+      "consttype": "uint32",
+      "constval": "8192"
+    },
+    {
+      "constname": "k_cbMaxGameServerGameDir",
+      "consttype": "int",
+      "constval": "32"
+    },
+    {
+      "constname": "k_cbMaxGameServerMapName",
+      "consttype": "int",
+      "constval": "32"
+    },
+    {
+      "constname": "k_cbMaxGameServerGameDescription",
+      "consttype": "int",
+      "constval": "64"
+    },
+    {
+      "constname": "k_cbMaxGameServerName",
+      "consttype": "int",
+      "constval": "64"
+    },
+    {
+      "constname": "k_cbMaxGameServerTags",
+      "consttype": "int",
+      "constval": "128"
+    },
+    {
+      "constname": "k_cbMaxGameServerGameData",
+      "consttype": "int",
+      "constval": "2048"
+    },
+    {
+      "constname": "HSERVERQUERY_INVALID",
+      "consttype": "int",
+      "constval": "0xffffffff"
+    },
+    {
+      "constname": "k_unFavoriteFlagNone",
+      "consttype": "uint32",
+      "constval": "0x00"
+    },
+    {
+      "constname": "k_unFavoriteFlagFavorite",
+      "consttype": "uint32",
+      "constval": "0x01"
+    },
+    {
+      "constname": "k_unFavoriteFlagHistory",
+      "consttype": "uint32",
+      "constval": "0x02"
     },
     {
       "constname": "k_unMaxCloudFileChunkSize",
@@ -304,14 +3544,114 @@
       "constval": "100 * 1024 * 1024"
     },
     {
+      "constname": "k_PublishedFileIdInvalid",
+      "consttype": "PublishedFileId_t",
+      "constval": "0"
+    },
+    {
       "constname": "k_UGCHandleInvalid",
       "consttype": "UGCHandle_t",
+      "constval": "0xffffffffffffffffull"
+    },
+    {
+      "constname": "k_PublishedFileUpdateHandleInvalid",
+      "consttype": "PublishedFileUpdateHandle_t",
+      "constval": "0xffffffffffffffffull"
+    },
+    {
+      "constname": "k_UGCFileStreamHandleInvalid",
+      "consttype": "UGCFileWriteStreamHandle_t",
       "constval": "0xffffffffffffffffull"
     },
     {
       "constname": "k_cchPublishedDocumentTitleMax",
       "consttype": "uint32",
       "constval": "128 + 1"
+    },
+    {
+      "constname": "k_cchPublishedDocumentDescriptionMax",
+      "consttype": "uint32",
+      "constval": "8000"
+    },
+    {
+      "constname": "k_cchPublishedDocumentChangeDescriptionMax",
+      "consttype": "uint32",
+      "constval": "8000"
+    },
+    {
+      "constname": "k_unEnumeratePublishedFilesMaxResults",
+      "consttype": "uint32",
+      "constval": "50"
+    },
+    {
+      "constname": "k_cchTagListMax",
+      "consttype": "uint32",
+      "constval": "1024 + 1"
+    },
+    {
+      "constname": "k_cchFilenameMax",
+      "consttype": "uint32",
+      "constval": "260"
+    },
+    {
+      "constname": "k_cchPublishedFileURLMax",
+      "consttype": "uint32",
+      "constval": "256"
+    },
+    {
+      "constname": "k_cubAppProofOfPurchaseKeyMax",
+      "consttype": "int",
+      "constval": "240"
+    },
+    {
+      "constname": "k_nScreenshotMaxTaggedUsers",
+      "consttype": "uint32",
+      "constval": "32"
+    },
+    {
+      "constname": "k_nScreenshotMaxTaggedPublishedFiles",
+      "consttype": "uint32",
+      "constval": "32"
+    },
+    {
+      "constname": "k_cubUFSTagTypeMax",
+      "consttype": "int",
+      "constval": "255"
+    },
+    {
+      "constname": "k_cubUFSTagValueMax",
+      "consttype": "int",
+      "constval": "255"
+    },
+    {
+      "constname": "k_ScreenshotThumbWidth",
+      "consttype": "int",
+      "constval": "200"
+    },
+    {
+      "constname": "k_UGCQueryHandleInvalid",
+      "consttype": "UGCQueryHandle_t",
+      "constval": "0xffffffffffffffffull"
+    },
+    {
+      "constname": "k_UGCUpdateHandleInvalid",
+      "consttype": "UGCUpdateHandle_t",
+      "constval": "0xffffffffffffffffull"
+    },
+    {
+      "constname": "kNumUGCResultsPerPage",
+      "consttype": "uint32",
+      "constval": "50"
+    },
+    {
+      "constname": "k_cchDeveloperMetadataMax",
+      "consttype": "uint32",
+      "constval": "10000"
+    },
+    {
+      "constname": "INVALID_HTMLBROWSER",
+      "consttype": "uint32",
+      "constval": "0"
     },
     {
       "constname": "k_SteamItemInstanceIDInvalid",
@@ -322,6 +3662,231 @@
       "constname": "k_SteamInventoryResultInvalid",
       "consttype": "SteamInventoryResult_t",
       "constval": "- 1"
+    },
+    {
+      "constname": "k_SteamInventoryUpdateHandleInvalid",
+      "consttype": "SteamInventoryUpdateHandle_t",
+      "constval": "0xffffffffffffffffull"
+    },
+    {
+      "constname": "k_unMaxTimelinePriority",
+      "consttype": "uint32",
+      "constval": "1000"
+    },
+    {
+      "constname": "k_unTimelinePriority_KeepCurrentValue",
+      "consttype": "uint32",
+      "constval": "1000000"
+    },
+    {
+      "constname": "k_flMaxTimelineEventDuration",
+      "consttype": "float",
+      "constval": "600.f"
+    },
+    {
+      "constname": "k_cchMaxPhaseIDLength",
+      "consttype": "uint32",
+      "constval": "64"
+    },
+    {
+      "constname": "k_HSteamNetConnection_Invalid",
+      "consttype": "HSteamNetConnection",
+      "constval": "0"
+    },
+    {
+      "constname": "k_HSteamListenSocket_Invalid",
+      "consttype": "HSteamListenSocket",
+      "constval": "0"
+    },
+    {
+      "constname": "k_HSteamNetPollGroup_Invalid",
+      "consttype": "HSteamNetPollGroup",
+      "constval": "0"
+    },
+    {
+      "constname": "k_cchMaxSteamNetworkingErrMsg",
+      "consttype": "int",
+      "constval": "1024"
+    },
+    {
+      "constname": "k_cchSteamNetworkingMaxConnectionCloseReason",
+      "consttype": "int",
+      "constval": "128"
+    },
+    {
+      "constname": "k_cchSteamNetworkingMaxConnectionDescription",
+      "consttype": "int",
+      "constval": "128"
+    },
+    {
+      "constname": "k_cchSteamNetworkingMaxConnectionAppName",
+      "consttype": "int",
+      "constval": "32"
+    },
+    {
+      "constname": "k_nSteamNetworkConnectionInfoFlags_Unauthenticated",
+      "consttype": "int",
+      "constval": "1"
+    },
+    {
+      "constname": "k_nSteamNetworkConnectionInfoFlags_Unencrypted",
+      "consttype": "int",
+      "constval": "2"
+    },
+    {
+      "constname": "k_nSteamNetworkConnectionInfoFlags_LoopbackBuffers",
+      "consttype": "int",
+      "constval": "4"
+    },
+    {
+      "constname": "k_nSteamNetworkConnectionInfoFlags_Fast",
+      "consttype": "int",
+      "constval": "8"
+    },
+    {
+      "constname": "k_nSteamNetworkConnectionInfoFlags_Relayed",
+      "consttype": "int",
+      "constval": "16"
+    },
+    {
+      "constname": "k_nSteamNetworkConnectionInfoFlags_DualWifi",
+      "consttype": "int",
+      "constval": "32"
+    },
+    {
+      "constname": "k_cbMaxSteamNetworkingSocketsMessageSizeSend",
+      "consttype": "int",
+      "constval": "512 * 1024"
+    },
+    {
+      "constname": "k_nSteamNetworkingSend_Unreliable",
+      "consttype": "int",
+      "constval": "0"
+    },
+    {
+      "constname": "k_nSteamNetworkingSend_NoNagle",
+      "consttype": "int",
+      "constval": "1"
+    },
+    {
+      "constname": "k_nSteamNetworkingSend_UnreliableNoNagle",
+      "consttype": "int",
+      "constval": "k_nSteamNetworkingSend_Unreliable | k_nSteamNetworkingSend_NoNagle"
+    },
+    {
+      "constname": "k_nSteamNetworkingSend_NoDelay",
+      "consttype": "int",
+      "constval": "4"
+    },
+    {
+      "constname": "k_nSteamNetworkingSend_UnreliableNoDelay",
+      "consttype": "int",
+      "constval": "k_nSteamNetworkingSend_Unreliable | k_nSteamNetworkingSend_NoDelay | k_nSteamNetworkingSend_NoNagle"
+    },
+    {
+      "constname": "k_nSteamNetworkingSend_Reliable",
+      "consttype": "int",
+      "constval": "8"
+    },
+    {
+      "constname": "k_nSteamNetworkingSend_ReliableNoNagle",
+      "consttype": "int",
+      "constval": "k_nSteamNetworkingSend_Reliable | k_nSteamNetworkingSend_NoNagle"
+    },
+    {
+      "constname": "k_nSteamNetworkingSend_UseCurrentThread",
+      "consttype": "int",
+      "constval": "16"
+    },
+    {
+      "constname": "k_nSteamNetworkingSend_AutoRestartBrokenSession",
+      "consttype": "int",
+      "constval": "32"
+    },
+    {
+      "constname": "k_cchMaxSteamNetworkingPingLocationString",
+      "consttype": "int",
+      "constval": "1024"
+    },
+    {
+      "constname": "k_nSteamNetworkingPing_Failed",
+      "consttype": "int",
+      "constval": "- 1"
+    },
+    {
+      "constname": "k_nSteamNetworkingPing_Unknown",
+      "consttype": "int",
+      "constval": "- 2"
+    },
+    {
+      "constname": "k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_Default",
+      "consttype": "int",
+      "constval": "- 1"
+    },
+    {
+      "constname": "k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_Disable",
+      "consttype": "int",
+      "constval": "0"
+    },
+    {
+      "constname": "k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_Relay",
+      "consttype": "int",
+      "constval": "1"
+    },
+    {
+      "constname": "k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_Private",
+      "consttype": "int",
+      "constval": "2"
+    },
+    {
+      "constname": "k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_Public",
+      "consttype": "int",
+      "constval": "4"
+    },
+    {
+      "constname": "k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_All",
+      "consttype": "int",
+      "constval": "0x7fffffff"
+    },
+    {
+      "constname": "k_SteamDatagramPOPID_dev",
+      "consttype": "SteamNetworkingPOPID",
+      "constval": "( ( uint32 ) 'd' << 16U ) | ( ( uint32 ) 'e' << 8U ) | ( uint32 ) 'v'"
+    },
+    {
+      "constname": "STEAMGAMESERVER_QUERY_PORT_SHARED",
+      "consttype": "uint16",
+      "constval": "0xffff"
+    },
+    {
+      "constname": "MASTERSERVERUPDATERPORT_USEGAMESOCKETSHARE",
+      "consttype": "uint16",
+      "constval": "STEAMGAMESERVER_QUERY_PORT_SHARED"
+    },
+    {
+      "constname": "k_cbSteamDatagramMaxSerializedTicket",
+      "consttype": "uint32",
+      "constval": "512"
+    },
+    {
+      "constname": "k_cbMaxSteamDatagramGameCoordinatorServerLoginAppData",
+      "consttype": "uint32",
+      "constval": "2048"
+    },
+    {
+      "constname": "k_cbMaxSteamDatagramGameCoordinatorServerLoginSerialized",
+      "consttype": "uint32",
+      "constval": "4096"
+    },
+    {
+      "constname": "k_cbSteamNetworkingSocketsFakeUDPPortRecommendedMTU",
+      "consttype": "int",
+      "constval": "1200"
+    },
+    {
+      "constname": "k_cbSteamNetworkingSocketsFakeUDPPortMaxMessageSize",
+      "consttype": "int",
+      "constval": "4096"
     }
   ],
   "enums": [
@@ -10970,178 +14535,6 @@
       ]
     }
   ],
-  "structs": [
-    {
-      "fields": [
-        {
-          "fieldname": "m_gameID",
-          "fieldtype": "CGameID"
-        },
-        {
-          "fieldname": "m_unGameIP",
-          "fieldtype": "uint32"
-        },
-        {
-          "fieldname": "m_usGamePort",
-          "fieldtype": "uint16"
-        },
-        {
-          "fieldname": "m_usQueryPort",
-          "fieldtype": "uint16"
-        },
-        {
-          "fieldname": "m_steamIDLobby",
-          "fieldtype": "CSteamID"
-        }
-      ],
-      "struct": "FriendGameInfo_t"
-    }
-  ],
-  "callback_structs": [
-    {
-      "callback_id": 101,
-      "fields": [],
-      "struct": "SteamServersConnected_t"
-    },
-    {
-      "callback_id": 331,
-      "fields": [
-        {
-          "fieldname": "m_bActive",
-          "fieldtype": "uint8"
-        },
-        {
-          "fieldname": "m_bUserInitiated",
-          "fieldtype": "bool"
-        },
-        {
-          "fieldname": "m_nAppID",
-          "fieldtype": "AppId_t"
-        },
-        {
-          "fieldname": "m_dwOverlayPID",
-          "fieldtype": "uint32"
-        }
-      ],
-      "struct": "GameOverlayActivated_t"
-    },
-    {
-      "callback_id": 703,
-      "fields": [
-        {
-          "fieldname": "m_hAsyncCall",
-          "fieldtype": "SteamAPICall_t"
-        },
-        {
-          "fieldname": "m_iCallback",
-          "fieldtype": "int"
-        },
-        {
-          "fieldname": "m_cubParam",
-          "fieldtype": "uint32"
-        }
-      ],
-      "struct": "SteamAPICallCompleted_t"
-    },
-    {
-      "callback_id": 1314,
-      "fields": [
-        {
-          "fieldname": "m_eResult",
-          "fieldtype": "EResult"
-        },
-        {
-          "fieldname": "m_nResultsReturned",
-          "fieldtype": "int32"
-        },
-        {
-          "fieldname": "m_nTotalResultCount",
-          "fieldtype": "int32"
-        },
-        {
-          "fieldname": "m_rgPublishedFileId",
-          "fieldtype": "PublishedFileId_t [50]"
-        },
-        {
-          "fieldname": "m_rgRTimeSubscribed",
-          "fieldtype": "uint32 [50]"
-        }
-      ],
-      "struct": "RemoteStorageEnumerateUserSubscribedFilesResult_t"
-    },
-    {
-      "callback_id": 1101,
-      "fields": [
-        {
-          "fieldname": "m_nGameID",
-          "fieldtype": "uint64"
-        },
-        {
-          "fieldname": "m_eResult",
-          "fieldtype": "EResult"
-        },
-        {
-          "fieldname": "m_steamIDUser",
-          "fieldtype": "CSteamID"
-        }
-      ],
-      "struct": "UserStatsReceived_t"
-    },
-    {
-      "callback_id": 1102,
-      "fields": [
-        {
-          "fieldname": "m_nGameID",
-          "fieldtype": "uint64"
-        },
-        {
-          "fieldname": "m_eResult",
-          "fieldtype": "EResult"
-        }
-      ],
-      "struct": "UserStatsStored_t"
-    },
-    {
-      "callback_id": 1103,
-      "fields": [
-        {
-          "fieldname": "m_nGameID",
-          "fieldtype": "uint64"
-        },
-        {
-          "fieldname": "m_bGroupAchievement",
-          "fieldtype": "bool"
-        },
-        {
-          "fieldname": "m_rgchAchievementName",
-          "fieldtype": "char [128]"
-        },
-        {
-          "fieldname": "m_nCurProgress",
-          "fieldtype": "uint32"
-        },
-        {
-          "fieldname": "m_nMaxProgress",
-          "fieldtype": "uint32"
-        }
-      ],
-      "struct": "UserAchievementStored_t"
-    },
-    {
-      "callback_id": 1110,
-      "fields": [
-        {
-          "fieldname": "m_nGameID",
-          "fieldtype": "uint64"
-        },
-        {
-          "fieldname": "m_eResult",
-          "fieldtype": "EResult"
-        }
-      ],
-      "struct": "GlobalAchievementPercentagesReady_t"
-    }
-  ],
   "interfaces": [
     {
       "accessors": [
@@ -14253,6 +17646,1817 @@
         }
       ],
       "version_string": "STEAMAPPS_INTERFACE_VERSION009"
+    }
+  ],
+  "structs": [
+    {
+      "fields": [
+        {
+          "fieldname": "m_rgubIPv6",
+          "fieldtype": "uint8 [16]"
+        },
+        {
+          "fieldname": "m_eType",
+          "fieldtype": "ESteamIPType"
+        }
+      ],
+      "methods": [
+        {
+          "methodname": "IsSet",
+          "methodname_flat": "SteamAPI_SteamIPAddress_t_IsSet",
+          "params": [],
+          "returntype": "bool"
+        }
+      ],
+      "struct": "SteamIPAddress_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_gameID",
+          "fieldtype": "CGameID"
+        },
+        {
+          "fieldname": "m_unGameIP",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_usGamePort",
+          "fieldtype": "uint16"
+        },
+        {
+          "fieldname": "m_usQueryPort",
+          "fieldtype": "uint16"
+        },
+        {
+          "fieldname": "m_steamIDLobby",
+          "fieldtype": "CSteamID"
+        }
+      ],
+      "struct": "FriendGameInfo_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_szKey",
+          "fieldtype": "char [256]"
+        },
+        {
+          "fieldname": "m_szValue",
+          "fieldtype": "char [256]"
+        }
+      ],
+      "methods": [
+        {
+          "methodname": "Construct",
+          "methodname_flat": "SteamAPI_MatchMakingKeyValuePair_t_Construct",
+          "params": [],
+          "returntype": "void"
+        }
+      ],
+      "struct": "MatchMakingKeyValuePair_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_usConnectionPort",
+          "fieldtype": "uint16",
+          "private": true
+        },
+        {
+          "fieldname": "m_usQueryPort",
+          "fieldtype": "uint16",
+          "private": true
+        },
+        {
+          "fieldname": "m_unIP",
+          "fieldtype": "uint32",
+          "private": true
+        }
+      ],
+      "methods": [
+        {
+          "methodname": "Construct",
+          "methodname_flat": "SteamAPI_servernetadr_t_Construct",
+          "params": [],
+          "returntype": "void"
+        },
+        {
+          "methodname": "Init",
+          "methodname_flat": "SteamAPI_servernetadr_t_Init",
+          "params": [
+            {
+              "paramname": "ip",
+              "paramtype": "unsigned int"
+            },
+            {
+              "paramname": "usQueryPort",
+              "paramtype": "uint16"
+            },
+            {
+              "paramname": "usConnectionPort",
+              "paramtype": "uint16"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "GetQueryPort",
+          "methodname_flat": "SteamAPI_servernetadr_t_GetQueryPort",
+          "params": [],
+          "returntype": "uint16"
+        },
+        {
+          "methodname": "SetQueryPort",
+          "methodname_flat": "SteamAPI_servernetadr_t_SetQueryPort",
+          "params": [
+            {
+              "paramname": "usPort",
+              "paramtype": "uint16"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "GetConnectionPort",
+          "methodname_flat": "SteamAPI_servernetadr_t_GetConnectionPort",
+          "params": [],
+          "returntype": "uint16"
+        },
+        {
+          "methodname": "SetConnectionPort",
+          "methodname_flat": "SteamAPI_servernetadr_t_SetConnectionPort",
+          "params": [
+            {
+              "paramname": "usPort",
+              "paramtype": "uint16"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "GetIP",
+          "methodname_flat": "SteamAPI_servernetadr_t_GetIP",
+          "params": [],
+          "returntype": "uint32"
+        },
+        {
+          "methodname": "SetIP",
+          "methodname_flat": "SteamAPI_servernetadr_t_SetIP",
+          "params": [
+            {
+              "paramname": "unIP",
+              "paramtype": "uint32"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "GetConnectionAddressString",
+          "methodname_flat": "SteamAPI_servernetadr_t_GetConnectionAddressString",
+          "params": [],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "GetQueryAddressString",
+          "methodname_flat": "SteamAPI_servernetadr_t_GetQueryAddressString",
+          "params": [],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "operator<",
+          "methodname_flat": "SteamAPI_servernetadr_t_IsLessThan",
+          "params": [
+            {
+              "paramname": "netadr",
+              "paramtype": "const servernetadr_t &"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "operator=",
+          "methodname_flat": "SteamAPI_servernetadr_t_Assign",
+          "params": [
+            {
+              "paramname": "that",
+              "paramtype": "const servernetadr_t &"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "operator==",
+          "methodname_flat": "SteamAPI_servernetadr_t_IsEqualTo",
+          "params": [
+            {
+              "paramname": "rhs",
+              "paramtype": "const servernetadr_t &"
+            }
+          ],
+          "returntype": "bool"
+        }
+      ],
+      "struct": "servernetadr_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_NetAdr",
+          "fieldtype": "servernetadr_t"
+        },
+        {
+          "fieldname": "m_nPing",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_bHadSuccessfulResponse",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_bDoNotRefresh",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_szGameDir",
+          "fieldtype": "char [32]"
+        },
+        {
+          "fieldname": "m_szMap",
+          "fieldtype": "char [32]"
+        },
+        {
+          "fieldname": "m_szGameDescription",
+          "fieldtype": "char [64]"
+        },
+        {
+          "fieldname": "m_nAppID",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_nPlayers",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_nMaxPlayers",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_nBotPlayers",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_bPassword",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_bSecure",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_ulTimeLastPlayed",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_nServerVersion",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_szServerName",
+          "fieldtype": "char [64]",
+          "private": true
+        },
+        {
+          "fieldname": "m_szGameTags",
+          "fieldtype": "char [128]"
+        },
+        {
+          "fieldname": "m_steamID",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_nCurrentFriendCount",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_nTotalFriendCount",
+          "fieldtype": "int"
+        }
+      ],
+      "methods": [
+        {
+          "methodname": "Construct",
+          "methodname_flat": "SteamAPI_gameserveritem_t_Construct",
+          "params": [],
+          "returntype": "void"
+        },
+        {
+          "methodname": "GetName",
+          "methodname_flat": "SteamAPI_gameserveritem_t_GetName",
+          "params": [],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "SetName",
+          "methodname_flat": "SteamAPI_gameserveritem_t_SetName",
+          "params": [
+            {
+              "paramname": "pName",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "operator==",
+          "methodname_flat": "SteamAPI_gameserveritem_t_IsEqualTo",
+          "params": [
+            {
+              "paramname": "rhs",
+              "paramtype": "const gameserveritem_t &"
+            }
+          ],
+          "returntype": "bool"
+        }
+      ],
+      "struct": "gameserveritem_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_eType",
+          "fieldtype": "ESteamPartyBeaconLocationType"
+        },
+        {
+          "fieldname": "m_ulLocationID",
+          "fieldtype": "uint64"
+        }
+      ],
+      "struct": "SteamPartyBeaconLocation_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_ppStrings",
+          "fieldtype": "const char **"
+        },
+        {
+          "fieldname": "m_nNumStrings",
+          "fieldtype": "int32"
+        }
+      ],
+      "struct": "SteamParamStringArray_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_steamIDUser",
+          "fieldtype": "CSteamID"
+        },
+        {
+          "fieldname": "m_nGlobalRank",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_nScore",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_cDetails",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_hUGC",
+          "fieldtype": "UGCHandle_t"
+        }
+      ],
+      "struct": "LeaderboardEntry_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_bConnectionActive",
+          "fieldtype": "uint8"
+        },
+        {
+          "fieldname": "m_bConnecting",
+          "fieldtype": "uint8"
+        },
+        {
+          "fieldname": "m_eP2PSessionError",
+          "fieldtype": "uint8"
+        },
+        {
+          "fieldname": "m_bUsingRelay",
+          "fieldtype": "uint8"
+        },
+        {
+          "fieldname": "m_nBytesQueuedForSend",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_nPacketsQueuedForSend",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_nRemoteIP",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_nRemotePort",
+          "fieldtype": "uint16"
+        }
+      ],
+      "struct": "P2PSessionState_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "eMode",
+          "fieldtype": "EInputSourceMode"
+        },
+        {
+          "fieldname": "x",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "y",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "bActive",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "InputAnalogActionData_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "bState",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "bActive",
+          "fieldtype": "bool"
+        }
+      ],
+      "struct": "InputDigitalActionData_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "rotQuatX",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "rotQuatY",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "rotQuatZ",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "rotQuatW",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "posAccelX",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "posAccelY",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "posAccelZ",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "rotVelX",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "rotVelY",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "rotVelZ",
+          "fieldtype": "float"
+        }
+      ],
+      "struct": "InputMotionData_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "controllerHandle",
+          "fieldtype": "InputHandle_t"
+        },
+        {
+          "fieldname": "eEventType",
+          "fieldtype": "ESteamInputActionEventType"
+        },
+        {
+          "fieldname": "analogAction",
+          "fieldtype": "SteamInputActionEvent_t::AnalogAction_t"
+        }
+      ],
+      "struct": "SteamInputActionEvent_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_nPublishedFileId",
+          "fieldtype": "PublishedFileId_t"
+        },
+        {
+          "fieldname": "m_eResult",
+          "fieldtype": "EResult"
+        },
+        {
+          "fieldname": "m_eFileType",
+          "fieldtype": "EWorkshopFileType"
+        },
+        {
+          "fieldname": "m_nCreatorAppID",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_nConsumerAppID",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_rgchTitle",
+          "fieldtype": "char [129]"
+        },
+        {
+          "fieldname": "m_rgchDescription",
+          "fieldtype": "char [8000]"
+        },
+        {
+          "fieldname": "m_ulSteamIDOwner",
+          "fieldtype": "uint64"
+        },
+        {
+          "fieldname": "m_rtimeCreated",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_rtimeUpdated",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_rtimeAddedToUserList",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_eVisibility",
+          "fieldtype": "ERemoteStoragePublishedFileVisibility"
+        },
+        {
+          "fieldname": "m_bBanned",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_bAcceptedForUse",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_bTagsTruncated",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_rgchTags",
+          "fieldtype": "char [1025]"
+        },
+        {
+          "fieldname": "m_hFile",
+          "fieldtype": "UGCHandle_t"
+        },
+        {
+          "fieldname": "m_hPreviewFile",
+          "fieldtype": "UGCHandle_t"
+        },
+        {
+          "fieldname": "m_pchFileName",
+          "fieldtype": "char [260]"
+        },
+        {
+          "fieldname": "m_nFileSize",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_nPreviewFileSize",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "m_rgchURL",
+          "fieldtype": "char [256]"
+        },
+        {
+          "fieldname": "m_unVotesUp",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_unVotesDown",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_flScore",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "m_unNumChildren",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_ulTotalFilesSize",
+          "fieldtype": "uint64"
+        }
+      ],
+      "struct": "SteamUGCDetails_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_itemId",
+          "fieldtype": "SteamItemInstanceID_t"
+        },
+        {
+          "fieldname": "m_iDefinition",
+          "fieldtype": "SteamItemDef_t"
+        },
+        {
+          "fieldname": "m_unQuantity",
+          "fieldtype": "uint16"
+        },
+        {
+          "fieldname": "m_unFlags",
+          "fieldtype": "uint16"
+        }
+      ],
+      "struct": "SteamItemDetails_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_bAbsolute",
+          "fieldtype": "bool"
+        },
+        {
+          "fieldname": "m_flNormalizedX",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "m_flNormalizedY",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "m_nDeltaX",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_nDeltaY",
+          "fieldtype": "int"
+        }
+      ],
+      "struct": "RemotePlayInputMouseMotion_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_eDirection",
+          "fieldtype": "ERemotePlayMouseWheelDirection"
+        },
+        {
+          "fieldname": "m_flAmount",
+          "fieldtype": "float"
+        }
+      ],
+      "struct": "RemotePlayInputMouseWheel_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_eScancode",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_unModifiers",
+          "fieldtype": "uint32"
+        },
+        {
+          "fieldname": "m_unKeycode",
+          "fieldtype": "uint32"
+        }
+      ],
+      "struct": "RemotePlayInputKey_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_unSessionID",
+          "fieldtype": "RemotePlaySessionID_t"
+        },
+        {
+          "fieldname": "m_eType",
+          "fieldtype": "ERemotePlayInputType"
+        },
+        {
+          "fieldname": "padding",
+          "fieldtype": "char [56]"
+        }
+      ],
+      "struct": "RemotePlayInput_t"
+    },
+    {
+      "consts": [
+        {
+          "constname": "k_cchMaxString",
+          "consttype": "int",
+          "constval": "48"
+        }
+      ],
+      "fields": [
+        {
+          "fieldname": "m_ipv6",
+          "fieldtype": "uint8 [16]"
+        },
+        {
+          "fieldname": "m_port",
+          "fieldtype": "uint16"
+        }
+      ],
+      "methods": [
+        {
+          "methodname": "Clear",
+          "methodname_flat": "SteamAPI_SteamNetworkingIPAddr_Clear",
+          "params": [],
+          "returntype": "void"
+        },
+        {
+          "methodname": "IsIPv6AllZeros",
+          "methodname_flat": "SteamAPI_SteamNetworkingIPAddr_IsIPv6AllZeros",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "SetIPv6",
+          "methodname_flat": "SteamAPI_SteamNetworkingIPAddr_SetIPv6",
+          "params": [
+            {
+              "paramname": "ipv6",
+              "paramtype": "const uint8 *"
+            },
+            {
+              "paramname": "nPort",
+              "paramtype": "uint16"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "SetIPv4",
+          "methodname_flat": "SteamAPI_SteamNetworkingIPAddr_SetIPv4",
+          "params": [
+            {
+              "paramname": "nIP",
+              "paramtype": "uint32"
+            },
+            {
+              "paramname": "nPort",
+              "paramtype": "uint16"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "IsIPv4",
+          "methodname_flat": "SteamAPI_SteamNetworkingIPAddr_IsIPv4",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetIPv4",
+          "methodname_flat": "SteamAPI_SteamNetworkingIPAddr_GetIPv4",
+          "params": [],
+          "returntype": "uint32"
+        },
+        {
+          "methodname": "SetIPv6LocalHost",
+          "methodname_flat": "SteamAPI_SteamNetworkingIPAddr_SetIPv6LocalHost",
+          "params": [
+            {
+              "paramname": "nPort",
+              "paramtype": "uint16"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "IsLocalHost",
+          "methodname_flat": "SteamAPI_SteamNetworkingIPAddr_IsLocalHost",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "ToString",
+          "methodname_flat": "SteamAPI_SteamNetworkingIPAddr_ToString",
+          "params": [
+            {
+              "paramname": "buf",
+              "paramtype": "char *"
+            },
+            {
+              "paramname": "cbBuf",
+              "paramtype": "uint32"
+            },
+            {
+              "paramname": "bWithPort",
+              "paramtype": "bool"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "ParseString",
+          "methodname_flat": "SteamAPI_SteamNetworkingIPAddr_ParseString",
+          "params": [
+            {
+              "paramname": "pszStr",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "operator==",
+          "methodname_flat": "SteamAPI_SteamNetworkingIPAddr_IsEqualTo",
+          "params": [
+            {
+              "paramname": "x",
+              "paramtype": "const SteamNetworkingIPAddr &"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetFakeIPType",
+          "methodname_flat": "SteamAPI_SteamNetworkingIPAddr_GetFakeIPType",
+          "params": [],
+          "returntype": "ESteamNetworkingFakeIPType"
+        },
+        {
+          "methodname": "IsFakeIP",
+          "methodname_flat": "SteamAPI_SteamNetworkingIPAddr_IsFakeIP",
+          "params": [],
+          "returntype": "bool"
+        }
+      ],
+      "struct": "SteamNetworkingIPAddr"
+    },
+    {
+      "consts": [
+        {
+          "constname": "k_cchMaxString",
+          "consttype": "int",
+          "constval": "128"
+        },
+        {
+          "constname": "k_cchMaxGenericString",
+          "consttype": "int",
+          "constval": "32"
+        },
+        {
+          "constname": "k_cchMaxXboxPairwiseID",
+          "consttype": "int",
+          "constval": "33"
+        },
+        {
+          "constname": "k_cbMaxGenericBytes",
+          "consttype": "int",
+          "constval": "32"
+        }
+      ],
+      "fields": [
+        {
+          "fieldname": "m_eType",
+          "fieldtype": "ESteamNetworkingIdentityType"
+        },
+        {
+          "fieldname": "m_cbSize",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_szUnknownRawString",
+          "fieldtype": "char [128]"
+        }
+      ],
+      "methods": [
+        {
+          "methodname": "Clear",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_Clear",
+          "params": [],
+          "returntype": "void"
+        },
+        {
+          "methodname": "IsInvalid",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_IsInvalid",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "SetSteamID",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_SetSteamID",
+          "params": [
+            {
+              "paramname": "steamID",
+              "paramtype": "CSteamID",
+              "paramtype_flat": "uint64_steamid"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "GetSteamID",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_GetSteamID",
+          "params": [],
+          "returntype": "CSteamID",
+          "returntype_flat": "uint64_steamid"
+        },
+        {
+          "methodname": "SetSteamID64",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_SetSteamID64",
+          "params": [
+            {
+              "paramname": "steamID",
+              "paramtype": "uint64"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "GetSteamID64",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_GetSteamID64",
+          "params": [],
+          "returntype": "uint64"
+        },
+        {
+          "methodname": "SetXboxPairwiseID",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_SetXboxPairwiseID",
+          "params": [
+            {
+              "paramname": "pszString",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetXboxPairwiseID",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_GetXboxPairwiseID",
+          "params": [],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "SetPSNID",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_SetPSNID",
+          "params": [
+            {
+              "paramname": "id",
+              "paramtype": "uint64"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "GetPSNID",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_GetPSNID",
+          "params": [],
+          "returntype": "uint64"
+        },
+        {
+          "methodname": "SetIPAddr",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_SetIPAddr",
+          "params": [
+            {
+              "paramname": "addr",
+              "paramtype": "const SteamNetworkingIPAddr &"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "GetIPAddr",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_GetIPAddr",
+          "params": [],
+          "returntype": "const SteamNetworkingIPAddr *"
+        },
+        {
+          "methodname": "SetIPv4Addr",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_SetIPv4Addr",
+          "params": [
+            {
+              "paramname": "nIPv4",
+              "paramtype": "uint32"
+            },
+            {
+              "paramname": "nPort",
+              "paramtype": "uint16"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "GetIPv4",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_GetIPv4",
+          "params": [],
+          "returntype": "uint32"
+        },
+        {
+          "methodname": "GetFakeIPType",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_GetFakeIPType",
+          "params": [],
+          "returntype": "ESteamNetworkingFakeIPType"
+        },
+        {
+          "methodname": "IsFakeIP",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_IsFakeIP",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "SetLocalHost",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_SetLocalHost",
+          "params": [],
+          "returntype": "void"
+        },
+        {
+          "methodname": "IsLocalHost",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_IsLocalHost",
+          "params": [],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "SetGenericString",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_SetGenericString",
+          "params": [
+            {
+              "paramname": "pszString",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetGenericString",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_GetGenericString",
+          "params": [],
+          "returntype": "const char *"
+        },
+        {
+          "methodname": "SetGenericBytes",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_SetGenericBytes",
+          "params": [
+            {
+              "paramname": "data",
+              "paramtype": "const void *"
+            },
+            {
+              "paramname": "cbLen",
+              "paramtype": "uint32"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "GetGenericBytes",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_GetGenericBytes",
+          "params": [
+            {
+              "paramname": "cbLen",
+              "paramtype": "int &"
+            }
+          ],
+          "returntype": "const uint8 *"
+        },
+        {
+          "methodname": "operator==",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_IsEqualTo",
+          "params": [
+            {
+              "paramname": "x",
+              "paramtype": "const SteamNetworkingIdentity &"
+            }
+          ],
+          "returntype": "bool"
+        },
+        {
+          "methodname": "ToString",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_ToString",
+          "params": [
+            {
+              "paramname": "buf",
+              "paramtype": "char *"
+            },
+            {
+              "paramname": "cbBuf",
+              "paramtype": "uint32"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "ParseString",
+          "methodname_flat": "SteamAPI_SteamNetworkingIdentity_ParseString",
+          "params": [
+            {
+              "paramname": "pszStr",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "bool"
+        }
+      ],
+      "struct": "SteamNetworkingIdentity"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_identityRemote",
+          "fieldtype": "SteamNetworkingIdentity"
+        },
+        {
+          "fieldname": "m_nUserData",
+          "fieldtype": "int64"
+        },
+        {
+          "fieldname": "m_hListenSocket",
+          "fieldtype": "HSteamListenSocket"
+        },
+        {
+          "fieldname": "m_addrRemote",
+          "fieldtype": "SteamNetworkingIPAddr"
+        },
+        {
+          "fieldname": "m__pad1",
+          "fieldtype": "uint16"
+        },
+        {
+          "fieldname": "m_idPOPRemote",
+          "fieldtype": "SteamNetworkingPOPID"
+        },
+        {
+          "fieldname": "m_idPOPRelay",
+          "fieldtype": "SteamNetworkingPOPID"
+        },
+        {
+          "fieldname": "m_eState",
+          "fieldtype": "ESteamNetworkingConnectionState"
+        },
+        {
+          "fieldname": "m_eEndReason",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_szEndDebug",
+          "fieldtype": "char [128]"
+        },
+        {
+          "fieldname": "m_szConnectionDescription",
+          "fieldtype": "char [128]"
+        },
+        {
+          "fieldname": "m_nFlags",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "reserved",
+          "fieldtype": "uint32 [63]"
+        }
+      ],
+      "struct": "SteamNetConnectionInfo_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_eState",
+          "fieldtype": "ESteamNetworkingConnectionState"
+        },
+        {
+          "fieldname": "m_nPing",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_flConnectionQualityLocal",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "m_flConnectionQualityRemote",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "m_flOutPacketsPerSec",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "m_flOutBytesPerSec",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "m_flInPacketsPerSec",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "m_flInBytesPerSec",
+          "fieldtype": "float"
+        },
+        {
+          "fieldname": "m_nSendRateBytesPerSecond",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_cbPendingUnreliable",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_cbPendingReliable",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_cbSentUnackedReliable",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_usecQueueTime",
+          "fieldtype": "SteamNetworkingMicroseconds"
+        },
+        {
+          "fieldname": "m_usecMaxJitter",
+          "fieldtype": "int32"
+        },
+        {
+          "fieldname": "reserved",
+          "fieldtype": "uint32 [15]"
+        }
+      ],
+      "struct": "SteamNetConnectionRealTimeStatus_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_cbPendingUnreliable",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_cbPendingReliable",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_cbSentUnackedReliable",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "_reservePad1",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_usecQueueTime",
+          "fieldtype": "SteamNetworkingMicroseconds"
+        },
+        {
+          "fieldname": "reserved",
+          "fieldtype": "uint32 [10]"
+        }
+      ],
+      "struct": "SteamNetConnectionRealTimeLaneStatus_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_pData",
+          "fieldtype": "void *"
+        },
+        {
+          "fieldname": "m_cbSize",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_conn",
+          "fieldtype": "HSteamNetConnection"
+        },
+        {
+          "fieldname": "m_identityPeer",
+          "fieldtype": "SteamNetworkingIdentity"
+        },
+        {
+          "fieldname": "m_nConnUserData",
+          "fieldtype": "int64"
+        },
+        {
+          "fieldname": "m_usecTimeReceived",
+          "fieldtype": "SteamNetworkingMicroseconds"
+        },
+        {
+          "fieldname": "m_nMessageNumber",
+          "fieldtype": "int64"
+        },
+        {
+          "fieldname": "m_pfnFreeData",
+          "fieldtype": "void (*)(SteamNetworkingMessage_t *)"
+        },
+        {
+          "fieldname": "m_pfnRelease",
+          "fieldtype": "void (*)(SteamNetworkingMessage_t *)"
+        },
+        {
+          "fieldname": "m_nChannel",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_nFlags",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_nUserData",
+          "fieldtype": "int64"
+        },
+        {
+          "fieldname": "m_idxLane",
+          "fieldtype": "uint16"
+        },
+        {
+          "fieldname": "_pad1__",
+          "fieldtype": "uint16"
+        }
+      ],
+      "methods": [
+        {
+          "methodname": "Release",
+          "methodname_flat": "SteamAPI_SteamNetworkingMessage_t_Release",
+          "params": [],
+          "returntype": "void"
+        }
+      ],
+      "struct": "SteamNetworkingMessage_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_data",
+          "fieldtype": "uint8 [512]"
+        }
+      ],
+      "struct": "SteamNetworkPingLocation_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_eValue",
+          "fieldtype": "ESteamNetworkingConfigValue"
+        },
+        {
+          "fieldname": "m_eDataType",
+          "fieldtype": "ESteamNetworkingConfigDataType"
+        },
+        {
+          "fieldname": "m_int64",
+          "fieldtype": "int64_t"
+        }
+      ],
+      "methods": [
+        {
+          "methodname": "SetInt32",
+          "methodname_flat": "SteamAPI_SteamNetworkingConfigValue_t_SetInt32",
+          "params": [
+            {
+              "paramname": "eVal",
+              "paramtype": "ESteamNetworkingConfigValue"
+            },
+            {
+              "paramname": "data",
+              "paramtype": "int32_t"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "SetInt64",
+          "methodname_flat": "SteamAPI_SteamNetworkingConfigValue_t_SetInt64",
+          "params": [
+            {
+              "paramname": "eVal",
+              "paramtype": "ESteamNetworkingConfigValue"
+            },
+            {
+              "paramname": "data",
+              "paramtype": "int64_t"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "SetFloat",
+          "methodname_flat": "SteamAPI_SteamNetworkingConfigValue_t_SetFloat",
+          "params": [
+            {
+              "paramname": "eVal",
+              "paramtype": "ESteamNetworkingConfigValue"
+            },
+            {
+              "paramname": "data",
+              "paramtype": "float"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "SetPtr",
+          "methodname_flat": "SteamAPI_SteamNetworkingConfigValue_t_SetPtr",
+          "params": [
+            {
+              "paramname": "eVal",
+              "paramtype": "ESteamNetworkingConfigValue"
+            },
+            {
+              "paramname": "data",
+              "paramtype": "void *"
+            }
+          ],
+          "returntype": "void"
+        },
+        {
+          "methodname": "SetString",
+          "methodname_flat": "SteamAPI_SteamNetworkingConfigValue_t_SetString",
+          "params": [
+            {
+              "paramname": "eVal",
+              "paramtype": "ESteamNetworkingConfigValue"
+            },
+            {
+              "paramname": "data",
+              "paramtype": "const char *"
+            }
+          ],
+          "returntype": "void"
+        }
+      ],
+      "struct": "SteamNetworkingConfigValue_t"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_cbSize",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_data",
+          "fieldtype": "char [128]"
+        }
+      ],
+      "methods": [
+        {
+          "methodname": "Clear",
+          "methodname_flat": "SteamAPI_SteamDatagramHostedAddress_Clear",
+          "params": [],
+          "returntype": "void"
+        },
+        {
+          "methodname": "GetPopID",
+          "methodname_flat": "SteamAPI_SteamDatagramHostedAddress_GetPopID",
+          "params": [],
+          "returntype": "SteamNetworkingPOPID"
+        },
+        {
+          "methodname": "SetDevAddress",
+          "methodname_flat": "SteamAPI_SteamDatagramHostedAddress_SetDevAddress",
+          "params": [
+            {
+              "paramname": "nIP",
+              "paramtype": "uint32"
+            },
+            {
+              "paramname": "nPort",
+              "paramtype": "uint16"
+            },
+            {
+              "paramname": "popid",
+              "paramtype": "SteamNetworkingPOPID"
+            }
+          ],
+          "returntype": "void"
+        }
+      ],
+      "struct": "SteamDatagramHostedAddress"
+    },
+    {
+      "fields": [
+        {
+          "fieldname": "m_identity",
+          "fieldtype": "SteamNetworkingIdentity"
+        },
+        {
+          "fieldname": "m_routing",
+          "fieldtype": "SteamDatagramHostedAddress"
+        },
+        {
+          "fieldname": "m_nAppID",
+          "fieldtype": "AppId_t"
+        },
+        {
+          "fieldname": "m_rtime",
+          "fieldtype": "RTime32"
+        },
+        {
+          "fieldname": "m_cbAppData",
+          "fieldtype": "int"
+        },
+        {
+          "fieldname": "m_appData",
+          "fieldtype": "char [2048]"
+        }
+      ],
+      "struct": "SteamDatagramGameCoordinatorServerLogin"
+    }
+  ],
+  "typedefs": [
+    {
+      "typedef": "uint8",
+      "type": "unsigned char"
+    },
+    {
+      "typedef": "int8",
+      "type": "signed char"
+    },
+    {
+      "typedef": "int16",
+      "type": "short"
+    },
+    {
+      "typedef": "uint16",
+      "type": "unsigned short"
+    },
+    {
+      "typedef": "int32",
+      "type": "int"
+    },
+    {
+      "typedef": "uint32",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "int64",
+      "type": "long long"
+    },
+    {
+      "typedef": "uint64",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "lint64",
+      "type": "long long"
+    },
+    {
+      "typedef": "ulint64",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "intp",
+      "type": "long long"
+    },
+    {
+      "typedef": "uintp",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "AppId_t",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "DepotId_t",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "RTime32",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "SteamAPICall_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "AccountID_t",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "PartyBeaconID_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "HAuthTicket",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "PFNPreMinidumpCallback",
+      "type": "void (*)(void *)"
+    },
+    {
+      "typedef": "HSteamPipe",
+      "type": "int"
+    },
+    {
+      "typedef": "HSteamUser",
+      "type": "int"
+    },
+    {
+      "typedef": "SteamErrMsg",
+      "type": "char [1024]"
+    },
+    {
+      "typedef": "FriendsGroupID_t",
+      "type": "short"
+    },
+    {
+      "typedef": "HServerListRequest",
+      "type": "void *"
+    },
+    {
+      "typedef": "HServerQuery",
+      "type": "int"
+    },
+    {
+      "typedef": "UGCHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "PublishedFileUpdateHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "PublishedFileId_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "UGCFileWriteStreamHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "SteamLeaderboard_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "SteamLeaderboardEntries_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "SNetSocket_t",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "SNetListenSocket_t",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "ScreenshotHandle",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "HTTPRequestHandle",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "HTTPCookieContainerHandle",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "InputHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "InputActionSetHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "InputDigitalActionHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "InputAnalogActionHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "SteamInputActionEventCallbackPointer",
+      "type": "void (*)(SteamInputActionEvent_t *)"
+    },
+    {
+      "typedef": "ControllerHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "ControllerActionSetHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "ControllerDigitalActionHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "ControllerAnalogActionHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "UGCQueryHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "UGCUpdateHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "HHTMLBrowser",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "SteamItemInstanceID_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "SteamItemDef_t",
+      "type": "int"
+    },
+    {
+      "typedef": "SteamInventoryResult_t",
+      "type": "int"
+    },
+    {
+      "typedef": "SteamInventoryUpdateHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "TimelineEventHandle_t",
+      "type": "unsigned long long"
+    },
+    {
+      "typedef": "RemotePlaySessionID_t",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "RemotePlayCursorID_t",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "FnSteamNetConnectionStatusChanged",
+      "type": "void (*)(SteamNetConnectionStatusChangedCallback_t *)"
+    },
+    {
+      "typedef": "FnSteamNetAuthenticationStatusChanged",
+      "type": "void (*)(SteamNetAuthenticationStatus_t *)"
+    },
+    {
+      "typedef": "FnSteamRelayNetworkStatusChanged",
+      "type": "void (*)(SteamRelayNetworkStatus_t *)"
+    },
+    {
+      "typedef": "FnSteamNetworkingMessagesSessionRequest",
+      "type": "void (*)(SteamNetworkingMessagesSessionRequest_t *)"
+    },
+    {
+      "typedef": "FnSteamNetworkingMessagesSessionFailed",
+      "type": "void (*)(SteamNetworkingMessagesSessionFailed_t *)"
+    },
+    {
+      "typedef": "FnSteamNetworkingFakeIPResult",
+      "type": "void (*)(SteamNetworkingFakeIPResult_t *)"
+    },
+    {
+      "typedef": "HSteamNetConnection",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "HSteamListenSocket",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "HSteamNetPollGroup",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "SteamNetworkingErrMsg",
+      "type": "char [1024]"
+    },
+    {
+      "typedef": "SteamNetworkingPOPID",
+      "type": "unsigned int"
+    },
+    {
+      "typedef": "SteamNetworkingMicroseconds",
+      "type": "long long"
+    },
+    {
+      "typedef": "FSteamNetworkingSocketsDebugOutput",
+      "type": "void (*)(ESteamNetworkingSocketsDebugOutputType, const char *)"
     }
   ]
 }

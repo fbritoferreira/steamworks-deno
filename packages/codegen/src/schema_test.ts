@@ -5,8 +5,9 @@ const FIXTURE = new URL("../fixtures/steam_api.mini.json", import.meta.url).path
 
 Deno.test("loadSchema reads the fixture and exposes the six top-level arrays", async () => {
   const s = await loadSchema(FIXTURE);
+  // The fixture is the real file with all but five interfaces removed.
   assertEquals(s.interfaces.length, 5);
-  assertEquals(s.callback_structs.length, 8);
+  assertEquals(s.callback_structs.length, 196);
   assert(s.typedefs.some((t) => t.typedef === "SteamAPICall_t" && t.type === "unsigned long long"));
 });
 

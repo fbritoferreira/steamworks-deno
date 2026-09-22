@@ -34,3 +34,18 @@ export function encodeFixedString(value: string, length: number): Uint8Array {
   out.set(bytes.subarray(0, Math.max(0, length - 1)));
   return out;
 }
+
+/**
+ * Read a `const char *` field out of a struct: dereference the pointer stored at `offset`
+ * and copy the string it points at. Returns "" for a null pointer.
+ *
+ * Steam owns that memory and only guarantees it for the duration of the callback, which is
+ * why the generated decoders copy it immediately.
+ */
+export function readCStringField(bytes: Uint8Array, offset: number): string {
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const address = view.getBigUint64(offset, true);
+  if (address === 0n) return "";
+  const ptr = Deno.UnsafePointer.create(address);
+  return ptr === null ? "" : new Deno.UnsafePointerView(ptr).getCString();
+}

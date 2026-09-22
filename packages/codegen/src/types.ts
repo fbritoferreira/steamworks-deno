@@ -73,7 +73,7 @@ const PRIMITIVES: Record<string, MappedType> = {
   // Declared in steam_api.h but absent from steam_api.json's typedefs.
   SteamAPIWarningMessageHook_t: {
     kind: "pointer",
-    native: "function",
+    native: "pointer",
     ts: "Deno.PointerValue",
     size: 8,
     align: 8,
@@ -106,7 +106,7 @@ export function mapType(cType: string, ctx: TypeContext): MappedType {
 
   // A callback typedef crosses the boundary as a plain address.
   if (FUNCPTR_RE.test(t)) {
-    return { kind: "pointer", native: "function", ts: "Deno.PointerValue", size: 8, align: 8 };
+    return { kind: "pointer", native: "pointer", ts: "Deno.PointerValue", size: 8, align: 8 };
   }
 
   const arr = ARRAY_RE.exec(t);

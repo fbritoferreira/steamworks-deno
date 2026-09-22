@@ -22,6 +22,8 @@ function tsFieldType(t: MappedType): string {
 
 function readerExpr(field: string, t: MappedType): string {
   const off = `L.${field}`;
+  // A `const char *` field: copy the string it points at while Steam still owns it.
+  if (t.kind === "string") return `readCStringField(bytes, ${off})`;
   if (t.kind === "struct") {
     return `decode${t.ts}(bytes.subarray(${off}, ${off} + ${t.ts}_layout[PACK].size))`;
   }
@@ -41,6 +43,8 @@ function readerExpr(field: string, t: MappedType): string {
 function writerStmt(field: string, t: MappedType): string {
   const off = `L.${field}`;
   const v = `value.${field}`;
+  // Encoding a `const char *` field would need memory outliving this call; leave it null.
+  if (t.kind === "string") return `void ${v}; // ${field} is a pointer Steam owns; left null`;
   if (t.kind === "struct") return `out.set(encode${t.ts}(${v}), ${off});`;
   if (t.kind === "array" && t.elem) {
     const e = t.elem;
@@ -135,7 +139,8 @@ export function emitStructs(
   }
 
   let out = `import { PACK, read, readArray, write, writeArray } from "../src/layout.ts";\n`;
-  out += `import { encodeFixedString, readFixedString } from "../src/cstring.ts";\n`;
+  out +=
+    `import { encodeFixedString, readCStringField, readFixedString } from "../src/cstring.ts";\n`;
   if (usedEnums.size) {
     out += `import type { ${[...usedEnums].sort().join(", ")} } from "./enums.ts";\n`;
   }

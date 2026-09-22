@@ -75,6 +75,6 @@ Deno.test("unknown type throws naming it", () => {
 
 Deno.test("function pointer typedefs become addresses", () => {
   const m = mapType("SteamAPIWarningMessageHook_t", ctx);
-  assertEquals([m.kind, m.native, m.size], ["pointer", "function", 8]);
-  assertEquals(mapType("void (*)(void *)", ctx).native, "function");
+  assertEquals([m.kind, m.native, m.size], ["pointer", "pointer", 8]);
+  assertEquals(mapType("void (*)(void *)", ctx).native, "pointer");
 });
