@@ -16,6 +16,7 @@ import {
 import { CallbackId } from "../gen/callback_ids.ts";
 import * as G from "../gen/mod.ts";
 import { ALL_INTERFACE_SYMBOLS } from "../gen/all_symbols.ts";
+import { SteamInterfaces } from "../gen/client_base.ts";
 
 export interface SteamClientOptions extends ResolveLibraryOptions {
   /** Your Steam AppID. Use 480, Valve's Spacewar test app, while developing. */
@@ -47,7 +48,7 @@ type Core = Deno.DynamicLibrary<typeof SYMBOLS>["symbols"];
  * frame, and {@link SteamClient.shutdown} on exit. Each interface is opened the first time
  * you reach for it.
  */
-export class SteamClient {
+export class SteamClient extends SteamInterfaces {
   readonly libraryPath: string;
 
   readonly #handle: LibraryHandle;
@@ -59,6 +60,7 @@ export class SteamClient {
   #closed = false;
 
   private constructor(handle: LibraryHandle, core: Core, pipe: number) {
+    super();
     this.#handle = handle;
     this.#core = core;
     this.#pipe = pipe;
@@ -193,11 +195,11 @@ export class SteamClient {
    * Wrap one interface's pointer, once. The symbols come from the single open library,
    * never from a fresh `Deno.dlopen`.
    */
-  #iface<S extends Deno.ForeignLibraryInterface, T>(
+  protected override iface<S extends Deno.ForeignLibraryInterface, T>(
     name: string,
     _symbols: S,
     accessor: string,
-    make: (s: Deno.DynamicLibrary<S>["symbols"], self: Deno.PointerValue, host: SteamClient) => T,
+    make: (s: Deno.DynamicLibrary<S>["symbols"], self: Deno.PointerValue, host: never) => T,
   ): T {
     const hit = this.#interfaces.get(name);
     if (hit) return hit as T;
@@ -205,90 +207,13 @@ export class SteamClient {
     const get = s[accessor] as (() => Deno.PointerValue) | null | undefined;
     const self = get?.() ?? null;
     if (self === null) throw new SteamInterfaceError(name, accessor, G.SDK_VERSION);
-    const made = make(this.#core as unknown as Deno.DynamicLibrary<S>["symbols"], self, this);
+    const made = make(
+      this.#core as unknown as Deno.DynamicLibrary<S>["symbols"],
+      self,
+      this as never,
+    );
     this.#interfaces.set(name, made);
     return made;
-  }
-
-  get user(): G.ISteamUser {
-    return this.#iface(
-      "ISteamUser",
-      G.ISteamUser_symbols,
-      G.ISteamUser.accessor,
-      (s, p, h) => new G.ISteamUser(s, p, h),
-    );
-  }
-
-  get friends(): G.ISteamFriends {
-    return this.#iface(
-      "ISteamFriends",
-      G.ISteamFriends_symbols,
-      G.ISteamFriends.accessor,
-      (s, p, h) => new G.ISteamFriends(s, p, h),
-    );
-  }
-
-  get utils(): G.ISteamUtils {
-    return this.#iface(
-      "ISteamUtils",
-      G.ISteamUtils_symbols,
-      G.ISteamUtils.accessor,
-      (s, p, h) => new G.ISteamUtils(s, p, h),
-    );
-  }
-
-  get apps(): G.ISteamApps {
-    return this.#iface(
-      "ISteamApps",
-      G.ISteamApps_symbols,
-      G.ISteamApps.accessor,
-      (s, p, h) => new G.ISteamApps(s, p, h),
-    );
-  }
-
-  get userStats(): G.ISteamUserStats {
-    return this.#iface(
-      "ISteamUserStats",
-      G.ISteamUserStats_symbols,
-      G.ISteamUserStats.accessor,
-      (s, p, h) => new G.ISteamUserStats(s, p, h),
-    );
-  }
-
-  get remoteStorage(): G.ISteamRemoteStorage {
-    return this.#iface(
-      "ISteamRemoteStorage",
-      G.ISteamRemoteStorage_symbols,
-      G.ISteamRemoteStorage.accessor,
-      (s, p, h) => new G.ISteamRemoteStorage(s, p, h),
-    );
-  }
-
-  get ugc(): G.ISteamUGC {
-    return this.#iface(
-      "ISteamUGC",
-      G.ISteamUGC_symbols,
-      G.ISteamUGC.accessor,
-      (s, p, h) => new G.ISteamUGC(s, p, h),
-    );
-  }
-
-  get input(): G.ISteamInput {
-    return this.#iface(
-      "ISteamInput",
-      G.ISteamInput_symbols,
-      G.ISteamInput.accessor,
-      (s, p, h) => new G.ISteamInput(s, p, h),
-    );
-  }
-
-  get matchmaking(): G.ISteamMatchmaking {
-    return this.#iface(
-      "ISteamMatchmaking",
-      G.ISteamMatchmaking_symbols,
-      G.ISteamMatchmaking.accessor,
-      (s, p, h) => new G.ISteamMatchmaking(s, p, h),
-    );
   }
 }
 

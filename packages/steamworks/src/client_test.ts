@@ -30,6 +30,14 @@ Deno.test({
 
       assertEquals(steam.runCallbacks() >= 0, true);
       assertEquals(CallbackId.UserStatsStored, 1102);
+
+      // Interfaces that had no getter before the base class was generated.
+      assertEquals(typeof steam.screenshots.hookScreenshots, "function");
+      assertEquals(typeof steam.http.createHTTPRequest, "function");
+      assertEquals(typeof steam.inventory.getAllItems, "function");
+      assertEquals(typeof steam.timeline.setTimelineTooltip, "function");
+      assert(steam.remotePlay.getSessionCount() >= 0);
+      assert(steam.networkingUtils.getLocalTimestamp() > 0n);
     } finally {
       steam.shutdown();
     }
