@@ -13,14 +13,16 @@ identity, overlay, and the rest of the flat C API.
 
 ## Status
 
-Early but working. Verified on macOS against a running Steam client:
+Working, and verified on macOS against a running Steam client:
 
-- `SteamAPI_InitFlat`, shutdown, and manual callback dispatch
-- identity, friends, app and achievement data through the generated interfaces
-- unsolicited callbacks delivered to listeners by id
-- call results surfaced as promises
+- all 25 interfaces Steam hands a client, reachable from `SteamClient`
+- callbacks delivered decoded by name, or as raw bytes if you prefer
+- call results returned as promises
+- a binary built with `deno compile` loads its embedded library and talks to Steam
 
-Continuous integration covers Linux, macOS and Windows.
+Continuous integration runs type check, lint and tests on Linux, macOS and Windows. The Windows
+struct layouts are computed and checked against a C compiler, but no Steam client has read them
+there yet.
 
 Everything else is on the roadmap: generated bindings for all 34 interfaces from `steam_api.json`,
 per-platform struct layouts (Windows packs callback structs at 8 bytes, macOS/Linux at 4), Linux and
@@ -42,20 +44,22 @@ export STEAMWORKS_SDK_PATH=/some/where/sdk
 ```
 
 ```ts
-import { callbacks, SteamClient } from "@steamworks/deno";
+import { SteamClient } from "@steamworks/deno";
 
-const steam = SteamClient.init({ appId: 480 }); // 480 = Spacewar, Valve's test app
+const steam = SteamClient.init({ appId: 480 }); // 480 is Spacewar, Valve's test app
 const stop = steam.startPump(16); // or call steam.runCallbacks() from your game loop
 
-console.log(steam.friends.personaName(), steam.user.steamId());
+console.log(steam.friends.getPersonaName(), steam.user.getSteamID());
 
-steam.on(callbacks.CallbackId.UserAchievementStored, (bytes) => {
-  console.log("stored", callbacks.decodeUserAchievementStored(bytes).achievementName);
+steam.onCallback("UserAchievementStored", (data) => {
+  console.log("stored", data.m_rgchAchievementName);
 });
 steam.userStats.setAchievement("ACH_WIN_ONE_GAME");
 steam.userStats.storeStats();
 
-const pct = await steam.userStats.requestGlobalAchievementPercentages(); // CallResult -> Promise
+// A call result comes back as a promise, resolved by a later runCallbacks().
+const ready = await steam.userStats.requestGlobalAchievementPercentages();
+console.log(ready.m_eResult);
 
 stop();
 steam.shutdown();
