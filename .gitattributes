@@ -1,0 +1,10 @@
+# Keep line endings as LF everywhere. Without this, git checks files out with CRLF
+# on Windows and `deno fmt --check` reports every file as unformatted.
+* text=auto eol=lf
+
+# Never touch binaries.
+*.png binary
+*.dylib binary
+*.so binary
+*.dll binary
+*.lib binary
