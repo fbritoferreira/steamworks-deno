@@ -2,5 +2,9 @@
 /sdk/
 # and unzip so that ./sdk/redistributable_bin and ./sdk/public exist. Never commit it.
 # Steamworks SDK: download from https://partner.steamgames.com/downloads/steamworks_sdk.zip
+examples/game/*.dll
+examples/game/*.so
+examples/game/libraylib.dylib
+examples/game/libsteam_api.dylib
 packages/steamworks/harness/.build/
 steam_appid.txt
