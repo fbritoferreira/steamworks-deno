@@ -1,0 +1,5 @@
+# Steamworks SDK: download from https://partner.steamgames.com/downloads/steamworks_sdk.zip
+# and unzip so that ./sdk/redistributable_bin and ./sdk/public exist. Never commit it.
+/sdk/
+steam_appid.txt
+.DS_Store

@@ -1,0 +1,11 @@
+{
+  "workspace": ["./packages/steamworks", "./examples/demo"],
+  "tasks": {
+    "demo": "deno run --allow-ffi --allow-env --allow-read examples/demo/main.ts",
+    "test": "deno test --allow-ffi --allow-env --allow-read",
+    "check": "deno check packages/steamworks/mod.ts examples/demo/main.ts",
+    "lint": "deno lint && deno fmt --check"
+  },
+  "fmt": { "lineWidth": 100 },
+  "lint": { "rules": { "tags": ["recommended"] } }
+}
