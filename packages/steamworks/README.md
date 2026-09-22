@@ -92,6 +92,31 @@ Include the library for the target you build for, not the host: `libsteam_api.dy
 Library lookup order: `libraryPath` option, `sdkPath` option, `STEAMWORKS_LIB_PATH`,
 `STEAMWORKS_SDK_PATH`.
 
+## Verifying on your platform
+
+Continuous integration proves this compiles and the unit tests pass on Linux, macOS and Windows, but
+no runner has a Steam client, so nothing there proves a real callback decodes correctly on that
+platform.
+
+One command does, with Steam running and logged in:
+
+```sh
+git clone https://github.com/fbritoferreira/steamworks-deno
+cd steamworks-deno
+export STEAMWORKS_SDK_PATH=/path/to/steamworks_sdk   # the folder holding public/
+deno task verify
+```
+
+It checks every struct size and field offset against your own C compiler, connects to Steam, reads
+the achievement schema, and unlocks an achievement to confirm the callback decodes. It prints one
+line per check and exits non-zero on any failure.
+
+**Verified so far:** macOS on arm64.
+
+**Not yet verified:** Linux and Windows. The struct layouts for both are computed and checked
+against a C compiler, but no Steam client has read them there. If you run the command above on
+either, the result is worth reporting in an issue.
+
 ## Repository layout
 
 ```
