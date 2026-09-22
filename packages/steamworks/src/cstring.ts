@@ -23,3 +23,14 @@ export function readFixedString(bytes: Uint8Array, offset: number, length: numbe
   const nul = slice.indexOf(0);
   return new TextDecoder().decode(nul === -1 ? slice : slice.subarray(0, nul));
 }
+
+/**
+ * Encode a string into a fixed-width `char[length]` field, NUL-terminated and truncated
+ * to fit. Returns exactly `length` bytes.
+ */
+export function encodeFixedString(value: string, length: number): Uint8Array {
+  const out = new Uint8Array(length);
+  const bytes = encoder.encode(value);
+  out.set(bytes.subarray(0, Math.max(0, length - 1)));
+  return out;
+}
