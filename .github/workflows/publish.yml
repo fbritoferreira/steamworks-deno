@@ -43,7 +43,12 @@ jobs:
       - name: Test
         run: deno task test
 
+      # Each package publishes independently. A flaky failure in one must not stop the
+      # other: publishing @steamworks/deno@0.2.0 succeeded but its provenance step failed,
+      # the CLI reported an error, and @steamworks/codegen was never published at all.
       - name: Publish @steamworks/deno
+        id: publish_deno
+        continue-on-error: true
         run: deno publish
         working-directory: packages/steamworks
 
@@ -57,6 +62,26 @@ jobs:
           echo "exists=$([ "$code" = "200" ] && echo yes || echo no)" >> "$GITHUB_OUTPUT"
 
       - name: Publish @steamworks/codegen
+        id: publish_codegen
+        continue-on-error: true
         if: steps.codegen.outputs.exists == 'yes'
         run: deno publish
         working-directory: packages/codegen
+
+      # Confirm against the registry rather than trusting the CLI's exit code, which has
+      # reported failure after a successful upload.
+      - name: Confirm both packages are on JSR at this version
+        run: |
+          version=$(deno eval 'console.log(JSON.parse(Deno.readTextFileSync("packages/steamworks/deno.json")).version)')
+          failed=0
+          for pkg in deno codegen; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" \
+              "https://jsr.io/api/scopes/steamworks/packages/$pkg/versions/$version")
+            if [ "$code" = "200" ]; then
+              echo "ok    @steamworks/$pkg@$version is published"
+            else
+              echo "FAIL  @steamworks/$pkg@$version is missing (HTTP $code)"
+              failed=1
+            fi
+          done
+          exit $failed
