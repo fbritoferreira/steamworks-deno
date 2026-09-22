@@ -8,8 +8,13 @@ export enum SteamInitResult {
 
 /** Thrown when the Steam client cannot be initialised. */
 export class SteamInitError extends Error {
-  constructor(readonly result: SteamInitResult, readonly steamMessage: string) {
-    super(`SteamAPI_InitFlat failed (${SteamInitResult[result] ?? result}): ${steamMessage}`);
+  constructor(
+    readonly result: SteamInitResult,
+    readonly steamMessage: string,
+    /** Which entry point failed, since a client and a game server use different ones. */
+    readonly entryPoint = "SteamAPI_InitFlat",
+  ) {
+    super(`${entryPoint} failed (${SteamInitResult[result] ?? result}): ${steamMessage}`);
     this.name = "SteamInitError";
   }
 }

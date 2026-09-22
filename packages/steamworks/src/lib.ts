@@ -27,6 +27,18 @@ export const CORE_SYMBOLS = {
   SteamAPI_ManualDispatch_RunFrame: { parameters: ["i32"], result: "void" },
   SteamAPI_ManualDispatch_GetNextCallback: { parameters: ["i32", "buffer"], result: "bool" },
   SteamAPI_ManualDispatch_FreeLastCallback: { parameters: ["i32"], result: "void" },
+  // --- game server lifecycle ------------------------------------------------
+  SteamInternal_GameServer_Init_V2: {
+    parameters: ["u32", "u16", "u16", "i32", "buffer", "buffer", "buffer"],
+    result: "i32",
+  },
+  SteamGameServer_Shutdown: { parameters: [], result: "void" },
+  SteamGameServer_RunCallbacks: { parameters: [], result: "void" },
+  SteamGameServer_GetHSteamPipe: { parameters: [], result: "i32" },
+  SteamGameServer_GetHSteamUser: { parameters: [], result: "i32" },
+  SteamGameServer_BSecure: { parameters: [], result: "bool" },
+  SteamGameServer_GetSteamID: { parameters: [], result: "u64" },
+
   SteamAPI_ManualDispatch_GetAPICallResult: {
     parameters: ["i32", "u64", "buffer", "i32", "i32", "buffer"],
     result: "bool",

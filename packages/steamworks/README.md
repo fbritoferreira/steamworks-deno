@@ -126,6 +126,40 @@ before opening it rejects exactly the case that matters. Try the open and catch 
 Library lookup order: `libraryPath` option, `sdkPath` option, `STEAMWORKS_LIB_PATH`,
 `STEAMWORKS_SDK_PATH`.
 
+## Dedicated game servers
+
+A server is not a client: it initialises through its own entry point, gets its own set of
+interfaces, and pumps its own callback queue.
+
+```ts
+import { ServerMode, SteamGameServerClient } from "@steamworks/deno";
+
+const server = SteamGameServerClient.init({
+  appId: 480,
+  gamePort: 27015,
+  queryPort: 27016,
+  serverMode: ServerMode.Authentication,
+  versionString: "1.0.0.0",
+});
+
+server.gameServer.setServerName("My server");
+server.gameServer.logOnAnonymous();
+
+// Once per tick, as a client does once per frame.
+server.runCallbacks();
+
+server.shutdown();
+```
+
+Nine interfaces are reachable, each through its game server accessor rather than the client one,
+since `SteamAPI_SteamGameServerHTTP_v003` and `SteamAPI_SteamHTTP_v003` are different exports that
+return different pointers.
+
+`ISteamGameServer` and `ISteamGameServerStats` work anywhere a server starts. The seven a server
+shares with a client, among them HTTP, UGC and the networking interfaces, are reached through a
+dedicated server's own steamclient library. On a development machine running the Steam client they
+return null, and the accessor error names which one failed.
+
 ## Verifying on your platform
 
 Continuous integration proves this compiles and the unit tests pass on Linux, macOS and Windows, but

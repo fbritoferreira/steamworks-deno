@@ -12,7 +12,11 @@ import { emitLayoutJson } from "./emit/layout_json.ts";
 import { emitInterface } from "./emit/interface.ts";
 import { emitHarnessC } from "./emit/harness_c.ts";
 import { emitAllSymbols } from "./emit/all_symbols.ts";
-import { emitClientBase } from "./emit/client_base.ts";
+import {
+  emitClientBase,
+  emitGameServerVersions,
+  gameServerInterfaces,
+} from "./emit/client_base.ts";
 import { scanPacking } from "./packscan.ts";
 import { scanDocs } from "./docscan.ts";
 
@@ -85,6 +89,14 @@ export async function generate(opts: GenerateOptions): Promise<string[]> {
   files.set("layout_check.cpp", emitHarnessC(schema));
   files.set("all_symbols.ts", h + emitAllSymbols(schema));
   files.set("client_base.ts", h + emitClientBase(schema));
+  files.set(
+    "game_server_base.ts",
+    h + emitClientBase(schema, {
+      className: "SteamGameServerInterfaces",
+      select: gameServerInterfaces,
+      accessorKinds: ["gameserver"],
+    }) + "\n" + emitGameServerVersions(schema),
+  );
 
   const names: string[] = [];
   for (const i of schema.interfaces) {
