@@ -34,5 +34,5 @@ Deno.test("emitClientBase writes one getter per reachable interface", () => {
     out,
     'return this.iface(\n      "ISteamUserStats",\n      ISteamUserStats_symbols,',
   );
-  assertEquals(out.match(/^  get /gm)?.length, reachableInterfaces(schema).length);
+  assertEquals(out.match(/^ {2}get /gm)?.length, reachableInterfaces(schema).length);
 });

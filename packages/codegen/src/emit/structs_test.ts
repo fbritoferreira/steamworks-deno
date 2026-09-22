@@ -105,7 +105,7 @@ Deno.test("emitCallbackIds writes a name to struct type map", () => {
   assertStringIncludes(out, "  UserStatsStored: UserStatsStored_t;");
   assertStringIncludes(out, "  UserAchievementStored: UserAchievementStored_t;");
   // Every name in CallbackId has an entry in CallbackMap.
-  const ids = [...out.matchAll(/^  (\w+): \d+,$/gm)].map((m) => m[1]);
-  const mapped = [...out.matchAll(/^  (\w+): \w+_t;$/gm)].map((m) => m[1]);
+  const ids = [...out.matchAll(/^ {2}(\w+): \d+,$/gm)].map((m) => m[1]);
+  const mapped = [...out.matchAll(/^ {2}(\w+): \w+_t;$/gm)].map((m) => m[1]);
   assertEquals(new Set(ids).size, new Set(mapped).size);
 });
