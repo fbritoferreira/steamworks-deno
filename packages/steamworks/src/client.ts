@@ -23,6 +23,12 @@ export interface SteamClientOptions extends ResolveLibraryOptions {
   /** Your Steam AppID. Use 480, Valve's Spacewar test app, while developing. */
   appId: number;
   /**
+   * Reject a call result Steam never completes, after this many milliseconds. Guards
+   * against an await that would otherwise never settle, usually because `runCallbacks`
+   * stopped being called. Pass 0 to wait indefinitely. Defaults to two minutes.
+   */
+  callResultTimeoutMs?: number;
+  /**
    * Ask Steam whether the game should be relaunched through the client first. When it says
    * yes this throws {@link SteamRestartRequested} and the process should exit.
    */
@@ -58,10 +64,18 @@ export class SteamClient extends SteamInterfaces {
   readonly #dispatcher = new Dispatcher();
   readonly #msgBuf = new Uint8Array(CallbackMsg_t_layout[PACK].size);
   readonly #interfaces = new Map<string, unknown>();
+  readonly #callResultTimeoutMs: number;
   #closed = false;
+  #connected = true;
 
-  private constructor(handle: LibraryHandle, core: Core, pipe: number) {
+  private constructor(
+    handle: LibraryHandle,
+    core: Core,
+    pipe: number,
+    callResultTimeoutMs: number,
+  ) {
     super();
+    this.#callResultTimeoutMs = callResultTimeoutMs;
     this.#handle = handle;
     this.#core = core;
     this.#pipe = pipe;
@@ -89,7 +103,13 @@ export class SteamClient extends SteamInterfaces {
         throw new SteamInitError(result, readFixedString(errBuf, 0, errBuf.length));
       }
       core.SteamAPI_ManualDispatch_Init();
-      const client = new SteamClient(handle, core, core.SteamAPI_GetHSteamPipe());
+      const client = new SteamClient(
+        handle,
+        core,
+        core.SteamAPI_GetHSteamPipe(),
+        opts.callResultTimeoutMs ?? 120_000,
+      );
+      client.#watchConnection();
       // Steam delivers the user's stats and achievement schema during the first frame,
       // so pump one before handing the client back.
       client.runCallbacks();
@@ -125,6 +145,68 @@ export class SteamClient extends SteamInterfaces {
     return this.#dispatcher.on(id, (bytes) => listener(decode(bytes)));
   }
 
+  /**
+   * True until {@link shutdown} runs.
+   *
+   * Reaching an interface afterwards would call through a pointer into a closed library,
+   * which crashes the process rather than raising anything, so every accessor checks this
+   * first.
+   */
+  get isRunning(): boolean {
+    return !this.#closed;
+  }
+
+  /**
+   * False once Steam reports the connection gone, through `SteamServersDisconnected_t`,
+   * `SteamShutdown_t` or `IPCFailure_t`. Calls still work, but anything needing Steam's
+   * servers will fail until it reconnects.
+   */
+  get isConnected(): boolean {
+    return this.#connected;
+  }
+
+  /** Ask the library whether a Steam client is running at all. */
+  isSteamRunning(): boolean {
+    this.#assertOpen();
+    return this.#core.SteamAPI_IsSteamRunning();
+  }
+
+  /**
+   * Release Steam's per-thread memory. Call it on any thread other than the one that
+   * pumps callbacks, before that thread ends.
+   */
+  releaseCurrentThreadMemory(): void {
+    this.#assertOpen();
+    this.#core.SteamAPI_ReleaseCurrentThreadMemory();
+  }
+
+  #assertOpen(): void {
+    if (this.#closed) {
+      throw new Error(
+        "This SteamClient has been shut down. Calling into Steam now would reach a closed " +
+          "library and crash the process, so the call was refused instead.",
+      );
+    }
+  }
+
+  /** Follow the callbacks that say the connection came or went. */
+  #watchConnection(): void {
+    this.#dispatcher.on(CallbackId.SteamServersConnected, () => {
+      this.#connected = true;
+    });
+    for (
+      const id of [
+        CallbackId.SteamServersDisconnected,
+        CallbackId.SteamShutdown,
+        CallbackId.IPCFailure,
+      ]
+    ) {
+      this.#dispatcher.on(id, () => {
+        this.#connected = false;
+      });
+    }
+  }
+
   /** Observe every callback that arrives, whatever its id. */
   onAny(listener: AnyCallbackListener): () => void {
     return this.#dispatcher.onAny(listener);
@@ -135,7 +217,8 @@ export class SteamClient extends SteamInterfaces {
    * call this; the promise settles during a later {@link runCallbacks}.
    */
   callResult<T>(handle: bigint, callbackId: number, decode: (bytes: Uint8Array) => T): Promise<T> {
-    return this.#dispatcher.waitFor(handle, callbackId).then(decode);
+    this.#assertOpen();
+    return this.#dispatcher.waitFor(handle, callbackId, this.#callResultTimeoutMs).then(decode);
   }
 
   /**
@@ -143,7 +226,7 @@ export class SteamClient extends SteamInterfaces {
    * Returns how many callbacks were processed.
    */
   runCallbacks(): number {
-    if (this.#closed) throw new Error("SteamClient has been shut down");
+    this.#assertOpen();
     const s = this.#core;
     s.SteamAPI_ManualDispatch_RunFrame(this.#pipe);
     let processed = 0;
@@ -180,6 +263,8 @@ export class SteamClient extends SteamInterfaces {
     if (this.#closed) return;
     this.#closed = true;
     this.#dispatcher.rejectAll(new Error("SteamClient shut down"));
+    this.#interfaces.clear();
+    this.#connected = false;
     this.#core.SteamAPI_Shutdown();
     this.#handle.closeAll();
   }
@@ -222,6 +307,7 @@ export class SteamClient extends SteamInterfaces {
     accessor: string,
     make: (s: Deno.DynamicLibrary<S>["symbols"], self: Deno.PointerValue, host: never) => T,
   ): T {
+    this.#assertOpen();
     const hit = this.#interfaces.get(name);
     if (hit) return hit as T;
     const s = this.#core as unknown as Record<string, unknown>;

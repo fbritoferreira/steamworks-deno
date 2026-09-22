@@ -67,6 +67,30 @@ steam.shutdown();
 
 Run with `deno run --allow-ffi --allow-env --allow-read main.ts`.
 
+## Lifecycle
+
+`SteamClient.init` opens the library and connects. `shutdown` closes both, and after it every
+accessor refuses rather than calling into freed memory:
+
+```ts
+steam.shutdown();
+steam.friends.getPersonaName(); // throws; before 0.3.0 this crashed the process
+```
+
+Two states are worth checking while a game runs:
+
+```ts
+steam.isRunning; // false once shutdown has run
+steam.isConnected; // false when Steam reports the connection gone
+```
+
+`isConnected` follows `SteamServersDisconnected_t`, `SteamShutdown_t` and `IPCFailure_t`. Calls keep
+working when it goes false, but anything needing Steam's servers will fail until it reconnects.
+
+A call result Steam never completes is rejected after two minutes, since callbacks only arrive while
+`runCallbacks` is being called. Change it with `callResultTimeoutMs`, or pass 0 to wait
+indefinitely.
+
 ## Shipping with `deno compile`
 
 Include the platform library and resolve it from your own module:
