@@ -6,3 +6,4 @@
  * @module
  */
 export * from "./src/schema.ts";
+export { generate, type GenerateOptions } from "./src/generate.ts";

@@ -18,6 +18,7 @@ export type ParamRole =
   | { role: "out-array"; elem: MappedType; countParam: string; fixedCount?: number }
   | { role: "out-scalar"; type: MappedType }
   | { role: "count"; forParam: string }
+  | { role: "inout-count"; forParam: string; type: MappedType }
   | { role: "opaque"; type: MappedType };
 
 export interface ClassifiedParam {
@@ -74,7 +75,9 @@ function resolveArrayCount(
 ): { countParam: string; fixedCount?: number } {
   const raw = (p.out_array_count ?? p.out_array_call ?? "").split(",")[0].trim();
   const names = new Set(all.map((q) => q.paramname));
-  if (names.has(raw)) return { countParam: raw };
+  // Some entries name the array itself rather than a count; the real size is then the
+  // method's own length parameter.
+  if (names.has(raw) && raw !== p.paramname) return { countParam: raw };
   if (raw in ARRAY_SIZE_CONSTANTS) {
     return { countParam: String(ARRAY_SIZE_CONSTANTS[raw]), fixedCount: ARRAY_SIZE_CONSTANTS[raw] };
   }
@@ -126,11 +129,26 @@ function baseRole(p: Param, next: Param | undefined, ctx: TypeContext, all: Para
   let innerT: MappedType;
   try {
     innerT = mapType(inner, ctx);
-  } catch {
+  } catch (_) {
     // A pointer to something the schema does not describe, such as an interface class.
     return { role: "opaque", type: mapType(declared, ctx) };
   }
-  if (innerT.kind === "pointer" || innerT.kind === "string") {
+  if (innerT.kind === "string") {
+    // `char **`: an array of strings Steam owns. Hand back the address.
+    return { role: "opaque", type: mapType(declared, ctx) };
+  }
+  // A reference to a fixed char buffer, such as SteamNetworkingErrMsg (char[1024]).
+  if (innerT.kind === "array" && innerT.elem?.native === "u8") {
+    return {
+      role: "out-string",
+      countParam: String(innerT.count ?? OUT_STRING_DEFAULT),
+      defaultSize: innerT.count ?? OUT_STRING_DEFAULT,
+    };
+  }
+  if (innerT.kind === "array" || innerT.kind === "struct") {
+    return { role: "opaque", type: mapType(declared, ctx) };
+  }
+  if (innerT.kind === "pointer") {
     if (next && isCountName(next.paramname)) {
       return { role: "out-array", elem: innerT, countParam: next.paramname };
     }
@@ -165,7 +183,13 @@ export function classify(method: Method, ctx: TypeContext): ClassifiedMethod {
     const countName = "countParam" in r ? r.countParam : undefined;
     if (!countName) continue;
     const count = params.find((q) => q.name === countName);
-    if (count && count.role.role === "in") count.role = { role: "count", forParam: p.name };
+    if (!count) continue;
+    if (count.role.role === "in") {
+      count.role = { role: "count", forParam: p.name };
+    } else if (count.role.role === "out-scalar") {
+      // Steam takes the capacity in and writes the real count back through the same pointer.
+      count.role = { role: "inout-count", forParam: p.name, type: count.role.type };
+    }
   }
 
   return {

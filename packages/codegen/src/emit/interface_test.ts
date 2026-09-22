@@ -45,7 +45,7 @@ Deno.test("a call result becomes a promise for the decoded struct", () => {
   assertStringIncludes(out, "requestUserStats(steamIDUser: bigint): Promise<UserStatsReceived_t>");
   assertStringIncludes(
     out,
-    "return this.host.callResult(handle, 1101, decodeUserStatsReceived_t);",
+    "return this.host.callResult(call, 1101, decodeUserStatsReceived_t);",
   );
 });
 

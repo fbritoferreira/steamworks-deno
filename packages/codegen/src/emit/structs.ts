@@ -70,7 +70,10 @@ function emitOne(s: Struct, resolver: LayoutResolver, encodable: boolean): strin
   const l8 = resolver.layout(s.struct, 8);
   const iface = l4.fields.map((f) => `  ${f.name}: ${tsFieldType(f.type)};`).join("\n");
 
-  let out = `export interface ${s.struct} {\n${iface || "  // no fields"}\n}\n\n`;
+  // A callback that carries no payload; an empty interface is not a useful type.
+  let out = l4.fields.length === 0
+    ? `export type ${s.struct} = Record<string, never>;\n\n`
+    : `export interface ${s.struct} {\n${iface}\n}\n\n`;
   out += `export const ${s.struct}_layout = {\n  4: ${layoutLiteral(l4)},\n  8: ${
     layoutLiteral(l8)
   },\n} as const;\n\n`;

@@ -1,13 +1,25 @@
 {
-  "workspace": ["./packages/steamworks", "./packages/codegen", "./examples/demo"],
+  "workspace": [
+    "./packages/steamworks",
+    "./packages/codegen",
+    "./examples/demo"
+  ],
   "tasks": {
     "demo": "deno run --allow-ffi --allow-env --allow-read examples/demo/main.ts",
     "test": "deno test --allow-ffi --allow-env --allow-read --allow-run --allow-write",
     "check": "deno check packages/steamworks/mod.ts packages/codegen/mod.ts examples/demo/main.ts",
     "lint": "deno lint && deno fmt --check",
-    "gen": "deno run --allow-env --allow-read --allow-write --allow-run=deno packages/codegen/cli.ts",
+    "gen": "deno run --allow-env --allow-read --allow-write --allow-run packages/codegen/cli.ts",
     "gen:check": "deno task gen && git diff --exit-code -- packages/steamworks/gen"
   },
-  "fmt": { "lineWidth": 100 },
-  "lint": { "rules": { "tags": ["recommended"] } }
+  "fmt": {
+    "lineWidth": 100
+  },
+  "lint": {
+    "rules": {
+      "tags": [
+        "recommended"
+      ]
+    }
+  }
 }
