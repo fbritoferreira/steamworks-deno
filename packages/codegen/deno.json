@@ -1,6 +1,6 @@
 {
   "name": "@steamworks/codegen",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "exports": "./mod.ts",
   "imports": {
@@ -8,9 +8,17 @@
     "@std/path": "jsr:@std/path@1"
   },
   "publish": {
+    "include": [
+      "mod.ts",
+      "cli.ts",
+      "src/**/*.ts",
+      "README.md",
+      "LICENSE"
+    ],
     "exclude": [
       "fixtures",
-      "src/**/*_test.ts"
+      "src/**/*_test.ts",
+      "**/*_test.ts"
     ]
   },
   "description": "Generates Deno FFI bindings for the Steamworks SDK from Valve's steam_api.json, including per-platform struct layouts. Not affiliated with Valve."

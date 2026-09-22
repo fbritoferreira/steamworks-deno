@@ -10,6 +10,7 @@
  * the declaration.
  */
 
+/** Documentation harvested from the SDK headers, keyed for lookup while emitting. */
 export interface DocIndex {
   /** Keyed `ISteamUserStats.GetAchievement`. */
   methods: Map<string, string>;

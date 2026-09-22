@@ -311,6 +311,7 @@ const MARSHAL_HELPERS = new Set([
   "writeScalarArray",
 ]);
 
+/** Emit one interface: its FFI symbol table and a class wrapping every method. */
 export function emitInterface(
   iface: Interface,
   ctx: TypeContext,

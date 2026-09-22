@@ -6,4 +6,5 @@
  * @module
  */
 export * from "./src/schema.ts";
+/** Generate the whole binding set from a local Steamworks SDK. */
 export { generate, type GenerateOptions } from "./src/generate.ts";

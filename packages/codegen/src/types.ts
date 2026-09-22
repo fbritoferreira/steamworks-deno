@@ -1,12 +1,14 @@
 /** Maps C types from `steam_api.json` onto Deno FFI native types and TypeScript types. */
 import type { SteamApiJson } from "./schema.ts";
 
+/** Everything the type mapper needs to resolve a name: aliases, enums and structs. */
 export interface TypeContext {
   typedefs: Map<string, string>;
   enums: Set<string>;
   structs: Set<string>;
 }
 
+/** The broad category a C type falls into, which decides how it crosses the boundary. */
 export type Kind =
   | "void"
   | "bool"
@@ -19,6 +21,7 @@ export type Kind =
   | "struct"
   | "array";
 
+/** A C type resolved to its FFI and TypeScript representations, with its size and alignment. */
 export interface MappedType {
   kind: Kind;
   /** Deno FFI type, or null for aggregates that travel through buffers. */
@@ -30,6 +33,7 @@ export interface MappedType {
   count?: number;
 }
 
+/** Collect the aliases, enums and structs a schema declares, for the type mapper to use. */
 export function buildContext(schema: SteamApiJson): TypeContext {
   const typedefs = new Map(schema.typedefs.map((t) => [t.typedef, t.type]));
   const enums = new Set<string>(schema.enums.map((e) => e.enumname));

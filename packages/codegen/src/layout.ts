@@ -7,14 +7,17 @@ import type { SteamApiJson, Struct } from "./schema.ts";
 import { type MappedType, mapType, type TypeContext } from "./types.ts";
 import { effectivePack, type PackMode } from "./packscan.ts";
 
+/** The struct packing a platform uses: 8 on Windows, 4 elsewhere. */
 export type Pack = 4 | 8;
 
+/** Where one field sits inside its struct. */
 export interface FieldLayout {
   name: string;
   type: MappedType;
   offset: number;
 }
 
+/** A struct resolved to a concrete size, alignment and set of field offsets. */
 export interface StructLayout {
   name: string;
   size: number;
@@ -24,6 +27,12 @@ export interface StructLayout {
 
 const alignUp = (n: number, a: number) => Math.ceil(n / a) * a;
 
+/**
+ * Resolves struct layouts under either packing, memoised per struct and packing.
+ *
+ * `steam_api.json` carries no layout information, so this reimplements the C rules and
+ * takes each struct's packing from the header that declares it.
+ */
 export class LayoutResolver {
   readonly #structs = new Map<string, Struct>();
   readonly #callbackIds = new Map<string, number>();

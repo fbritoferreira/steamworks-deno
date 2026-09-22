@@ -16,6 +16,7 @@ import { emitClientBase } from "./emit/client_base.ts";
 import { scanPacking } from "./packscan.ts";
 import { scanDocs } from "./docscan.ts";
 
+/** Where to read the SDK from and where to write the bindings. */
 export interface GenerateOptions {
   /** Root of an unzipped Steamworks SDK: the folder holding `public/` and `redistributable_bin/`. */
   sdkPath: string;

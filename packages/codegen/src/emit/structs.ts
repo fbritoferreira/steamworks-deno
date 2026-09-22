@@ -155,6 +155,7 @@ function topoSort(structs: Struct[], ctx: TypeContext): Struct[] {
   return out;
 }
 
+/** Emit an interface, a layout table, a decoder and where useful an encoder, per struct. */
 export function emitStructs(
   schema: SteamApiJson,
   ctx: TypeContext,

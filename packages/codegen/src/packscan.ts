@@ -7,6 +7,7 @@
  * any region, which uses the compiler's natural alignment.
  */
 
+/** The packing regime a struct falls under, as declared by its header. */
 export type PackMode = "platform" | "natural" | 1 | 2 | 4 | 8;
 
 const PUSH = /^\s*#pragma\s+pack\s*\(\s*push\s*,\s*(\d+)\s*\)/;

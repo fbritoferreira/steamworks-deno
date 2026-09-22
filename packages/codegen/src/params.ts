@@ -7,6 +7,7 @@ import type { Method, Param } from "./schema.ts";
 import { type MappedType, mapType, type TypeContext } from "./types.ts";
 import { OVERRIDES } from "./overrides.ts";
 
+/** What a parameter does, and therefore how the generated wrapper handles it. */
 export type ParamRole =
   | { role: "in"; type: MappedType }
   | { role: "in-string" }
@@ -21,12 +22,14 @@ export type ParamRole =
   | { role: "inout-count"; forParam: string; type: MappedType }
   | { role: "opaque"; type: MappedType };
 
+/** One parameter with the role the classifier gave it. */
 export interface ClassifiedParam {
   name: string;
   c: Param;
   role: ParamRole;
 }
 
+/** A method with every parameter classified, ready for the emitter. */
 export interface ClassifiedMethod {
   method: Method;
   params: ClassifiedParam[];
@@ -166,6 +169,7 @@ function baseRole(p: Param, next: Param | undefined, ctx: TypeContext, all: Para
   return { role: "out-scalar", type: innerT };
 }
 
+/** Work out what each parameter of a method does. */
 export function classify(method: Method, ctx: TypeContext): ClassifiedMethod {
   const overrides = OVERRIDES[method.methodname_flat] ?? {};
   const params: ClassifiedParam[] = method.params.map((p, i) => ({
