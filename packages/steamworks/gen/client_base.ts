@@ -56,7 +56,7 @@ import {
 /**
  * One getter per Steam interface a client can obtain.
  *
- * `SteamClient` extends this and supplies `iface`, which reads the accessor from the
+ * The client extends this and supplies `iface`, which reads the accessor from the
  * single open library and wraps the pointer once.
  */
 export abstract class SteamInterfaces {
@@ -71,7 +71,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamApps",
       ISteamApps_symbols,
-      ISteamApps.accessor,
+      "SteamAPI_SteamApps_v009",
       (s, p, h) => new ISteamApps(s, p, h as never),
     );
   }
@@ -80,7 +80,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamController",
       ISteamController_symbols,
-      ISteamController.accessor,
+      "SteamAPI_SteamController_v008",
       (s, p, h) => new ISteamController(s, p, h as never),
     );
   }
@@ -89,7 +89,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamFriends",
       ISteamFriends_symbols,
-      ISteamFriends.accessor,
+      "SteamAPI_SteamFriends_v018",
       (s, p, h) => new ISteamFriends(s, p, h as never),
     );
   }
@@ -98,7 +98,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamHTMLSurface",
       ISteamHTMLSurface_symbols,
-      ISteamHTMLSurface.accessor,
+      "SteamAPI_SteamHTMLSurface_v005",
       (s, p, h) => new ISteamHTMLSurface(s, p, h as never),
     );
   }
@@ -107,7 +107,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamHTTP",
       ISteamHTTP_symbols,
-      ISteamHTTP.accessor,
+      "SteamAPI_SteamHTTP_v003",
       (s, p, h) => new ISteamHTTP(s, p, h as never),
     );
   }
@@ -116,7 +116,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamInput",
       ISteamInput_symbols,
-      ISteamInput.accessor,
+      "SteamAPI_SteamInput_v007",
       (s, p, h) => new ISteamInput(s, p, h as never),
     );
   }
@@ -125,7 +125,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamInventory",
       ISteamInventory_symbols,
-      ISteamInventory.accessor,
+      "SteamAPI_SteamInventory_v003",
       (s, p, h) => new ISteamInventory(s, p, h as never),
     );
   }
@@ -134,7 +134,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamMatchmaking",
       ISteamMatchmaking_symbols,
-      ISteamMatchmaking.accessor,
+      "SteamAPI_SteamMatchmaking_v009",
       (s, p, h) => new ISteamMatchmaking(s, p, h as never),
     );
   }
@@ -143,7 +143,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamMatchmakingServers",
       ISteamMatchmakingServers_symbols,
-      ISteamMatchmakingServers.accessor,
+      "SteamAPI_SteamMatchmakingServers_v003",
       (s, p, h) => new ISteamMatchmakingServers(s, p, h as never),
     );
   }
@@ -152,7 +152,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamMusic",
       ISteamMusic_symbols,
-      ISteamMusic.accessor,
+      "SteamAPI_SteamMusic_v001",
       (s, p, h) => new ISteamMusic(s, p, h as never),
     );
   }
@@ -161,7 +161,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamNetworking",
       ISteamNetworking_symbols,
-      ISteamNetworking.accessor,
+      "SteamAPI_SteamNetworking_v006",
       (s, p, h) => new ISteamNetworking(s, p, h as never),
     );
   }
@@ -170,7 +170,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamNetworkingMessages",
       ISteamNetworkingMessages_symbols,
-      ISteamNetworkingMessages.accessor,
+      "SteamAPI_SteamNetworkingMessages_SteamAPI_v002",
       (s, p, h) => new ISteamNetworkingMessages(s, p, h as never),
     );
   }
@@ -179,7 +179,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamNetworkingSockets",
       ISteamNetworkingSockets_symbols,
-      ISteamNetworkingSockets.accessor,
+      "SteamAPI_SteamNetworkingSockets_SteamAPI_v013",
       (s, p, h) => new ISteamNetworkingSockets(s, p, h as never),
     );
   }
@@ -188,7 +188,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamNetworkingUtils",
       ISteamNetworkingUtils_symbols,
-      ISteamNetworkingUtils.accessor,
+      "SteamAPI_SteamNetworkingUtils_SteamAPI_v004",
       (s, p, h) => new ISteamNetworkingUtils(s, p, h as never),
     );
   }
@@ -197,7 +197,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamParentalSettings",
       ISteamParentalSettings_symbols,
-      ISteamParentalSettings.accessor,
+      "SteamAPI_SteamParentalSettings_v001",
       (s, p, h) => new ISteamParentalSettings(s, p, h as never),
     );
   }
@@ -206,7 +206,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamParties",
       ISteamParties_symbols,
-      ISteamParties.accessor,
+      "SteamAPI_SteamParties_v002",
       (s, p, h) => new ISteamParties(s, p, h as never),
     );
   }
@@ -215,7 +215,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamRemotePlay",
       ISteamRemotePlay_symbols,
-      ISteamRemotePlay.accessor,
+      "SteamAPI_SteamRemotePlay_v004",
       (s, p, h) => new ISteamRemotePlay(s, p, h as never),
     );
   }
@@ -224,7 +224,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamRemoteStorage",
       ISteamRemoteStorage_symbols,
-      ISteamRemoteStorage.accessor,
+      "SteamAPI_SteamRemoteStorage_v016",
       (s, p, h) => new ISteamRemoteStorage(s, p, h as never),
     );
   }
@@ -233,7 +233,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamScreenshots",
       ISteamScreenshots_symbols,
-      ISteamScreenshots.accessor,
+      "SteamAPI_SteamScreenshots_v003",
       (s, p, h) => new ISteamScreenshots(s, p, h as never),
     );
   }
@@ -242,7 +242,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamTimeline",
       ISteamTimeline_symbols,
-      ISteamTimeline.accessor,
+      "SteamAPI_SteamTimeline_v004",
       (s, p, h) => new ISteamTimeline(s, p, h as never),
     );
   }
@@ -251,7 +251,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamUGC",
       ISteamUGC_symbols,
-      ISteamUGC.accessor,
+      "SteamAPI_SteamUGC_v021",
       (s, p, h) => new ISteamUGC(s, p, h as never),
     );
   }
@@ -260,7 +260,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamUser",
       ISteamUser_symbols,
-      ISteamUser.accessor,
+      "SteamAPI_SteamUser_v023",
       (s, p, h) => new ISteamUser(s, p, h as never),
     );
   }
@@ -269,7 +269,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamUserStats",
       ISteamUserStats_symbols,
-      ISteamUserStats.accessor,
+      "SteamAPI_SteamUserStats_v013",
       (s, p, h) => new ISteamUserStats(s, p, h as never),
     );
   }
@@ -278,7 +278,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamUtils",
       ISteamUtils_symbols,
-      ISteamUtils.accessor,
+      "SteamAPI_SteamUtils_v011",
       (s, p, h) => new ISteamUtils(s, p, h as never),
     );
   }
@@ -287,7 +287,7 @@ export abstract class SteamInterfaces {
     return this.iface(
       "ISteamVideo",
       ISteamVideo_symbols,
-      ISteamVideo.accessor,
+      "SteamAPI_SteamVideo_v007",
       (s, p, h) => new ISteamVideo(s, p, h as never),
     );
   }

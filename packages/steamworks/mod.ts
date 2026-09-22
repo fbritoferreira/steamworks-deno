@@ -28,6 +28,12 @@ export {
   type ResolveLibraryOptions,
   resolveLibraryPath,
 } from "./src/lib.ts";
+export {
+  interfaceVersionList,
+  ServerMode,
+  SteamGameServerClient,
+  type SteamGameServerOptions,
+} from "./src/game_server.ts";
 export { SteamInitError, SteamInitResult, SteamInterfaceError } from "./src/errors.ts";
 export type { AnyCallbackListener, CallbackListener } from "./src/dispatch.ts";
 export type { CallResultHost } from "./src/marshal.ts";
