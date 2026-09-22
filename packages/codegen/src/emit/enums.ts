@@ -11,9 +11,8 @@ function emitOne(e: Enum, docs?: DocIndex): string {
     seen.add(v.name);
     lines.push(`  ${v.name} = ${v.value},`);
   }
-  return `${jsdoc(docs?.enums.get(e.enumname))}export enum ${e.enumname} {\n${
-    lines.join("\n")
-  }\n}\n`;
+  const doc = docs?.enums.get(e.enumname) ?? `Steam's \`${e.enumname}\` enumeration.`;
+  return `${jsdoc(doc)}export enum ${e.enumname} {\n${lines.join("\n")}\n}\n`;
 }
 
 /** Every enum in the schema, including ones nested inside interfaces and structs. */

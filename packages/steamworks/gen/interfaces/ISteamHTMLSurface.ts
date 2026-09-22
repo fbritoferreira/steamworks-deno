@@ -5,6 +5,10 @@ import { cstrArg } from "../../src/marshal.ts";
 import { decodeHTML_BrowserReady_t, HTML_BrowserReady_t } from "../structs.ts";
 import type { EHTMLKeyModifiers, EHTMLMouseButton } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamHTMLSurface`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamHTMLSurface_symbols = {
   SteamAPI_ISteamHTMLSurface_Init: { parameters: ["pointer"], result: "bool" },
   SteamAPI_ISteamHTMLSurface_Shutdown: { parameters: ["pointer"], result: "bool" },
@@ -112,7 +116,12 @@ export const ISteamHTMLSurface_symbols = {
   SteamAPI_SteamHTMLSurface_v005: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamHTMLSurface` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamHTMLSurface {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamHTMLSurface_v005";
 
   constructor(

@@ -5,6 +5,10 @@ import { arrayOut, readScalarArray } from "../../src/marshal.ts";
 import { encodeSteamNetworkingIPAddr, SteamNetworkingIPAddr } from "../structs.ts";
 import type { EResult } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamNetworkingFakeUDPPort`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamNetworkingFakeUDPPort_symbols = {
   SteamAPI_ISteamNetworkingFakeUDPPort_DestroyFakeUDPPort: {
     parameters: ["pointer"],
@@ -24,6 +28,10 @@ export const ISteamNetworkingFakeUDPPort_symbols = {
   },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamNetworkingFakeUDPPort` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamNetworkingFakeUDPPort {
   constructor(
     private readonly s: Deno.DynamicLibrary<typeof ISteamNetworkingFakeUDPPort_symbols>["symbols"],

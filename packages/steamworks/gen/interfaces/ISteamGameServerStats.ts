@@ -9,6 +9,10 @@ import {
   GSStatsStored_t,
 } from "../structs.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamGameServerStats`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamGameServerStats_symbols = {
   SteamAPI_ISteamGameServerStats_RequestUserStats: {
     parameters: ["pointer", "u64"],
@@ -50,7 +54,12 @@ export const ISteamGameServerStats_symbols = {
   SteamAPI_SteamGameServerStats_v001: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamGameServerStats` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamGameServerStats {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamGameServerStats_v001";
 
   constructor(

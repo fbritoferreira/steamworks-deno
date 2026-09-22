@@ -25,6 +25,10 @@ import {
 } from "../structs.ts";
 import type { EResult } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamInventory`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamInventory_symbols = {
   SteamAPI_ISteamInventory_GetResultStatus: { parameters: ["pointer", "i32"], result: "i32" },
   SteamAPI_ISteamInventory_GetResultItems: {
@@ -151,7 +155,12 @@ export const ISteamInventory_symbols = {
   SteamAPI_SteamInventory_v003: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamInventory` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamInventory {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamInventory_v003";
 
   constructor(

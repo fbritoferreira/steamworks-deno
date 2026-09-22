@@ -32,6 +32,10 @@ import type {
   ESteamNetworkingSocketsDebugOutputType,
 } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamNetworkingUtils`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamNetworkingUtils_symbols = {
   SteamAPI_ISteamNetworkingUtils_AllocateMessage: {
     parameters: ["pointer", "i32"],
@@ -195,7 +199,12 @@ export const ISteamNetworkingUtils_symbols = {
   },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamNetworkingUtils` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamNetworkingUtils {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamNetworkingUtils_SteamAPI_v004";
 
   constructor(

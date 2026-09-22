@@ -18,6 +18,10 @@ import type {
   EUniverse,
 } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamUtils`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamUtils_symbols = {
   SteamAPI_ISteamUtils_GetSecondsSinceAppActive: { parameters: ["pointer"], result: "u32" },
   SteamAPI_ISteamUtils_GetSecondsSinceComputerActive: { parameters: ["pointer"], result: "u32" },
@@ -97,7 +101,12 @@ export const ISteamUtils_symbols = {
   SteamAPI_SteamUtils_v011: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamUtils` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamUtils {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamUtils_v011";
 
   constructor(

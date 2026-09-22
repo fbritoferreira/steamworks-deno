@@ -82,12 +82,22 @@ function emitOne(
       };`
     )
     .join("\n");
-  const structDoc = jsdoc(docs?.structs.get(s.struct));
+  const callbackId = resolver.isCallback(s.struct) ? resolver.callbackId(s.struct) : undefined;
+  const structDoc = jsdoc(
+    docs?.structs.get(s.struct) ??
+      (callbackId !== undefined
+        ? `Steam's \`${s.struct}\` callback, id ${callbackId}.`
+        : `Steam's \`${s.struct}\` struct.`),
+  );
 
   // A callback that carries no payload; an empty interface is not a useful type.
   let out = l4.fields.length === 0
     ? `${structDoc}export type ${s.struct} = Record<string, never>;\n\n`
     : `${structDoc}export interface ${s.struct} {\n${iface}\n}\n\n`;
+  out += jsdoc(
+    `Field offsets and total size of \`${s.struct}\`, under each struct packing.\n` +
+      `Index it with \`PACK\`, which is 8 on Windows and 4 elsewhere.`,
+  );
   out += `export const ${s.struct}_layout = {\n  4: ${layoutLiteral(l4)},\n  8: ${
     layoutLiteral(l8)
   },\n} as const;\n\n`;
@@ -95,6 +105,9 @@ function emitOne(
   const decodeBody = l4.fields
     .map((f) => `    ${f.name}: ${readerExpr(f.name, f.type)},`)
     .join("\n");
+  out += jsdoc(
+    `Read a \`${s.struct}\` out of the bytes Steam delivered, using this platform's layout.`,
+  );
   out += `export function decode${s.struct}(bytes: Uint8Array): ${s.struct} {\n`;
   if (l4.fields.length === 0) {
     out += `  void bytes;\n  return {};\n}\n\n`;
@@ -103,6 +116,9 @@ function emitOne(
   }
 
   if (encodable) {
+    out += jsdoc(
+      `Write a \`${s.struct}\` into the bytes Steam expects, using this platform's layout.`,
+    );
     out += `export function encode${s.struct}(value: ${s.struct}): Uint8Array {\n`;
     out += `  const out = new Uint8Array(${s.struct}_layout[PACK].size);\n`;
     if (l4.fields.length > 0) {

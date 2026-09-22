@@ -11,6 +11,10 @@ import {
 } from "../structs.ts";
 import type { ESteamDeviceFormFactor } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamRemotePlay`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamRemotePlay_symbols = {
   SteamAPI_ISteamRemotePlay_GetSessionCount: { parameters: ["pointer"], result: "u32" },
   SteamAPI_ISteamRemotePlay_GetSessionID: { parameters: ["pointer", "i32"], result: "u32" },
@@ -77,7 +81,12 @@ export const ISteamRemotePlay_symbols = {
   SteamAPI_SteamRemotePlay_v004: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamRemotePlay` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamRemotePlay {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamRemotePlay_v004";
 
   constructor(

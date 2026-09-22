@@ -18,6 +18,10 @@ import type {
   ELobbyType,
 } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamMatchmaking`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamMatchmaking_symbols = {
   SteamAPI_ISteamMatchmaking_GetFavoriteGameCount: { parameters: ["pointer"], result: "i32" },
   SteamAPI_ISteamMatchmaking_GetFavoriteGame: {
@@ -141,7 +145,12 @@ export const ISteamMatchmaking_symbols = {
   SteamAPI_SteamMatchmaking_v009: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamMatchmaking` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamMatchmaking {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamMatchmaking_v009";
 
   constructor(

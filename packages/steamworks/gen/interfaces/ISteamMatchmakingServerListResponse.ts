@@ -3,6 +3,10 @@
 import type { CallResultHost } from "../../src/marshal.ts";
 import type { EMatchMakingServerResponse } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamMatchmakingServerListResponse`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamMatchmakingServerListResponse_symbols = {
   SteamAPI_ISteamMatchmakingServerListResponse_ServerResponded: {
     parameters: ["pointer", "pointer", "i32"],
@@ -18,6 +22,10 @@ export const ISteamMatchmakingServerListResponse_symbols = {
   },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamMatchmakingServerListResponse` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamMatchmakingServerListResponse {
   constructor(
     private readonly s: Deno.DynamicLibrary<

@@ -4,6 +4,10 @@ import type { CallResultHost } from "../../src/marshal.ts";
 import { cstrArg, readScalar, scalarOut } from "../../src/marshal.ts";
 import type { EHTTPMethod } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamHTTP`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamHTTP_symbols = {
   SteamAPI_ISteamHTTP_CreateHTTPRequest: {
     parameters: ["pointer", "i32", "buffer"],
@@ -90,7 +94,12 @@ export const ISteamHTTP_symbols = {
   SteamAPI_SteamHTTP_v003: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamHTTP` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamHTTP {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamHTTP_v003";
 
   constructor(

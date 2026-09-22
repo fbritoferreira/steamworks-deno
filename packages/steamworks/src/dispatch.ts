@@ -3,15 +3,23 @@
  * and pending CallResults keyed by `SteamAPICall_t`. No FFI here, so it is unit-testable.
  */
 
+/** Receives one callback's raw payload bytes. */
 export type CallbackListener = (param: Uint8Array) => void;
+/** Receives every callback, with the id that identifies it. */
 export type AnyCallbackListener = (callbackId: number, param: Uint8Array) => void;
 
+/** A call result nobody has answered yet. */
 export interface PendingCall {
   callbackId: number;
   resolve: (param: Uint8Array) => void;
   reject: (err: Error) => void;
 }
 
+/**
+ * Bookkeeping for callbacks and call results: which listeners want which callback id, and
+ * which promise is waiting on which `SteamAPICall_t`. Holds no FFI state, so it is testable
+ * without a Steam client.
+ */
 export class Dispatcher {
   #listeners = new Map<number, Set<CallbackListener>>();
   #anyListeners = new Set<AnyCallbackListener>();

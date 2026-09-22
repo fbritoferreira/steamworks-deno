@@ -357,11 +357,26 @@ export function emitInterface(
   if (fromStructs.length) out += `import { ${fromStructs.join(", ")} } from "../structs.ts";\n`;
   if (fromEnums.length) out += `import type { ${fromEnums.join(", ")} } from "../enums.ts";\n`;
 
-  out += `\nexport const ${iface.classname}_symbols = {\n${symbols.join("\n")}\n` +
+  out += "\n" + jsdoc(
+    `Deno FFI symbol table for \`${iface.classname}\`: every flat method, plus the versioned\n` +
+      `accessor Steam uses to hand out the interface.`,
+  );
+  out += `export const ${iface.classname}_symbols = {\n${symbols.join("\n")}\n` +
     `} as const satisfies Deno.ForeignLibraryInterface;\n\n`;
 
+  const classDoc = docs?.methods.get(`${iface.classname}.__class__`) ??
+    `Steam's \`${iface.classname}\` interface. Reach it from \`SteamClient\`; the constructor is\n` +
+      `for the client to call.`;
+  out += jsdoc(classDoc);
   out += `export class ${iface.classname} {\n`;
-  if (accessor) out += `  static readonly accessor = "${accessor.name_flat}";\n\n`;
+  if (accessor) {
+    out += jsdoc(
+      `The versioned export Steam uses to hand out this interface, for SDK ${"$"}{version}.`
+        .replace("${version}", "1.65"),
+      "  ",
+    );
+    out += `  static readonly accessor = "${accessor.name_flat}";\n\n`;
+  }
   out += `  constructor(\n` +
     `    private readonly s: Deno.DynamicLibrary<typeof ${iface.classname}_symbols>["symbols"],\n` +
     `    private readonly self: Deno.PointerValue,\n` +

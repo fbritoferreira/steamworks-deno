@@ -3,6 +3,10 @@
 import type { CallResultHost } from "../../src/marshal.ts";
 import { writeScalarArray } from "../../src/marshal.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamMatchmakingServers`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamMatchmakingServers_symbols = {
   SteamAPI_ISteamMatchmakingServers_RequestInternetServerList: {
     parameters: ["pointer", "u32", "buffer", "u32", "pointer"],
@@ -79,7 +83,12 @@ export const ISteamMatchmakingServers_symbols = {
   SteamAPI_SteamMatchmakingServers_v003: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamMatchmakingServers` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamMatchmakingServers {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamMatchmakingServers_v003";
 
   constructor(

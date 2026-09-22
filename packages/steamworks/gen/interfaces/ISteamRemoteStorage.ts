@@ -55,6 +55,10 @@ import type {
   EWorkshopVideoProvider,
 } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamRemoteStorage`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamRemoteStorage_symbols = {
   SteamAPI_ISteamRemoteStorage_FileWrite: {
     parameters: ["pointer", "buffer", "buffer", "i32"],
@@ -270,7 +274,12 @@ export const ISteamRemoteStorage_symbols = {
   SteamAPI_SteamRemoteStorage_v016: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamRemoteStorage` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamRemoteStorage {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamRemoteStorage_v016";
 
   constructor(

@@ -32,6 +32,10 @@ import type {
   ELeaderboardUploadScoreMethod,
 } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamUserStats`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamUserStats_symbols = {
   SteamAPI_ISteamUserStats_GetStatInt32: {
     parameters: ["pointer", "buffer", "buffer"],
@@ -182,7 +186,12 @@ export const ISteamUserStats_symbols = {
   SteamAPI_SteamUserStats_v013: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamUserStats` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamUserStats {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamUserStats_v013";
 
   constructor(

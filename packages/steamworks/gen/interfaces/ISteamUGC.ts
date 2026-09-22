@@ -67,6 +67,10 @@ import type {
   EWorkshopFileType,
 } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamUGC`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamUGC_symbols = {
   SteamAPI_ISteamUGC_CreateQueryUserUGCRequest: {
     parameters: ["pointer", "u32", "i32", "i32", "i32", "u32", "u32", "u32"],
@@ -335,7 +339,12 @@ export const ISteamUGC_symbols = {
   SteamAPI_SteamUGC_v021: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamUGC` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamUGC {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamUGC_v021";
 
   constructor(

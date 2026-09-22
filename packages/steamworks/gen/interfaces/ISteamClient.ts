@@ -5,6 +5,10 @@ import { cstrArg, readScalar, scalarOut } from "../../src/marshal.ts";
 import { encodeSteamIPAddress_t, SteamIPAddress_t } from "../structs.ts";
 import type { EAccountType } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamClient`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamClient_symbols = {
   SteamAPI_ISteamClient_CreateSteamPipe: { parameters: ["pointer"], result: "i32" },
   SteamAPI_ISteamClient_BReleaseSteamPipe: { parameters: ["pointer", "i32"], result: "bool" },
@@ -122,6 +126,10 @@ export const ISteamClient_symbols = {
   },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamClient` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamClient {
   constructor(
     private readonly s: Deno.DynamicLibrary<typeof ISteamClient_symbols>["symbols"],

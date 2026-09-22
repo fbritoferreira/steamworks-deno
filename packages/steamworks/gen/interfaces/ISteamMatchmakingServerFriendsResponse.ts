@@ -3,6 +3,10 @@
 import type { CallResultHost } from "../../src/marshal.ts";
 import { cstrArg } from "../../src/marshal.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamMatchmakingServerFriendsResponse`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamMatchmakingServerFriendsResponse_symbols = {
   SteamAPI_ISteamMatchmakingServerFriendsResponse_AddFriendToList: {
     parameters: ["pointer", "u64", "buffer", "bool"],
@@ -18,6 +22,10 @@ export const ISteamMatchmakingServerFriendsResponse_symbols = {
   },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamMatchmakingServerFriendsResponse` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamMatchmakingServerFriendsResponse {
   constructor(
     private readonly s: Deno.DynamicLibrary<

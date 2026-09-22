@@ -3,6 +3,10 @@
 import type { CallResultHost } from "../../src/marshal.ts";
 import type { EParentalFeature } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamParentalSettings`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamParentalSettings_symbols = {
   SteamAPI_ISteamParentalSettings_BIsParentalLockEnabled: {
     parameters: ["pointer"],
@@ -28,7 +32,12 @@ export const ISteamParentalSettings_symbols = {
   SteamAPI_SteamParentalSettings_v001: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamParentalSettings` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamParentalSettings {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamParentalSettings_v001";
 
   constructor(

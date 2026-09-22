@@ -10,6 +10,10 @@ import {
 } from "../structs.ts";
 import type { ETimelineEventClipPriority, ETimelineGameMode } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamTimeline`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamTimeline_symbols = {
   SteamAPI_ISteamTimeline_SetTimelineTooltip: {
     parameters: ["pointer", "buffer", "f32"],
@@ -68,7 +72,12 @@ export const ISteamTimeline_symbols = {
   SteamAPI_SteamTimeline_v004: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamTimeline` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamTimeline {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamTimeline_v004";
 
   constructor(

@@ -16,6 +16,10 @@ import {
 } from "../structs.ts";
 import type { EBeginAuthSessionResult, EUserHasLicenseForAppResult } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamGameServer`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamGameServer_symbols = {
   SteamAPI_ISteamGameServer_SetProduct: { parameters: ["pointer", "buffer"], result: "void" },
   SteamAPI_ISteamGameServer_SetGameDescription: {
@@ -132,7 +136,12 @@ export const ISteamGameServer_symbols = {
   SteamAPI_SteamGameServer_v015: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamGameServer` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamGameServer {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamGameServer_v015";
 
   constructor(

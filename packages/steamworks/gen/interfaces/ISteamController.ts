@@ -18,6 +18,10 @@ import type {
   EXboxOrigin,
 } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamController`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamController_symbols = {
   SteamAPI_ISteamController_Init: { parameters: ["pointer"], result: "bool" },
   SteamAPI_ISteamController_Shutdown: { parameters: ["pointer"], result: "bool" },
@@ -143,7 +147,12 @@ export const ISteamController_symbols = {
   SteamAPI_SteamController_v008: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamController` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamController {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamController_v008";
 
   constructor(

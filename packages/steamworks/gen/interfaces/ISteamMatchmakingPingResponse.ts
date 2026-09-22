@@ -4,6 +4,10 @@ import { PACK } from "../../src/layout.ts";
 import type { CallResultHost } from "../../src/marshal.ts";
 import { decodegameserveritem_t, gameserveritem_t, gameserveritem_t_layout } from "../structs.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamMatchmakingPingResponse`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamMatchmakingPingResponse_symbols = {
   SteamAPI_ISteamMatchmakingPingResponse_ServerResponded: {
     parameters: ["pointer", "buffer"],
@@ -15,6 +19,10 @@ export const ISteamMatchmakingPingResponse_symbols = {
   },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamMatchmakingPingResponse` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamMatchmakingPingResponse {
   constructor(
     private readonly s: Deno.DynamicLibrary<

@@ -44,6 +44,10 @@ import {
 } from "../structs.ts";
 import type { EResult, ESteamNetworkingAvailability } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamNetworkingSockets`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamNetworkingSockets_symbols = {
   SteamAPI_ISteamNetworkingSockets_CreateListenSocketIP: {
     parameters: ["pointer", "buffer", "i32", "buffer"],
@@ -231,7 +235,12 @@ export const ISteamNetworkingSockets_symbols = {
   },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamNetworkingSockets` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamNetworkingSockets {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamNetworkingSockets_SteamAPI_v013";
 
   constructor(

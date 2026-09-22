@@ -21,6 +21,10 @@ import type {
   EVoiceResult,
 } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamUser`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamUser_symbols = {
   SteamAPI_ISteamUser_GetHSteamUser: { parameters: ["pointer"], result: "i32" },
   SteamAPI_ISteamUser_BLoggedOn: { parameters: ["pointer"], result: "bool" },
@@ -111,7 +115,12 @@ export const ISteamUser_symbols = {
   SteamAPI_SteamUser_v023: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamUser` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamUser {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamUser_v023";
 
   constructor(

@@ -4,6 +4,10 @@ import type { CallResultHost } from "../../src/marshal.ts";
 import { cstrArg } from "../../src/marshal.ts";
 import type { EVRScreenshotType } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamScreenshots`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamScreenshots_symbols = {
   SteamAPI_ISteamScreenshots_WriteScreenshot: {
     parameters: ["pointer", "buffer", "u32", "i32", "i32"],
@@ -32,7 +36,12 @@ export const ISteamScreenshots_symbols = {
   SteamAPI_SteamScreenshots_v003: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamScreenshots` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamScreenshots {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamScreenshots_v003";
 
   constructor(

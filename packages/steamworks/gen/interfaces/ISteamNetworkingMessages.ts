@@ -13,6 +13,10 @@ import {
 } from "../structs.ts";
 import type { EResult } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamNetworkingMessages`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamNetworkingMessages_symbols = {
   SteamAPI_ISteamNetworkingMessages_SendMessageToUser: {
     parameters: ["pointer", "buffer", "buffer", "u32", "i32", "i32"],
@@ -45,7 +49,12 @@ export const ISteamNetworkingMessages_symbols = {
   },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamNetworkingMessages` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamNetworkingMessages {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamNetworkingMessages_SteamAPI_v002";
 
   constructor(

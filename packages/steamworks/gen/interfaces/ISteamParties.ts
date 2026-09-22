@@ -17,6 +17,10 @@ import {
 } from "../structs.ts";
 import type { ESteamPartyBeaconLocationData } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamParties`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamParties_symbols = {
   SteamAPI_ISteamParties_GetNumActiveBeacons: { parameters: ["pointer"], result: "u32" },
   SteamAPI_ISteamParties_GetBeaconByIndex: { parameters: ["pointer", "u32"], result: "u64" },
@@ -57,7 +61,12 @@ export const ISteamParties_symbols = {
   SteamAPI_SteamParties_v002: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamParties` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamParties {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamParties_v002";
 
   constructor(

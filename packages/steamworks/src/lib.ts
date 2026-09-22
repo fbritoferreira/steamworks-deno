@@ -8,8 +8,10 @@ import { fromFileUrl } from "@std/path";
  * SteamFriends v018, SteamUtils v011, SteamUserStats v013, SteamApps v009).
  */
 
+/** The Steamworks SDK release these bindings were generated from. */
 export const SDK_VERSION = "1.65";
 
+/** Lifecycle and manual dispatch: the symbols the client needs before any interface. */
 export const CORE_SYMBOLS = {
   // --- lifecycle -----------------------------------------------------------
   SteamAPI_InitFlat: { parameters: ["buffer"], result: "i32" },
@@ -31,6 +33,7 @@ export const CORE_SYMBOLS = {
   },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/** An opened Steam library holding the core symbols. */
 export type SteamLib = Deno.DynamicLibrary<typeof CORE_SYMBOLS>;
 
 type DlOpen = <S extends Deno.ForeignLibraryInterface>(
@@ -78,6 +81,7 @@ export class LibraryHandle {
   }
 }
 
+/** Where to find the Steam library. */
 export interface ResolveLibraryOptions {
   /** Absolute path to libsteam_api.dylib / libsteam_api.so / steam_api64.dll. Wins over everything. */
   libraryPath?: string;

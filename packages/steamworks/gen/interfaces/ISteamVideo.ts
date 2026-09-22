@@ -3,6 +3,10 @@
 import type { CallResultHost } from "../../src/marshal.ts";
 import { cstrArg, readScalar, scalarOut } from "../../src/marshal.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamVideo`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamVideo_symbols = {
   SteamAPI_ISteamVideo_GetVideoURL: { parameters: ["pointer", "u32"], result: "void" },
   SteamAPI_ISteamVideo_IsBroadcasting: { parameters: ["pointer", "buffer"], result: "bool" },
@@ -14,7 +18,12 @@ export const ISteamVideo_symbols = {
   SteamAPI_SteamVideo_v007: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamVideo` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamVideo {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamVideo_v007";
 
   constructor(

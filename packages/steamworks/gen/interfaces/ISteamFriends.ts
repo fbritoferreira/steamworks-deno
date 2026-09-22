@@ -40,6 +40,10 @@ import type {
   EPersonaState,
 } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamFriends`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamFriends_symbols = {
   SteamAPI_ISteamFriends_GetPersonaName: { parameters: ["pointer"], result: "pointer" },
   SteamAPI_ISteamFriends_GetPersonaState: { parameters: ["pointer"], result: "i32" },
@@ -245,7 +249,12 @@ export const ISteamFriends_symbols = {
   SteamAPI_SteamFriends_v018: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamFriends` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamFriends {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamFriends_v018";
 
   constructor(

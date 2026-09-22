@@ -14,6 +14,10 @@ import {
 import { decodeFileDetailsResult_t, FileDetailsResult_t } from "../structs.ts";
 import type { EGamePerformanceSetting } from "../enums.ts";
 
+/**
+ * Deno FFI symbol table for `ISteamApps`: every flat method, plus the versioned
+ * accessor Steam uses to hand out the interface.
+ */
 export const ISteamApps_symbols = {
   SteamAPI_ISteamApps_BIsSubscribed: { parameters: ["pointer"], result: "bool" },
   SteamAPI_ISteamApps_BIsLowViolence: { parameters: ["pointer"], result: "bool" },
@@ -86,7 +90,12 @@ export const ISteamApps_symbols = {
   SteamAPI_SteamApps_v009: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
+/**
+ * Steam's `ISteamApps` interface. Reach it from `SteamClient`; the constructor is
+ * for the client to call.
+ */
 export class ISteamApps {
+  /** The versioned export Steam uses to hand out this interface, for SDK 1.65. */
   static readonly accessor = "SteamAPI_SteamApps_v009";
 
   constructor(
