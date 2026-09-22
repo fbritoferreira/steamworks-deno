@@ -1,22 +1,35 @@
 /**
- * Integration test. Runs only when STEAMWORKS_SDK_PATH is set AND the Steam client
- * is running and logged in. CI runners cannot satisfy that, so this is a local check.
+ * Live check against a running Steam client, using the generated bindings.
+ * Runs only when STEAMWORKS_SDK_PATH is set and Steam is running and logged in,
+ * which no CI runner offers.
  */
-import { assert, assertEquals } from "jsr:@std/assert@1";
+import { assert, assertEquals } from "@std/assert";
 import { SteamClient } from "./client.ts";
+import { CallbackId } from "../gen/callback_ids.ts";
 
 const sdk = Deno.env.get("STEAMWORKS_SDK_PATH");
 
 Deno.test({
-  name: "SteamClient.init against Spacewar (480)",
+  name: "the generated interfaces talk to Spacewar (AppID 480)",
   ignore: !sdk,
   fn() {
     const steam = SteamClient.init({ appId: 480, sdkPath: sdk });
     try {
-      assertEquals(steam.utils.appId(), 480);
-      assert(steam.user.steamId() > 0n);
-      assert(steam.friends.personaName().length > 0);
-      assert(steam.userStats.numAchievements() > 0);
+      assertEquals(steam.utils.getAppID(), 480);
+      assert(steam.user.getSteamID() > 0n, "a logged-in user has a SteamID");
+      assert(steam.friends.getPersonaName().length > 0, "a logged-in user has a persona name");
+
+      const count = steam.userStats.getNumAchievements();
+      assert(count > 0, "the achievement schema loads during init");
+      const first = steam.userStats.getAchievementName(0);
+      assert(first.length > 0);
+      // getAchievement reports both the call's success and the unlocked flag.
+      const state = steam.userStats.getAchievement(first);
+      assertEquals(typeof state.ok, "boolean");
+      assertEquals(typeof state.pbAchieved, "boolean");
+
+      assertEquals(steam.runCallbacks() >= 0, true);
+      assertEquals(CallbackId.UserStatsStored, 1102);
     } finally {
       steam.shutdown();
     }

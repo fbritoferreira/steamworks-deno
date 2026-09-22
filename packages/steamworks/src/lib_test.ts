@@ -1,5 +1,5 @@
 import { assertEquals, assertThrows } from "jsr:@std/assert@1";
-import { redistributablePath, resolveLibraryPath } from "./lib.ts";
+import { LibraryHandle, redistributablePath, resolveLibraryPath } from "./lib.ts";
 
 const mac = { os: "darwin", arch: "aarch64" };
 const noEnv = () => undefined;
@@ -47,4 +47,24 @@ Deno.test("resolveLibraryPath: env fallbacks in order", () => {
 
 Deno.test("resolveLibraryPath: throws with download hint when nothing set", () => {
   assertThrows(() => resolveLibraryPath({ build: mac, env: noEnv }), Error, "steamworks_sdk.zip");
+});
+
+Deno.test("LibraryHandle opens each symbol table once and closes them all", () => {
+  const calls: string[] = [];
+  const fake = <S extends Deno.ForeignLibraryInterface>(path: string, symbols: S) => {
+    calls.push(`open ${path}:${Object.keys(symbols).join(",")}`);
+    return {
+      symbols: {},
+      close: () => calls.push("close"),
+    } as unknown as Deno.DynamicLibrary<S>;
+  };
+  const handle = new LibraryHandle("/lib.dylib", fake);
+  const a = { SteamAPI_Foo: { parameters: [], result: "void" } } as const;
+  const b = { SteamAPI_Bar: { parameters: [], result: "void" } } as const;
+  handle.open(a);
+  handle.open(a);
+  handle.open(b);
+  assertEquals(calls, ["open /lib.dylib:SteamAPI_Foo", "open /lib.dylib:SteamAPI_Bar"]);
+  handle.closeAll();
+  assertEquals(calls.filter((c) => c === "close").length, 2);
 });

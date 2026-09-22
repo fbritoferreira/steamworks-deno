@@ -1,98 +1,96 @@
 /**
- * Proof of concept: talk to a running Steam client from Deno via FFI.
+ * Proof that the generated bindings drive a real Steam client.
  *
  *   STEAMWORKS_SDK_PATH=./sdk deno task demo [--keep]
  *
- * Uses AppID 480 (Spacewar), Valve's public test app. Unlocks ACH_WIN_ONE_GAME,
- * waits for the store callbacks, fetches global percentages through a CallResult,
- * then clears the achievement again unless --keep is passed.
+ * Uses AppID 480, Valve's public Spacewar test app. Reads identity and app data, lists the
+ * achievement schema, unlocks one achievement and waits for the two callbacks that confirm
+ * it, resolves a call result, then clears the achievement again unless --keep is passed.
  */
-import { callbacks, SteamClient } from "@steamworks/deno";
+import {
+  CallbackId,
+  decodeUserAchievementStored_t,
+  decodeUserStatsStored_t,
+  SteamClient,
+} from "@steamworks/deno";
 
 const keep = Deno.args.includes("--keep");
 const ACH = "ACH_WIN_ONE_GAME";
 
 const steam = SteamClient.init({ appId: 480 });
 const stopPump = steam.startPump(16);
-steam.onAny((id) => {
-  if (
-    id !== callbacks.CallbackId.UserStatsStored && id !== callbacks.CallbackId.UserAchievementStored
-  ) {
-    console.log(`   (callback ${id})`);
-  }
-});
 
 try {
   console.log("library     :", steam.libraryPath);
-  console.log("steamId     :", steam.user.steamId().toString());
-  console.log("persona     :", steam.friends.personaName());
-  console.log("appId/build :", steam.utils.appId(), "/", steam.apps.buildId());
-  console.log("country/lang:", steam.utils.ipCountry(), "/", steam.utils.uiLanguage());
-  console.log("overlay     :", steam.utils.overlayEnabled() ? "enabled" : "disabled");
-  console.log("subscribed  :", steam.apps.isSubscribed());
+  console.log("steamId     :", steam.user.getSteamID().toString());
+  console.log("persona     :", steam.friends.getPersonaName());
+  console.log("appId/build :", steam.utils.getAppID(), "/", steam.apps.getAppBuildId());
+  console.log("country/lang:", steam.utils.getIPCountry(), "/", steam.utils.getSteamUILanguage());
+  console.log("game lang   :", steam.apps.getCurrentGameLanguage());
+  console.log("overlay     :", steam.utils.isOverlayEnabled() ? "enabled" : "disabled");
+  console.log("subscribed  :", steam.apps.bIsSubscribed());
 
   console.log("\nachievements:");
-  for (const a of steam.userStats.listAchievements()) {
-    console.log(`  ${a.achieved ? "[x]" : "[ ]"} ${a.apiName.padEnd(22)} ${a.displayName}`);
+  const names: string[] = [];
+  for (let i = 0; i < steam.userStats.getNumAchievements(); i++) {
+    const apiName = steam.userStats.getAchievementName(i);
+    names.push(apiName);
+    const achieved = steam.userStats.getAchievement(apiName).pbAchieved;
+    const label = steam.userStats.getAchievementDisplayAttribute(apiName, "name");
+    console.log(`  ${achieved ? "[x]" : "[ ]"} ${apiName.padEnd(22)} ${label}`);
   }
 
-  // --- unsolicited callbacks -------------------------------------------------
   const stored = new Promise<void>((resolve) => {
     let statsDone = false;
     let achDone = false;
     const check = () => statsDone && achDone && resolve();
-    steam.on(callbacks.CallbackId.UserStatsStored, (b) => {
-      const m = callbacks.decodeUserStatsStored(b);
-      console.log(`\n<- UserStatsStored_t   gameId=${m.gameId} result=${m.result}`);
+    steam.on(CallbackId.UserStatsStored, (bytes) => {
+      const m = decodeUserStatsStored_t(bytes);
+      console.log(`\n<- UserStatsStored_t       gameId=${m.m_nGameID} result=${m.m_eResult}`);
       statsDone = true;
       check();
     });
-    steam.on(callbacks.CallbackId.UserAchievementStored, (b) => {
-      const m = callbacks.decodeUserAchievementStored(b);
+    steam.on(CallbackId.UserAchievementStored, (bytes) => {
+      const m = decodeUserAchievementStored_t(bytes);
       console.log(
-        `<- UserAchievementStored_t ${m.achievementName} ${m.curProgress}/${m.maxProgress}`,
+        `<- UserAchievementStored_t ${m.m_rgchAchievementName} ${m.m_nCurProgress}/${m.m_nMaxProgress}`,
       );
       achDone = true;
       check();
     });
   });
 
-  const wasAchieved = steam.userStats.isAchieved(ACH);
-  if (wasAchieved) {
-    console.log(`\n${ACH} already unlocked; clearing first so the demo can unlock it.`);
+  if (steam.userStats.getAchievement(ACH).pbAchieved) {
+    console.log(`\n${ACH} is already unlocked; clearing it so the demo can unlock it.`);
     steam.userStats.clearAchievement(ACH);
     steam.userStats.storeStats();
     await sleep(500);
   }
 
-  console.log(`\n-> SetAchievement(${ACH}) + StoreStats()`);
+  console.log(`\n-> SetAchievement(${ACH}) and StoreStats()`);
   const setOk = steam.userStats.setAchievement(ACH);
   const storeOk = steam.userStats.storeStats();
   console.log(`   SetAchievement=${setOk} StoreStats=${storeOk}`);
-  if (!setOk || !storeOk) throw new Error("Steam rejected SetAchievement/StoreStats");
-  await withTimeout(stored, 5000, "waiting for UserStatsStored_t/UserAchievementStored_t");
-  console.log("achieved now:", steam.userStats.isAchieved(ACH));
+  if (!setOk || !storeOk) throw new Error("Steam rejected SetAchievement or StoreStats");
+  await withTimeout(stored, 5000, "the two store callbacks");
+  console.log("achieved now:", steam.userStats.getAchievement(ACH).pbAchieved);
 
-  // --- CallResult --------------------------------------------------------------
-  console.log("\n-> RequestGlobalAchievementPercentages() (CallResult)");
-  const pct = await withTimeout(
-    steam.userStats.requestGlobalAchievementPercentages(),
-    5000,
-    "GlobalAchievementPercentagesReady_t",
-  );
-  console.log(`<- GlobalAchievementPercentagesReady_t result=${pct.result}`);
-  for (const a of steam.userStats.listAchievements()) {
-    const p = steam.userStats.achievedPercent(a.apiName);
-    console.log(`  ${a.apiName.padEnd(22)} ${p === null ? "n/a" : p.toFixed(1) + "%"}`);
+  console.log("\n-> RequestGlobalAchievementPercentages(), a call result");
+  const handle = steam.userStats.requestGlobalAchievementPercentages();
+  const ready = await withTimeout(handle, 5000, "GlobalAchievementPercentagesReady_t");
+  console.log(`<- GlobalAchievementPercentagesReady_t result=${ready.m_eResult}`);
+  for (const apiName of names) {
+    const pct = steam.userStats.getAchievementAchievedPercent(apiName);
+    console.log(`  ${apiName.padEnd(22)} ${pct.ok ? pct.pflPercent.toFixed(1) + "%" : "n/a"}`);
   }
 
   if (!keep) {
-    console.log(`\n-> ClearAchievement(${ACH}) (pass --keep to skip)`);
+    console.log(`\n-> ClearAchievement(${ACH}); pass --keep to leave it unlocked`);
     steam.userStats.clearAchievement(ACH);
     steam.userStats.storeStats();
     await sleep(500);
   }
-  console.log("\nPOC OK");
+  console.log("\nGenerated bindings OK");
 } finally {
   stopPump();
   steam.shutdown();
@@ -103,8 +101,9 @@ function sleep(ms: number): Promise<void> {
 }
 
 function withTimeout<T>(p: Promise<T>, ms: number, what: string): Promise<T> {
-  return Promise.race([
-    p,
-    new Promise<T>((_, reject) => setTimeout(() => reject(new Error(`Timed out ${what}`)), ms)),
-  ]);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<T>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`Timed out waiting for ${what}`)), ms);
+  });
+  return Promise.race([p, timeout]).finally(() => clearTimeout(timer));
 }

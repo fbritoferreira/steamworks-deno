@@ -8,13 +8,14 @@
 
 export const SDK_VERSION = "1.65";
 
-export const SYMBOLS = {
+export const CORE_SYMBOLS = {
   // --- lifecycle -----------------------------------------------------------
   SteamAPI_InitFlat: { parameters: ["buffer"], result: "i32" },
   SteamAPI_Shutdown: { parameters: [], result: "void" },
   SteamAPI_IsSteamRunning: { parameters: [], result: "bool" },
   SteamAPI_RestartAppIfNecessary: { parameters: ["u32"], result: "bool" },
   SteamAPI_GetHSteamPipe: { parameters: [], result: "i32" },
+  SteamAPI_GetHSteamUser: { parameters: [], result: "i32" },
   SteamAPI_ReleaseCurrentThreadMemory: { parameters: [], result: "void" },
 
   // --- manual dispatch -----------------------------------------------------
@@ -26,69 +27,46 @@ export const SYMBOLS = {
     parameters: ["i32", "u64", "buffer", "i32", "i32", "buffer"],
     result: "bool",
   },
-
-  // --- interface accessors -------------------------------------------------
-  SteamAPI_SteamUser_v023: { parameters: [], result: "pointer" },
-  SteamAPI_SteamFriends_v018: { parameters: [], result: "pointer" },
-  SteamAPI_SteamUtils_v011: { parameters: [], result: "pointer" },
-  SteamAPI_SteamUserStats_v013: { parameters: [], result: "pointer" },
-  SteamAPI_SteamApps_v009: { parameters: [], result: "pointer" },
-
-  // --- ISteamUser ----------------------------------------------------------
-  SteamAPI_ISteamUser_GetSteamID: { parameters: ["pointer"], result: "u64" },
-
-  // --- ISteamFriends -------------------------------------------------------
-  SteamAPI_ISteamFriends_GetPersonaName: { parameters: ["pointer"], result: "pointer" },
-  SteamAPI_ISteamFriends_GetPersonaState: { parameters: ["pointer"], result: "i32" },
-  SteamAPI_ISteamFriends_ActivateGameOverlay: { parameters: ["pointer", "buffer"], result: "void" },
-
-  // --- ISteamUtils ---------------------------------------------------------
-  SteamAPI_ISteamUtils_GetAppID: { parameters: ["pointer"], result: "u32" },
-  SteamAPI_ISteamUtils_IsOverlayEnabled: { parameters: ["pointer"], result: "bool" },
-  SteamAPI_ISteamUtils_GetIPCountry: { parameters: ["pointer"], result: "pointer" },
-  SteamAPI_ISteamUtils_GetSteamUILanguage: { parameters: ["pointer"], result: "pointer" },
-
-  // --- ISteamApps ----------------------------------------------------------
-  SteamAPI_ISteamApps_GetAppBuildId: { parameters: ["pointer"], result: "i32" },
-  SteamAPI_ISteamApps_BIsSubscribed: { parameters: ["pointer"], result: "bool" },
-  SteamAPI_ISteamApps_GetCurrentGameLanguage: { parameters: ["pointer"], result: "pointer" },
-
-  // --- ISteamUserStats -----------------------------------------------------
-  SteamAPI_ISteamUserStats_GetNumAchievements: { parameters: ["pointer"], result: "u32" },
-  SteamAPI_ISteamUserStats_GetAchievementName: {
-    parameters: ["pointer", "u32"],
-    result: "pointer",
-  },
-  SteamAPI_ISteamUserStats_GetAchievement: {
-    parameters: ["pointer", "buffer", "buffer"],
-    result: "bool",
-  },
-  SteamAPI_ISteamUserStats_SetAchievement: { parameters: ["pointer", "buffer"], result: "bool" },
-  SteamAPI_ISteamUserStats_ClearAchievement: { parameters: ["pointer", "buffer"], result: "bool" },
-  SteamAPI_ISteamUserStats_StoreStats: { parameters: ["pointer"], result: "bool" },
-  SteamAPI_ISteamUserStats_GetAchievementDisplayAttribute: {
-    parameters: ["pointer", "buffer", "buffer"],
-    result: "pointer",
-  },
-  SteamAPI_ISteamUserStats_RequestGlobalAchievementPercentages: {
-    parameters: ["pointer"],
-    result: "u64",
-  },
-  SteamAPI_ISteamUserStats_GetAchievementAchievedPercent: {
-    parameters: ["pointer", "buffer", "buffer"],
-    result: "bool",
-  },
-  SteamAPI_ISteamUserStats_GetStatInt32: {
-    parameters: ["pointer", "buffer", "buffer"],
-    result: "bool",
-  },
-  SteamAPI_ISteamUserStats_SetStatInt32: {
-    parameters: ["pointer", "buffer", "i32"],
-    result: "bool",
-  },
 } as const satisfies Deno.ForeignLibraryInterface;
 
-export type SteamLib = Deno.DynamicLibrary<typeof SYMBOLS>;
+export type SteamLib = Deno.DynamicLibrary<typeof CORE_SYMBOLS>;
+
+type DlOpen = <S extends Deno.ForeignLibraryInterface>(
+  path: string,
+  symbols: S,
+) => Deno.DynamicLibrary<S>;
+
+/**
+ * One Steam library, opened once per symbol table.
+ *
+ * The SDK exports over a thousand symbols. Loading them all up front costs startup time and
+ * turns one symbol missing from an older SDK into a failure to open anything, so each
+ * interface opens only its own table, all against the same file.
+ */
+export class LibraryHandle {
+  readonly #opened = new Map<
+    Deno.ForeignLibraryInterface,
+    Deno.DynamicLibrary<Deno.ForeignLibraryInterface>
+  >();
+  readonly #dlopen: DlOpen;
+
+  constructor(readonly path: string, dlopen: DlOpen = Deno.dlopen) {
+    this.#dlopen = dlopen;
+  }
+
+  open<S extends Deno.ForeignLibraryInterface>(symbols: S): Deno.DynamicLibrary<S> {
+    const hit = this.#opened.get(symbols);
+    if (hit) return hit as Deno.DynamicLibrary<S>;
+    const lib = this.#dlopen(this.path, symbols);
+    this.#opened.set(symbols, lib);
+    return lib;
+  }
+
+  closeAll(): void {
+    for (const lib of this.#opened.values()) lib.close();
+    this.#opened.clear();
+  }
+}
 
 export interface ResolveLibraryOptions {
   /** Absolute path to libsteam_api.dylib / libsteam_api.so / steam_api64.dll. Wins over everything. */
@@ -137,8 +115,4 @@ export function resolveLibraryPath(opts: ResolveLibraryOptions = {}): string {
 function join(base: string, rel: string): string {
   const sep = base.endsWith("/") || base.endsWith("\\") ? "" : "/";
   return `${base}${sep}${rel}`;
-}
-
-export function openSteamLib(path: string): SteamLib {
-  return Deno.dlopen(path, SYMBOLS);
 }

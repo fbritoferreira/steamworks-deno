@@ -13,3 +13,19 @@ export class SteamInitError extends Error {
     this.name = "SteamInitError";
   }
 }
+
+/** Thrown when Steam has no instance of an interface, usually an SDK version mismatch. */
+export class SteamInterfaceError extends Error {
+  constructor(
+    readonly interfaceName: string,
+    readonly accessor: string,
+    readonly generatedFor: string,
+  ) {
+    super(
+      `Steam returned no ${interfaceName}: the accessor ${accessor} is missing or returned null. ` +
+        `These bindings were generated for SDK ${generatedFor}; check that the library in ` +
+        `redistributable_bin matches.`,
+    );
+    this.name = "SteamInterfaceError";
+  }
+}

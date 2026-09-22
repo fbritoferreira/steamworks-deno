@@ -1,137 +1,133 @@
 import {
-  openSteamLib,
+  CORE_SYMBOLS,
+  LibraryHandle,
   type ResolveLibraryOptions,
   resolveLibraryPath,
-  type SteamLib,
 } from "./lib.ts";
 import { readFixedString } from "./cstring.ts";
-import { SteamInitError, SteamInitResult } from "./errors.ts";
+import { SteamInitError, SteamInitResult, SteamInterfaceError } from "./errors.ts";
 import { type AnyCallbackListener, type CallbackListener, Dispatcher } from "./dispatch.ts";
+import { PACK } from "./layout.ts";
 import {
-  CALLBACK_MSG_SIZE,
-  CallbackId,
-  type CallbackMsg,
-  decodeCallbackMsg,
-  decodeSteamAPICallCompleted,
-} from "./callbacks.ts";
-import { SteamApps, SteamFriends, SteamUser, SteamUserStats, SteamUtils } from "./interfaces.ts";
+  CallbackMsg_t_layout,
+  decodeCallbackMsg_t,
+  decodeSteamAPICallCompleted_t,
+} from "../gen/structs.ts";
+import { CallbackId } from "../gen/callback_ids.ts";
+import * as G from "../gen/mod.ts";
 
 export interface SteamClientOptions extends ResolveLibraryOptions {
-  /** Your Steam AppID. Use 480 (Spacewar) while developing. */
+  /** Your Steam AppID. Use 480, Valve's Spacewar test app, while developing. */
   appId: number;
   /**
-   * Call `SteamAPI_RestartAppIfNecessary` before init. When it returns true Steam is
-   * relaunching the game through the client and this process should exit; we throw
-   * `SteamRestartRequested` in that case. Default false (development).
+   * Ask Steam whether the game should be relaunched through the client first. When it says
+   * yes this throws {@link SteamRestartRequested} and the process should exit.
    */
   restartIfNecessary?: boolean;
 }
 
+/** Steam is relaunching the app through the client; this process should exit. */
 export class SteamRestartRequested extends Error {
   constructor() {
-    super("Steam is relaunching the app through the Steam client; exit now.");
+    super("Steam is relaunching this app through the Steam client; exit now.");
     this.name = "SteamRestartRequested";
   }
 }
 
+type Core = Deno.DynamicLibrary<typeof CORE_SYMBOLS>["symbols"];
+
 /**
- * A connected Steam client. Create with {@link SteamClient.init}, call
- * {@link SteamClient.runCallbacks} every frame (or use {@link SteamClient.startPump}),
- * and {@link SteamClient.shutdown} on exit.
+ * A connected Steam client.
+ *
+ * Create one with {@link SteamClient.init}, call {@link SteamClient.runCallbacks} once per
+ * frame, and {@link SteamClient.shutdown} on exit. Each interface is opened the first time
+ * you reach for it.
  */
 export class SteamClient {
   readonly libraryPath: string;
-  readonly user: SteamUser;
-  readonly friends: SteamFriends;
-  readonly utils: SteamUtils;
-  readonly apps: SteamApps;
-  readonly userStats: SteamUserStats;
 
-  readonly #lib: SteamLib;
+  readonly #handle: LibraryHandle;
+  readonly #core: Core;
   readonly #pipe: number;
   readonly #dispatcher = new Dispatcher();
-  readonly #msgBuf = new Uint8Array(CALLBACK_MSG_SIZE);
+  readonly #msgBuf = new Uint8Array(CallbackMsg_t_layout[PACK].size);
+  readonly #interfaces = new Map<string, unknown>();
   #closed = false;
 
-  private constructor(lib: SteamLib, pipe: number, libraryPath: string) {
-    this.#lib = lib;
+  private constructor(handle: LibraryHandle, core: Core, pipe: number) {
+    this.#handle = handle;
+    this.#core = core;
     this.#pipe = pipe;
-    this.libraryPath = libraryPath;
-    const s = lib.symbols;
-    this.user = new SteamUser(s, s.SteamAPI_SteamUser_v023());
-    this.friends = new SteamFriends(s, s.SteamAPI_SteamFriends_v018());
-    this.utils = new SteamUtils(s, s.SteamAPI_SteamUtils_v011());
-    this.apps = new SteamApps(s, s.SteamAPI_SteamApps_v009());
-    this.userStats = new SteamUserStats(s, s.SteamAPI_SteamUserStats_v013(), this);
+    this.libraryPath = handle.path;
   }
 
   /**
-   * Load the Steam library, initialise the API and switch to manual callback dispatch.
-   * Requires the Steam client to be running and logged in.
+   * Load the Steam library, start the API and switch to manual callback dispatch.
+   * The Steam client must be running and logged in.
    */
   static init(opts: SteamClientOptions): SteamClient {
-    const path = resolveLibraryPath(opts);
-    // Same trick steamworks-rs uses: lets libsteam_api know the AppID without steam_appid.txt.
+    const handle = new LibraryHandle(resolveLibraryPath(opts));
+    // Tells libsteam_api which app this is without a steam_appid.txt beside the binary.
     Deno.env.set("SteamAppId", String(opts.appId));
     Deno.env.set("SteamGameId", String(opts.appId));
 
-    const lib = openSteamLib(path);
+    const core = handle.open(CORE_SYMBOLS).symbols;
     try {
-      if (opts.restartIfNecessary && lib.symbols.SteamAPI_RestartAppIfNecessary(opts.appId)) {
+      if (opts.restartIfNecessary && core.SteamAPI_RestartAppIfNecessary(opts.appId)) {
         throw new SteamRestartRequested();
       }
       const errBuf = new Uint8Array(1024);
-      const result = lib.symbols.SteamAPI_InitFlat(errBuf) as SteamInitResult;
+      const result = core.SteamAPI_InitFlat(errBuf) as SteamInitResult;
       if (result !== SteamInitResult.OK) {
         throw new SteamInitError(result, readFixedString(errBuf, 0, errBuf.length));
       }
-      lib.symbols.SteamAPI_ManualDispatch_Init();
-      const pipe = lib.symbols.SteamAPI_GetHSteamPipe();
-      const client = new SteamClient(lib, pipe, path);
-      // Steam delivers the user's stats/achievement schema during the first frame.
-      // Prime once so `userStats` is usable straight after init.
+      core.SteamAPI_ManualDispatch_Init();
+      const client = new SteamClient(handle, core, core.SteamAPI_GetHSteamPipe());
+      // Steam delivers the user's stats and achievement schema during the first frame,
+      // so pump one before handing the client back.
       client.runCallbacks();
       return client;
     } catch (e) {
-      lib.close();
+      handle.closeAll();
       throw e;
     }
   }
 
-  /** Subscribe to an unsolicited callback by id. Returns an unsubscribe function. */
+  /** Subscribe to one callback id. Returns a function that unsubscribes. */
   on(callbackId: number, listener: CallbackListener): () => void {
     return this.#dispatcher.on(callbackId, listener);
   }
 
-  /** Observe every callback id that comes through the pump. */
+  /** Observe every callback that arrives, whatever its id. */
   onAny(listener: AnyCallbackListener): () => void {
     return this.#dispatcher.onAny(listener);
   }
 
   /**
-   * Turn a `SteamAPICall_t` handle into a promise for the decoded result struct.
-   * Resolves during a later {@link runCallbacks}.
+   * Turn a `SteamAPICall_t` handle into a promise for its decoded result. Generated wrappers
+   * call this; the promise settles during a later {@link runCallbacks}.
    */
   callResult<T>(handle: bigint, callbackId: number, decode: (bytes: Uint8Array) => T): Promise<T> {
     return this.#dispatcher.waitFor(handle, callbackId).then(decode);
   }
 
   /**
-   * Drain Steam's callback queue once. Call every frame from the main thread.
-   * Returns the number of callbacks processed.
+   * Drain Steam's callback queue once, on the calling thread. Call it every frame.
+   * Returns how many callbacks were processed.
    */
   runCallbacks(): number {
-    this.#assertOpen();
-    const s = this.#lib.symbols;
+    if (this.#closed) throw new Error("SteamClient has been shut down");
+    const s = this.#core;
     s.SteamAPI_ManualDispatch_RunFrame(this.#pipe);
     let processed = 0;
     while (s.SteamAPI_ManualDispatch_GetNextCallback(this.#pipe, this.#msgBuf)) {
       try {
-        const msg = decodeCallbackMsg(this.#msgBuf);
-        if (msg.callbackId === CallbackId.SteamAPICallCompleted) {
-          this.#completeCall(msg);
+        const msg = decodeCallbackMsg_t(this.#msgBuf);
+        const param = copyParam(msg.m_pubParam, msg.m_cubParam);
+        if (msg.m_iCallback === CallbackId.SteamAPICallCompleted) {
+          this.#completeCall(param);
         } else {
-          this.#dispatcher.emit(msg.callbackId, copyParam(msg));
+          this.#dispatcher.emit(msg.m_iCallback, param);
         }
         processed++;
       } finally {
@@ -141,7 +137,7 @@ export class SteamClient {
     return processed;
   }
 
-  /** Convenience: pump callbacks on an interval. Returns a stop function. */
+  /** Pump callbacks on a timer, for scripts with no game loop. Returns a stop function. */
   startPump(intervalMs = 16): () => void {
     const id = setInterval(() => {
       if (!this.#closed) this.runCallbacks();
@@ -157,30 +153,30 @@ export class SteamClient {
     if (this.#closed) return;
     this.#closed = true;
     this.#dispatcher.rejectAll(new Error("SteamClient shut down"));
-    this.#lib.symbols.SteamAPI_Shutdown();
-    this.#lib.close();
+    this.#core.SteamAPI_Shutdown();
+    this.#handle.closeAll();
   }
 
-  #completeCall(msg: CallbackMsg): void {
-    const completed = decodeSteamAPICallCompleted(copyParam(msg));
-    const pending = this.#dispatcher.takePending(completed.asyncCall);
-    if (!pending) return; // nobody awaiting this handle
-    const out = new Uint8Array(completed.paramSize);
+  #completeCall(param: Uint8Array): void {
+    const completed = decodeSteamAPICallCompleted_t(param);
+    const pending = this.#dispatcher.takePending(completed.m_hAsyncCall);
+    if (!pending) return; // nobody is waiting on this handle
+    const out = new Uint8Array(completed.m_cubParam);
     const failed = new Uint8Array(1);
-    const ok = this.#lib.symbols.SteamAPI_ManualDispatch_GetAPICallResult(
+    const ok = this.#core.SteamAPI_ManualDispatch_GetAPICallResult(
       this.#pipe,
-      completed.asyncCall,
+      completed.m_hAsyncCall,
       out,
       out.length,
-      completed.callbackId,
+      completed.m_iCallback,
       failed,
     );
     if (!ok || failed[0] !== 0) {
-      pending.reject(new Error(`Steam CallResult ${completed.asyncCall} failed`));
-    } else if (completed.callbackId !== pending.callbackId) {
+      pending.reject(new Error(`Steam call ${completed.m_hAsyncCall} failed`));
+    } else if (completed.m_iCallback !== pending.callbackId) {
       pending.reject(
         new Error(
-          `CallResult callback id mismatch: expected ${pending.callbackId}, got ${completed.callbackId}`,
+          `Call result id mismatch: expected ${pending.callbackId}, got ${completed.m_iCallback}`,
         ),
       );
     } else {
@@ -188,13 +184,108 @@ export class SteamClient {
     }
   }
 
-  #assertOpen(): void {
-    if (this.#closed) throw new Error("SteamClient has been shut down");
+  /** Open one interface's symbol table and wrap its pointer, once. */
+  #iface<S extends Deno.ForeignLibraryInterface, T>(
+    name: string,
+    symbols: S,
+    accessor: string,
+    make: (s: Deno.DynamicLibrary<S>["symbols"], self: Deno.PointerValue, host: SteamClient) => T,
+  ): T {
+    const hit = this.#interfaces.get(name);
+    if (hit) return hit as T;
+    const s = this.#handle.open(symbols).symbols;
+    const get = (s as Record<string, unknown>)[accessor] as (() => Deno.PointerValue) | null;
+    const self = get?.() ?? null;
+    if (self === null) throw new SteamInterfaceError(name, accessor, G.SDK_VERSION);
+    const made = make(s, self, this);
+    this.#interfaces.set(name, made);
+    return made;
+  }
+
+  get user(): G.ISteamUser {
+    return this.#iface(
+      "ISteamUser",
+      G.ISteamUser_symbols,
+      G.ISteamUser.accessor,
+      (s, p, h) => new G.ISteamUser(s, p, h),
+    );
+  }
+
+  get friends(): G.ISteamFriends {
+    return this.#iface(
+      "ISteamFriends",
+      G.ISteamFriends_symbols,
+      G.ISteamFriends.accessor,
+      (s, p, h) => new G.ISteamFriends(s, p, h),
+    );
+  }
+
+  get utils(): G.ISteamUtils {
+    return this.#iface(
+      "ISteamUtils",
+      G.ISteamUtils_symbols,
+      G.ISteamUtils.accessor,
+      (s, p, h) => new G.ISteamUtils(s, p, h),
+    );
+  }
+
+  get apps(): G.ISteamApps {
+    return this.#iface(
+      "ISteamApps",
+      G.ISteamApps_symbols,
+      G.ISteamApps.accessor,
+      (s, p, h) => new G.ISteamApps(s, p, h),
+    );
+  }
+
+  get userStats(): G.ISteamUserStats {
+    return this.#iface(
+      "ISteamUserStats",
+      G.ISteamUserStats_symbols,
+      G.ISteamUserStats.accessor,
+      (s, p, h) => new G.ISteamUserStats(s, p, h),
+    );
+  }
+
+  get remoteStorage(): G.ISteamRemoteStorage {
+    return this.#iface(
+      "ISteamRemoteStorage",
+      G.ISteamRemoteStorage_symbols,
+      G.ISteamRemoteStorage.accessor,
+      (s, p, h) => new G.ISteamRemoteStorage(s, p, h),
+    );
+  }
+
+  get ugc(): G.ISteamUGC {
+    return this.#iface(
+      "ISteamUGC",
+      G.ISteamUGC_symbols,
+      G.ISteamUGC.accessor,
+      (s, p, h) => new G.ISteamUGC(s, p, h),
+    );
+  }
+
+  get input(): G.ISteamInput {
+    return this.#iface(
+      "ISteamInput",
+      G.ISteamInput_symbols,
+      G.ISteamInput.accessor,
+      (s, p, h) => new G.ISteamInput(s, p, h),
+    );
+  }
+
+  get matchmaking(): G.ISteamMatchmaking {
+    return this.#iface(
+      "ISteamMatchmaking",
+      G.ISteamMatchmaking_symbols,
+      G.ISteamMatchmaking.accessor,
+      (s, p, h) => new G.ISteamMatchmaking(s, p, h),
+    );
   }
 }
 
-function copyParam(msg: CallbackMsg): Uint8Array {
-  if (msg.paramPtr === null || msg.paramSize === 0) return new Uint8Array(0);
-  const view = new Deno.UnsafePointerView(msg.paramPtr);
-  return new Uint8Array(view.getArrayBuffer(msg.paramSize).slice(0));
+function copyParam(ptr: Deno.PointerValue, size: number): Uint8Array {
+  if (ptr === null || size <= 0) return new Uint8Array(0);
+  const view = new Deno.UnsafePointerView(ptr);
+  return new Uint8Array(view.getArrayBuffer(size).slice(0));
 }
