@@ -49,14 +49,42 @@ export class Dispatcher {
     return set.size + this.#anyListeners.size;
   }
 
-  /** Register a CallResult and get a promise for its raw struct bytes. */
-  waitFor(handle: bigint, callbackId: number): Promise<Uint8Array> {
+  /**
+   * Register a call result and get a promise for its raw struct bytes.
+   *
+   * `timeoutMs` rejects the promise if Steam never completes the call, which otherwise
+   * leaves it pending for the life of the process. Pass 0 to wait indefinitely.
+   */
+  waitFor(handle: bigint, callbackId: number, timeoutMs = 0): Promise<Uint8Array> {
     return new Promise((resolve, reject) => {
       if (handle === 0n) {
         reject(new Error("Steam returned an invalid SteamAPICall_t (0)"));
         return;
       }
-      this.#pending.set(handle, { callbackId, resolve, reject });
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      const settle = (fn: () => void) => {
+        if (timer !== undefined) clearTimeout(timer);
+        this.#pending.delete(handle);
+        fn();
+      };
+      const entry: PendingCall = {
+        callbackId,
+        resolve: (bytes) => settle(() => resolve(bytes)),
+        reject: (err) => settle(() => reject(err)),
+      };
+      if (timeoutMs > 0) {
+        timer = setTimeout(() => {
+          entry.reject(
+            new Error(
+              `Steam call ${handle} did not complete within ${timeoutMs}ms. ` +
+                `Callbacks are only delivered while runCallbacks() is being called.`,
+            ),
+          );
+        }, timeoutMs);
+        // Do not hold the process open waiting for a call result.
+        Deno.unrefTimer(timer);
+      }
+      this.#pending.set(handle, entry);
     });
   }
 
