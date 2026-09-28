@@ -216,6 +216,7 @@ handed out on the app's own partner page. Spacewar is not ours, so nothing here 
 successful decrypt against a live ticket. The live test verifies everything around it: the ticket is
 requested, arrives as a call result, comes back out as bytes, and the decrypt refuses the wrong key
 — exactly what a ticket from an app you do not own must produce.
+
 ## Known limitations
 
 - **Game coordinator messaging is unreachable, upstream.** `isteamgamecoordinator.h` ships in the
