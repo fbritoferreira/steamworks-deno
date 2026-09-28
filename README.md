@@ -232,9 +232,11 @@ requested, arrives as a call result, comes back out as bytes, and the decrypt re
   the `STEAMWORKS_PARTNER_COOKIE` repository secret, the `Cookie` header a logged-in browser sends
   to partner.steamgames.com — and stores nothing beyond the ephemeral runner disk. With the secret
   set, the layout check, the library check and `deno task gen:check` run on Linux and Windows; a new
-  Steamworks SDK release turns the schema check red until the bindings are regenerated. The live
-  tests still need the SDK plus a running, logged-in Steam client, which no runner has: those run
-  locally, gated on `STEAMWORKS_SDK_PATH`.
+  Steamworks SDK release turns the schema check red until the bindings are regenerated. The session
+  token inside the cookie lives about a day and a runner cannot refresh it, so a stale or failing
+  download skips the SDK checks with a notice: red in that workflow always means the bindings, never
+  the credential. The live tests still need the SDK plus a running, logged-in Steam client, which no
+  runner has: those run locally, gated on `STEAMWORKS_SDK_PATH`.
 
 ## Verifying on your platform
 
@@ -245,8 +247,9 @@ and Windows: every struct size and field offset against the runner's own C++ com
 generated symbol resolved in the redistributable library, with a call into the library that must
 answer rather than crash. It also diffs the committed bindings against the downloaded SDK's schema,
 which turns red on a new Steamworks release until `deno task gen` regenerates them. The SDK is never
-cached or stored anywhere beyond the ephemeral runner disk, and a fork pull request, which cannot
-see repository secrets, skips these checks with a notice instead of failing.
+cached or stored anywhere beyond the ephemeral runner disk. A fork pull request, which cannot see
+repository secrets, skips these checks with a notice instead of failing — and so does an expired
+cookie, since the session token inside lives about a day and no runner can refresh it.
 
 The other half — the part a runner can never do, because no Steam client runs there — is one
 command, with Steam running and logged in:
