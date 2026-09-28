@@ -7,6 +7,33 @@ only describes one.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Content is derived from
 the release tags, their commits and the pull requests that carried them.
 
+## [0.5.0] - 2026-09-28
+
+Encrypted app tickets, decrypted and checked (#6), with the status section made truthful and a
+changelog added (#7), and verification that runs anywhere (#8).
+
+### Added
+
+- `SteamEncryptedAppTicket`: bindings for the SDK's separate `sdkencryptedappticket` library, which
+  decrypts and checks the ticket `ISteamUser.requestEncryptedAppTicket` produces. The library never
+  talks to the Steam client, so a backend holding a ticket and the app's secret key can verify it
+  with nothing else running. It resolves like the client library does (`libraryPath`, `sdkPath`,
+  `STEAMWORKS_TICKET_LIB_PATH`, `STEAMWORKS_SDK_PATH`) and refuses calls after `close`. The live
+  test asserts the honest result on AppID 480: a ticket requested, arrived and pulled as bytes, and
+  a decrypt that refuses a key its app does not own.
+- `CHANGELOG.md`, this file, covering every release from v0.0.1, and a Known limitations section in
+  the README: game coordinator messaging is unreachable upstream, and everything that needs the SDK
+  runs only on a machine that has it.
+
+### Changed
+
+- `deno task verify` selects a C++ compiler — `CXX` if set, then `clang++`, `c++`, `g++` — instead
+  of requiring clang, and names the one it used. It also verifies the dedicated-server path now:
+  init, the two server-only interfaces, the callback pipe, server identity, and the documented null
+  behaviour of the seven shared interfaces on a development machine.
+- The README's Status section states what 0.4.0 ships instead of listing finished work as roadmap,
+  and "Verifying on your platform" carries per-OS prerequisites.
+
 ## [0.4.0] - 2026-09-23
 
 Dedicated game server support (#5), with a raylib demo game alongside it (#4).
