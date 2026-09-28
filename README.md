@@ -37,8 +37,9 @@ Still missing:
 - the live half of verification on Linux and Windows: layouts and symbols are compiler- and
   library-checked in CI, but no Steam client has read them there yet
 - the seven shared dedicated-server interfaces, against a real dedicated server's steamclient
-- decrypting an encrypted app ticket: the bindings fetch the bytes, making sense of them is still
-  yours
+- a successful decrypt against a live ticket: the bindings decrypt and check them now
+  ([Encrypted app tickets](#encrypted-app-tickets)), but Spacewar's key is not ours, so the live
+  test can only watch the wrong key fail
 - the [known limitations](#known-limitations) below
 
 What shipped in each tagged release is in the [changelog](CHANGELOG.md).
