@@ -31,8 +31,10 @@ jobs:
       # run and never cached or uploaded: only the ephemeral runner disk holds a copy. The
       # download needs a logged-in partner session, held as the STEAMWORKS_PARTNER_COOKIE
       # repository secret — the Cookie header a browser sends to partner.steamgames.com.
-      # A fork pull request cannot see repository secrets, so the SDK checks skip with a
-      # notice rather than fail.
+      # The session token inside is short-lived (roughly a day), and a runner cannot refresh
+      # it, so an expired cookie skips these checks with a notice rather than failing:
+      # red in this workflow means the bindings are wrong, never the plumbing. A fork pull
+      # request cannot see repository secrets and skips the same way.
       - name: Download the Steamworks SDK
         shell: bash
         env:
@@ -42,12 +44,15 @@ jobs:
             echo "::notice title=SDK checks skipped::STEAMWORKS_PARTNER_COOKIE is not set on this run (a fork pull request never sees repository secrets). Add it under Settings → Secrets and variables → Actions to run the SDK checks."
             exit 0
           fi
-          curl -fsSL --cookie "$PARTNER_COOKIE" \
-            -o "$RUNNER_TEMP/steamworks_sdk.zip" \
-            https://partner.steamgames.com/downloads/steamworks_sdk.zip
+          if ! curl -fsSL --cookie "$PARTNER_COOKIE" \
+              -o "$RUNNER_TEMP/steamworks_sdk.zip" \
+              https://partner.steamgames.com/downloads/steamworks_sdk.zip; then
+            echo "::notice title=SDK checks skipped::The SDK download failed. If this persists, check the STEAMWORKS_PARTNER_COOKIE secret."
+            exit 0
+          fi
           if [ "$(head -c 2 "$RUNNER_TEMP/steamworks_sdk.zip")" != "PK" ]; then
-            echo "The partner site served something other than a zip, most likely its login page: refresh the STEAMWORKS_PARTNER_COOKIE secret with a new session cookie." >&2
-            exit 1
+            echo "::notice title=SDK checks skipped::The partner site served something other than a zip, most likely its login page: the session cookie has expired. Refresh the STEAMWORKS_PARTNER_COOKIE secret with a new Cookie header to resume the SDK checks."
+            exit 0
           fi
           if [ "$RUNNER_OS" = "Windows" ]; then
             /c/Windows/System32/tar.exe -xf "$RUNNER_TEMP/steamworks_sdk.zip" -C "$RUNNER_TEMP"

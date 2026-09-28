@@ -18,8 +18,11 @@ the release tags, their commits and the pull requests that carried them.
 - CI that downloads the Steamworks SDK from Valve on every push and verifies the bindings on Linux
   and Windows: the two checks above, plus `deno task gen:check` against the downloaded SDK's schema,
   which turns red on a new Steamworks release until the bindings are regenerated. The download is
-  authenticated by the `STEAMWORKS_PARTNER_COOKIE` repository secret; without it the checks skip
-  with a notice, so fork pull requests stay green.
+  authenticated by the `STEAMWORKS_PARTNER_COOKIE` repository secret; a missing, stale or failing
+  download skips with a notice — red is reserved for binding regressions — so fork pull requests and
+  an expired cookie stay green. On Windows the layout harness now parses its output as CRLF: the
+  first authenticated run there compared zero offsets because every line ended in a carriage return
+  no regex matched.
 
 ## [0.5.0] - 2026-09-28
 
