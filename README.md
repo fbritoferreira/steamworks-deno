@@ -13,20 +13,32 @@ identity, overlay, and the rest of the flat C API.
 
 ## Status
 
-Working, and verified on macOS against a running Steam client:
+Working, and verified on macOS arm64 against a running Steam client:
 
 - all 25 interfaces Steam hands a client, reachable from `SteamClient`
 - callbacks delivered decoded by name, or as raw bytes if you prefer
 - call results returned as promises
 - a binary built with `deno compile` loads its embedded library and talks to Steam
 
+The game-server path has the same shape through `SteamGameServerClient`: nine interfaces, manual
+dispatch, decoded callbacks, call results as promises. `ISteamGameServer` and
+`ISteamGameServerStats` are verified on a development machine. The seven interfaces a server shares
+with a client need a real dedicated server to reach and are unverified; see
+[Dedicated game servers](#dedicated-game-servers) for which and why.
+
 Continuous integration runs type check, lint and tests on Linux, macOS and Windows. The Windows
 struct layouts are computed and checked against a C compiler, but no Steam client has read them
 there yet.
 
-Everything else is on the roadmap: generated bindings for all 34 interfaces from `steam_api.json`,
-per-platform struct layouts (Windows packs callback structs at 8 bytes, macOS/Linux at 4), Linux and
-Windows CI, a raylib demo game, JSR publish.
+Still missing:
+
+- live verification on Linux and Windows, against a real Steam client on each
+- the seven shared dedicated-server interfaces, against a real dedicated server's steamclient
+- decrypting an encrypted app ticket: the bindings fetch the bytes, making sense of them is still
+  yours
+- the [known limitations](#known-limitations) below
+
+What shipped in each tagged release is in the [changelog](CHANGELOG.md).
 
 ## Requirements
 
@@ -159,6 +171,19 @@ return different pointers.
 shares with a client, among them HTTP, UGC and the networking interfaces, are reached through a
 dedicated server's own steamclient library. On a development machine running the Steam client they
 return null, and the accessor error names which one failed.
+
+## Known limitations
+
+- **Game coordinator messaging is unreachable, upstream.** `isteamgamecoordinator.h` ships in the
+  SDK, but Valve's `steam_api.json` — the schema these bindings generate from — does not describe
+  `ISteamGameCoordinator`, and the flat C API has no GameCoordinator entry points. There is nothing
+  to bind until Valve publishes the interface; that is a gap in the schema Valve ships, not a bug
+  here.
+- **Everything that needs the SDK runs only on a machine that has it.** The SDK licence forbids
+  redistributing it, so no CI runner ever holds a copy: the layout harness and the live tests skip
+  themselves there, and `deno task gen:check` and `deno task verify` do not run at all. Binding
+  drift — committed generated code that no longer matches the SDK — is only caught locally, where
+  `STEAMWORKS_SDK_PATH` points at a real SDK (the layout harness also needs `clang`).
 
 ## Verifying on your platform
 
