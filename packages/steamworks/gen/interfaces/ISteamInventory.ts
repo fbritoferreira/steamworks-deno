@@ -27,7 +27,7 @@ import type { EResult } from "../enums.ts";
 
 /**
  * Deno FFI symbol table for `ISteamInventory`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamInventory_symbols = {
   SteamAPI_ISteamInventory_GetResultStatus: { parameters: ["pointer", "i32"], result: "i32" },
@@ -153,6 +153,7 @@ export const ISteamInventory_symbols = {
     result: "bool",
   },
   SteamAPI_SteamInventory_v003: { parameters: [], result: "pointer", optional: true },
+  SteamAPI_SteamGameServerInventory_v003: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
 /**

@@ -16,7 +16,7 @@ import type { EGamePerformanceSetting } from "../enums.ts";
 
 /**
  * Deno FFI symbol table for `ISteamApps`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamApps_symbols = {
   SteamAPI_ISteamApps_BIsSubscribed: { parameters: ["pointer"], result: "bool" },

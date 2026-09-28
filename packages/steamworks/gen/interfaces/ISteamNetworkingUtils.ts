@@ -34,7 +34,7 @@ import type {
 
 /**
  * Deno FFI symbol table for `ISteamNetworkingUtils`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamNetworkingUtils_symbols = {
   SteamAPI_ISteamNetworkingUtils_AllocateMessage: {

@@ -23,6 +23,23 @@ the release tags, their commits and the pull requests that carried them.
   an expired cookie stay green. On Windows the layout harness now parses its output as CRLF: the
   first authenticated run there compared zero offsets because every line ended in a carriage return
   no regex matched.
+- `deno task verify --dedicated`: the dedicated-server path, verified end to end. The mode runs the
+  offline checks, then starts a real game server — AppID 480, anonymous logon, no desktop Steam
+  client — using the standalone `steamclient` library steamcmd ships, placed where libsteam_api
+  looks for it (the working directory on macOS, `~/.steam/sdk64` on Linux). It asserts init, a
+  `SteamServersConnected_t` callback decoded through the server pipe on the machine's own struct
+  layout, all nine server interfaces answering — the seven shared with a client included — the
+  server's anonymous SteamID, and the refusal of a call after shutdown.
+- A `dedicated` CI job on a Linux runner: it fetches Valve's standalone steamclient anonymously
+  (`steamcmd +login anonymous +download_depot 1007 1006`, app 1007 being the Steamworks SDK Redist)
+  and runs the mode above on every push, behind the same cookie-gated SDK download and the same
+  skip-with-notice semantics. The plain offline matrix gained macOS.
+- The dedicated-server accessors now ship in the generated symbol tables. Until now each interface's
+  table carried only its client accessor, so `SteamAPI_SteamGameServerHTTP_v003` and its six
+  siblings never resolved and every shared interface refused with a `SteamInterfaceError` on any
+  machine — the "dev machine answers null" story was that refusal, misread. Codegen now emits every
+  accessor an interface has; on a standalone steamclient all seven answer, and the full run's
+  development-machine assertion still guards the desktop-client path.
 
 ## [0.5.0] - 2026-09-28
 

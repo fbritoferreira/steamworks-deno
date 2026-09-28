@@ -13,7 +13,7 @@ import type { ESteamDeviceFormFactor } from "../enums.ts";
 
 /**
  * Deno FFI symbol table for `ISteamRemotePlay`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamRemotePlay_symbols = {
   SteamAPI_ISteamRemotePlay_GetSessionCount: { parameters: ["pointer"], result: "u32" },

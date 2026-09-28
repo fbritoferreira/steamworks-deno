@@ -20,7 +20,7 @@ import type {
 
 /**
  * Deno FFI symbol table for `ISteamUtils`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamUtils_symbols = {
   SteamAPI_ISteamUtils_GetSecondsSinceAppActive: { parameters: ["pointer"], result: "u32" },
@@ -99,6 +99,7 @@ export const ISteamUtils_symbols = {
   SteamAPI_ISteamUtils_GetSteamHardwareDefaultConfig: { parameters: ["pointer"], result: "i32" },
   SteamAPI_ISteamUtils_IsRunningUnderProton: { parameters: ["pointer"], result: "bool" },
   SteamAPI_SteamUtils_v011: { parameters: [], result: "pointer", optional: true },
+  SteamAPI_SteamGameServerUtils_v011: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
 /**

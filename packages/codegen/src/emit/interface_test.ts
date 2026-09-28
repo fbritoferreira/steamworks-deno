@@ -33,6 +33,21 @@ Deno.test("the symbol table types every parameter and marks the accessor optiona
   assertStringIncludes(out, 'static readonly accessor = "SteamAPI_SteamUserStats_v013";');
 });
 
+Deno.test("the symbol table carries every accessor, client and game server both", () => {
+  const out = emitInterface(iface("ISteamUtils"), ctx, resolver);
+  assertStringIncludes(
+    out,
+    'SteamAPI_SteamUtils_v011: { parameters: [], result: "pointer", optional: true },',
+  );
+  assertStringIncludes(
+    out,
+    'SteamAPI_SteamGameServerUtils_v011: { parameters: [], result: "pointer", optional: true },',
+  );
+  // The class still hands out the client accessor; the game server one is reached
+  // through SteamGameServerClient, which looks it up by name.
+  assertStringIncludes(out, 'static readonly accessor = "SteamAPI_SteamUtils_v011";');
+});
+
 Deno.test("an out scalar is hidden and returned alongside the C return value", () => {
   const out = emitInterface(iface("ISteamUserStats"), ctx, resolver);
   assertStringIncludes(

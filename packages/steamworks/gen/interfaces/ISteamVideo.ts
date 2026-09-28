@@ -5,7 +5,7 @@ import { cstrArg, readScalar, scalarOut } from "../../src/marshal.ts";
 
 /**
  * Deno FFI symbol table for `ISteamVideo`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamVideo_symbols = {
   SteamAPI_ISteamVideo_GetVideoURL: { parameters: ["pointer", "u32"], result: "void" },

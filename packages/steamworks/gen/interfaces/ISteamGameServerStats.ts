@@ -11,7 +11,7 @@ import {
 
 /**
  * Deno FFI symbol table for `ISteamGameServerStats`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamGameServerStats_symbols = {
   SteamAPI_ISteamGameServerStats_RequestUserStats: {

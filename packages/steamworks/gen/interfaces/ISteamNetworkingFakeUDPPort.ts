@@ -7,7 +7,7 @@ import type { EResult } from "../enums.ts";
 
 /**
  * Deno FFI symbol table for `ISteamNetworkingFakeUDPPort`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamNetworkingFakeUDPPort_symbols = {
   SteamAPI_ISteamNetworkingFakeUDPPort_DestroyFakeUDPPort: {

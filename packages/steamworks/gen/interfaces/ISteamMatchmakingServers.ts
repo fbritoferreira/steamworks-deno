@@ -5,7 +5,7 @@ import { writeScalarArray } from "../../src/marshal.ts";
 
 /**
  * Deno FFI symbol table for `ISteamMatchmakingServers`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamMatchmakingServers_symbols = {
   SteamAPI_ISteamMatchmakingServers_RequestInternetServerList: {

@@ -16,7 +16,7 @@ import type { EP2PSend, ESNetSocketConnectionType } from "../enums.ts";
 
 /**
  * Deno FFI symbol table for `ISteamNetworking`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamNetworking_symbols = {
   SteamAPI_ISteamNetworking_SendP2PPacket: {
@@ -156,6 +156,7 @@ export const ISteamNetworking_symbols = {
   },
   SteamAPI_ISteamNetworking_GetMaxPacketSize: { parameters: ["pointer", "u32"], result: "i32" },
   SteamAPI_SteamNetworking_v006: { parameters: [], result: "pointer", optional: true },
+  SteamAPI_SteamGameServerNetworking_v006: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
 /**

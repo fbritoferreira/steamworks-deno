@@ -46,7 +46,7 @@ import type { EResult, ESteamNetworkingAvailability } from "../enums.ts";
 
 /**
  * Deno FFI symbol table for `ISteamNetworkingSockets`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamNetworkingSockets_symbols = {
   SteamAPI_ISteamNetworkingSockets_CreateListenSocketIP: {
@@ -229,6 +229,11 @@ export const ISteamNetworkingSockets_symbols = {
     result: "pointer",
   },
   SteamAPI_SteamNetworkingSockets_SteamAPI_v013: {
+    parameters: [],
+    result: "pointer",
+    optional: true,
+  },
+  SteamAPI_SteamGameServerNetworkingSockets_SteamAPI_v013: {
     parameters: [],
     result: "pointer",
     optional: true,

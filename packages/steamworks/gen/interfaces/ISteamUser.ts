@@ -23,7 +23,7 @@ import type {
 
 /**
  * Deno FFI symbol table for `ISteamUser`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamUser_symbols = {
   SteamAPI_ISteamUser_GetHSteamUser: { parameters: ["pointer"], result: "i32" },

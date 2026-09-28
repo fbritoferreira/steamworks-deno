@@ -6,7 +6,7 @@ import { decodegameserveritem_t, gameserveritem_t, gameserveritem_t_layout } fro
 
 /**
  * Deno FFI symbol table for `ISteamMatchmakingPingResponse`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamMatchmakingPingResponse_symbols = {
   SteamAPI_ISteamMatchmakingPingResponse_ServerResponded: {

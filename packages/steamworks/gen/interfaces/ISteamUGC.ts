@@ -69,7 +69,7 @@ import type {
 
 /**
  * Deno FFI symbol table for `ISteamUGC`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamUGC_symbols = {
   SteamAPI_ISteamUGC_CreateQueryUserUGCRequest: {
@@ -337,6 +337,7 @@ export const ISteamUGC_symbols = {
     result: "u32",
   },
   SteamAPI_SteamUGC_v021: { parameters: [], result: "pointer", optional: true },
+  SteamAPI_SteamGameServerUGC_v021: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
 /**

@@ -5,7 +5,7 @@ import type { EParentalFeature } from "../enums.ts";
 
 /**
  * Deno FFI symbol table for `ISteamParentalSettings`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamParentalSettings_symbols = {
   SteamAPI_ISteamParentalSettings_BIsParentalLockEnabled: {

@@ -6,7 +6,7 @@ import type { EVRScreenshotType } from "../enums.ts";
 
 /**
  * Deno FFI symbol table for `ISteamScreenshots`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamScreenshots_symbols = {
   SteamAPI_ISteamScreenshots_WriteScreenshot: {

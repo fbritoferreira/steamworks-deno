@@ -7,7 +7,7 @@ import type { EAccountType } from "../enums.ts";
 
 /**
  * Deno FFI symbol table for `ISteamClient`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamClient_symbols = {
   SteamAPI_ISteamClient_CreateSteamPipe: { parameters: ["pointer"], result: "i32" },
