@@ -89,7 +89,10 @@ try {
   ]);
 
   const run = await new Deno.Command(exe, { stdout: "piped" }).output();
-  const text = new TextDecoder().decode(run.stdout);
+  if (!run.success) throw new Error(`the layout harness exited ${run.code}`);
+  // The Windows C runtime writes \r\n; without stripping it every line ends in \r and
+  // no regex matches, which once read as "0 sizes and offsets agree".
+  const text = new TextDecoder().decode(run.stdout).replaceAll("\r", "");
   const table = JSON.parse(await Deno.readTextFile(join(here, "gen", "layout.json")));
   const expected = table.pack[String(PACK)] as Record<
     string,
