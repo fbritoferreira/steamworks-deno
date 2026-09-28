@@ -175,15 +175,29 @@ export STEAMWORKS_SDK_PATH=/path/to/steamworks_sdk   # the folder holding public
 deno task verify
 ```
 
-It checks every struct size and field offset against your own C compiler, connects to Steam, reads
-the achievement schema, and unlocks an achievement to confirm the callback decodes. It prints one
-line per check and exits non-zero on any failure.
+Besides Deno, the SDK and a running Steam client, the layout check needs a C++ compiler:
+
+- **macOS:** Xcode's command-line tools (`xcode-select --install`) provide `clang++`.
+- **Linux:** `clang++` or `g++`, whichever the distribution offers, or set `CXX` to another.
+- **Windows:** LLVM's clang (`winget install LLVM.LLVM`), or set `CXX` to a clang-compatible
+  compiler. MSVC is not supported; its flags differ.
+
+The harness compiles with `CXX` when that variable is set, otherwise with the first of `clang++`,
+`c++`, `g++` that compiles it, and the check's printed line names the compiler that ran.
+
+The command checks every struct size and field offset against that compiler, connects to Steam as a
+client, reads the achievement schema, and unlocks an achievement to confirm the callback decodes. It
+then starts a dedicated game server — UDP 27015 and 27016 must be free — and checks its init, its
+two interfaces, a callback pump, its identity, the documented null answer the seven client-shared
+interfaces give on a development machine, and the refusal to call after shutdown. It prints one line
+per check and exits non-zero on any failure.
 
 **Verified so far:** macOS on arm64.
 
 **Not yet verified:** Linux and Windows. The struct layouts for both are computed and checked
-against a C compiler, but no Steam client has read them there. If you run the command above on
-either, the result is worth reporting in an issue.
+against a C++ compiler, but no Steam client has read them there. If you run the command above on
+either, open an issue with the lines it printed: a pass verifies the platform, and a fail is a bug
+worth seeing.
 
 ## Repository layout
 
