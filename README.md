@@ -26,13 +26,16 @@ dispatch, decoded callbacks, call results as promises. `ISteamGameServer` and
 with a client need a real dedicated server to reach and are unverified; see
 [Dedicated game servers](#dedicated-game-servers) for which and why.
 
-Continuous integration runs type check, lint and tests on Linux, macOS and Windows. The Windows
-struct layouts are computed and checked against a C compiler, but no Steam client has read them
-there yet.
+Continuous integration runs type check, lint and tests on Linux, macOS and Windows. It also
+downloads the Steamworks SDK from Valve on every push and, on Linux and Windows, checks every struct
+layout against the runner's own C++ compiler, resolves every generated symbol in the redistributable
+library, and diffs the committed bindings against the downloaded SDK's schema. No Steam client runs
+on a runner, so the live checks remain the part only a human can do.
 
 Still missing:
 
-- live verification on Linux and Windows, against a real Steam client on each
+- the live half of verification on Linux and Windows: layouts and symbols are compiler- and
+  library-checked in CI, but no Steam client has read them there yet
 - the seven shared dedicated-server interfaces, against a real dedicated server's steamclient
 - decrypting an encrypted app ticket: the bindings fetch the bytes, making sense of them is still
   yours
@@ -224,19 +227,29 @@ requested, arrives as a call result, comes back out as bytes, and the decrypt re
   `ISteamGameCoordinator`, and the flat C API has no GameCoordinator entry points. There is nothing
   to bind until Valve publishes the interface; that is a gap in the schema Valve ships, not a bug
   here.
-- **Everything that needs the SDK runs only on a machine that has it.** The SDK licence forbids
-  redistributing it, so no CI runner ever holds a copy: the layout harness and the live tests skip
-  themselves there, and `deno task gen:check` and `deno task verify` do not run at all. Binding
-  drift — committed generated code that no longer matches the SDK — is only caught locally, where
-  `STEAMWORKS_SDK_PATH` points at a real SDK (the layout harness also needs `clang`).
+- **The live checks need a human; everything else runs in CI against a downloaded SDK.** The SDK
+  licence forbids redistributing it, so CI downloads it from Valve on every run — authenticated by
+  the `STEAMWORKS_PARTNER_COOKIE` repository secret, the `Cookie` header a logged-in browser sends
+  to partner.steamgames.com — and stores nothing beyond the ephemeral runner disk. With the secret
+  set, the layout check, the library check and `deno task gen:check` run on Linux and Windows; a new
+  Steamworks SDK release turns the schema check red until the bindings are regenerated. The live
+  tests still need the SDK plus a running, logged-in Steam client, which no runner has: those run
+  locally, gated on `STEAMWORKS_SDK_PATH`.
 
 ## Verifying on your platform
 
-Continuous integration proves this compiles and the unit tests pass on Linux, macOS and Windows, but
-no runner has a Steam client, so nothing there proves a real callback decodes correctly on that
-platform.
+Continuous integration runs the offline half on every push. It downloads the SDK from Valve — the
+download is authenticated by the `STEAMWORKS_PARTNER_COOKIE` repository secret, the `Cookie` header
+a logged-in browser sends to partner.steamgames.com — and runs `deno task verify --offline` on Linux
+and Windows: every struct size and field offset against the runner's own C++ compiler, and every
+generated symbol resolved in the redistributable library, with a call into the library that must
+answer rather than crash. It also diffs the committed bindings against the downloaded SDK's schema,
+which turns red on a new Steamworks release until `deno task gen` regenerates them. The SDK is never
+cached or stored anywhere beyond the ephemeral runner disk, and a fork pull request, which cannot
+see repository secrets, skips these checks with a notice instead of failing.
 
-One command does, with Steam running and logged in:
+The other half — the part a runner can never do, because no Steam client runs there — is one
+command, with Steam running and logged in:
 
 ```sh
 git clone https://github.com/fbritoferreira/steamworks-deno
@@ -262,12 +275,12 @@ two interfaces, a callback pump, its identity, the documented null answer the se
 interfaces give on a development machine, and the refusal to call after shutdown. It prints one line
 per check and exits non-zero on any failure.
 
-**Verified so far:** macOS on arm64.
+**Verified so far:** macOS on arm64. Struct layouts and library symbols are compiler- and
+library-checked by CI on Linux and Windows with every push.
 
-**Not yet verified:** Linux and Windows. The struct layouts for both are computed and checked
-against a C++ compiler, but no Steam client has read them there. If you run the command above on
-either, open an issue with the lines it printed: a pass verifies the platform, and a fail is a bug
-worth seeing.
+**Not yet verified:** the live half on Linux and Windows — no Steam client has read a callback there
+yet. If you run the command above on either, open an issue with the lines it printed: a pass
+verifies the platform, and a fail is a bug worth seeing.
 
 ## Repository layout
 

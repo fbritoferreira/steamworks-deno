@@ -1,0 +1,75 @@
+name: sdk-verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # What a runner can prove without a Steam client: the struct layouts against its own
+  # compiler, every generated symbol resolving in the redistributable library, and the
+  # committed bindings matching the SDK's schema. The live checks need a logged-in Steam
+  # client, which no runner has; `deno task verify` remains the human half.
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      # The SDK licence forbids redistributing it, so it is downloaded from Valve on every
+      # run and never cached or uploaded: only the ephemeral runner disk holds a copy. The
+      # download needs a logged-in partner session, held as the STEAMWORKS_PARTNER_COOKIE
+      # repository secret — the Cookie header a browser sends to partner.steamgames.com.
+      # A fork pull request cannot see repository secrets, so the SDK checks skip with a
+      # notice rather than fail.
+      - name: Download the Steamworks SDK
+        shell: bash
+        env:
+          PARTNER_COOKIE: ${{ secrets.STEAMWORKS_PARTNER_COOKIE }}
+        run: |
+          if [ -z "$PARTNER_COOKIE" ]; then
+            echo "::notice title=SDK checks skipped::STEAMWORKS_PARTNER_COOKIE is not set on this run (a fork pull request never sees repository secrets). Add it under Settings → Secrets and variables → Actions to run the SDK checks."
+            exit 0
+          fi
+          curl -fsSL --cookie "$PARTNER_COOKIE" \
+            -o "$RUNNER_TEMP/steamworks_sdk.zip" \
+            https://partner.steamgames.com/downloads/steamworks_sdk.zip
+          if [ "$(head -c 2 "$RUNNER_TEMP/steamworks_sdk.zip")" != "PK" ]; then
+            echo "The partner site served something other than a zip, most likely its login page: refresh the STEAMWORKS_PARTNER_COOKIE secret with a new session cookie." >&2
+            exit 1
+          fi
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            /c/Windows/System32/tar.exe -xf "$RUNNER_TEMP/steamworks_sdk.zip" -C "$RUNNER_TEMP"
+          else
+            unzip -q "$RUNNER_TEMP/steamworks_sdk.zip" -d "$RUNNER_TEMP"
+          fi
+          echo "STEAMWORKS_SDK_PATH=$RUNNER_TEMP/sdk" >> "$GITHUB_ENV"
+
+      - name: C++ compiler for the layout check
+        if: runner.os == 'Windows' && env.STEAMWORKS_SDK_PATH != ''
+        shell: bash
+        run: command -v clang++ || choco install llvm -y --no-progress
+
+      # Blocking on purpose: red here means the committed bindings no longer match the
+      # SDK Valve is distributing — regenerate them with `deno task gen` against the new
+      # SDK.
+      - name: Bindings match the SDK schema
+        if: env.STEAMWORKS_SDK_PATH != ''
+        shell: bash
+        run: deno task gen:check
+
+      - name: Verify the bindings against the SDK on this platform
+        if: env.STEAMWORKS_SDK_PATH != ''
+        shell: bash
+        run: deno task verify --offline
