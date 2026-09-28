@@ -172,6 +172,51 @@ shares with a client, among them HTTP, UGC and the networking interfaces, are re
 dedicated server's own steamclient library. On a development machine running the Steam client they
 return null, and the accessor error names which one failed.
 
+## Encrypted app tickets
+
+`ISteamUser` can hand you a ticket encrypted with your app's secret key, and a second library in the
+SDK — `sdkencryptedappticket` — decrypts and checks it. It ships in `public/steam/lib`, not in
+`redistributable_bin`, and these bindings keep it just as separate from `SteamClient`: the library
+never talks to the Steam client, needs no `SteamAPI_Init`, and no Steam has to be running, so a
+backend holding a ticket and your secret key can verify it with nothing else.
+
+```ts
+import { SteamClient, SteamEncryptedAppTicket } from "@steamworks/deno";
+
+const steam = SteamClient.init({ appId: 480 });
+const stop = steam.startPump();
+
+// A call result: this promise settles during a later runCallbacks().
+const ready = await steam.user.requestEncryptedAppTicket(new Uint8Array([1, 2, 3]), 3);
+
+// Pull the encrypted bytes Steam has ready.
+const buf = new Uint8Array(1024);
+const pulled = steam.user.getEncryptedAppTicket(buf, buf.length);
+if (!pulled.ok) throw new Error("no ticket ready"); // or the buffer was too small
+const encrypted = buf.subarray(0, pulled.pcbTicket);
+
+// Decrypt with YOUR app's secret key, from its Steamworks partner page.
+const ticket = SteamEncryptedAppTicket.open();
+const decrypted = ticket.decryptTicket(encrypted, secretKey32Bytes);
+if (decrypted) {
+  console.log(ticket.getTicketSteamID(decrypted)); // the user the ticket belongs to
+  console.log(ticket.getTicketAppID(decrypted)); // the app it was issued for
+}
+ticket.close();
+
+stop();
+steam.shutdown();
+```
+
+The library loads the way the client one does: `libraryPath` option, `sdkPath` option,
+`STEAMWORKS_TICKET_LIB_PATH`, `STEAMWORKS_SDK_PATH`.
+
+One honest limit: only the app's owner can truly decrypt its tickets, because the secret key is
+handed out on the app's own partner page. Spacewar is not ours, so nothing here has verified a
+successful decrypt against a live ticket. The live test verifies everything around it: the ticket is
+requested, arrives as a call result, comes back out as bytes, and the decrypt refuses the wrong key
+— exactly what a ticket from an app you do not own must produce.
+
 ## Known limitations
 
 - **Game coordinator messaging is unreachable, upstream.** `isteamgamecoordinator.h` ships in the

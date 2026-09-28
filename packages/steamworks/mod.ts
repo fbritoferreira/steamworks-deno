@@ -29,6 +29,14 @@ export {
   resolveLibraryPath,
 } from "./src/lib.ts";
 export {
+  k_nSteamEncryptedAppTicketSymmetricKeyLen,
+  resolveTicketLibraryPath,
+  SteamEncryptedAppTicket,
+  type SteamEncryptedAppTicketOptions,
+  ticketLibraryFileName,
+  ticketLibraryPath,
+} from "./src/encrypted_app_ticket.ts";
+export {
   interfaceVersionList,
   ServerMode,
   SteamGameServerClient,
