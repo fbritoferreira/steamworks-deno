@@ -7,12 +7,17 @@
  *
  *   STEAMWORKS_SDK_PATH=/path/to/sdk deno task verify
  *
- * Needs the Steam client running and logged in, an SDK on disk, and clang for the layout
- * check. Exits non-zero if any check fails.
+ * Needs the Steam client running and logged in, an SDK on disk, and a C++ compiler for the
+ * layout check. Any clang- or g++-compatible driver will do: CXX is used verbatim when set,
+ * otherwise clang++, c++ and g++ are tried in that order. MSVC is not — its flags differ —
+ * so on Windows install LLVM's clang or point CXX at a clang-compatible compiler. The
+ * server checks bind UDP 27015 and 27016, which must be free. Exits non-zero on any
+ * failure.
  */
 import { fromFileUrl, join } from "@std/path";
 import { PACK } from "./src/layout.ts";
 import { SteamClient } from "./src/client.ts";
+import { ServerMode, SteamGameServerClient } from "./src/game_server.ts";
 
 const sdk = Deno.env.get("STEAMWORKS_SDK_PATH");
 const here = fromFileUrl(new URL(".", import.meta.url));
@@ -29,6 +34,28 @@ function record(name: string, ok: boolean, detail: string) {
   console.log(`${ok ? "pass" : "FAIL"}  ${name.padEnd(34)} ${detail}`);
 }
 
+/**
+ * Compile the layout harness, and report which compiler did it.
+ *
+ * The first candidate that compiles the harness wins, so a machine needs any one C++
+ * compiler rather than clang specifically. A compiler that runs but fails contributes its
+ * first error line; one that is not installed is skipped quietly.
+ */
+async function compileHarness(candidates: readonly string[], args: string[]): Promise<string> {
+  let compileError = "";
+  for (const compiler of candidates) {
+    try {
+      const cc = await new Deno.Command(compiler, { args, stderr: "piped", stdout: "null" })
+        .output();
+      if (cc.success) return compiler;
+      compileError ||= `${compiler}: ${new TextDecoder().decode(cc.stderr).split("\n")[0]}`;
+    } catch {
+      // Not installed on this machine; try the next candidate.
+    }
+  }
+  throw new Error(compileError || `no C++ compiler found; tried ${candidates.join(", ")}`);
+}
+
 console.log(`Steamworks bindings verification`);
 console.log(`platform ${Deno.build.os}/${Deno.build.arch}, struct packing ${PACK}\n`);
 
@@ -37,24 +64,20 @@ if (!sdk) {
   Deno.exit(2);
 }
 
-// 1. Struct layouts against the platform's own C compiler.
+// 1. Struct layouts against the platform's own C++ compiler.
 try {
   const build = join(here, "harness", ".build");
   await Deno.mkdir(build, { recursive: true });
   const exe = join(build, Deno.build.os === "windows" ? "layout_check.exe" : "layout_check");
-  const cc = await new Deno.Command("clang++", {
-    args: [
-      "-std=c++17",
-      "-Wno-invalid-offsetof",
-      `-I${join(sdk, "public")}`,
-      join(here, "gen", "layout_check.cpp"),
-      "-o",
-      exe,
-    ],
-    stderr: "piped",
-    stdout: "null",
-  }).output();
-  if (!cc.success) throw new Error(new TextDecoder().decode(cc.stderr).split("\n")[0]);
+  const cxx = Deno.env.get("CXX");
+  const compiler = await compileHarness(cxx ? [cxx] : ["clang++", "c++", "g++"], [
+    "-std=c++17",
+    "-Wno-invalid-offsetof",
+    `-I${join(sdk, "public")}`,
+    join(here, "gen", "layout_check.cpp"),
+    "-o",
+    exe,
+  ]);
 
   const run = await new Deno.Command(exe, { stdout: "piped" }).output();
   const text = new TextDecoder().decode(run.stdout);
@@ -88,7 +111,9 @@ try {
   record(
     "struct layouts vs C compiler",
     bad.length === 0 && compared > 500,
-    bad.length === 0 ? `${compared} sizes and offsets agree` : bad.slice(0, 3).join("; "),
+    bad.length === 0
+      ? `${compared} sizes and offsets agree (${compiler})`
+      : bad.slice(0, 3).join("; "),
   );
 } catch (e) {
   record("struct layouts vs C compiler", false, (e as Error).message);
@@ -165,6 +190,124 @@ if (steam) {
   }
 
   steam.shutdown();
+}
+
+// 3. The dedicated-server path, which the client checks above never exercise.
+let server: SteamGameServerClient | undefined;
+try {
+  server = SteamGameServerClient.init({
+    appId: 480,
+    gamePort: 27015,
+    queryPort: 27016,
+    serverMode: ServerMode.NoAuthentication,
+    versionString: "1.0.0.0",
+    sdkPath: sdk,
+  });
+  record("game server init", true, "SteamInternal_GameServer_Init_V2 connected");
+} catch (e) {
+  record(
+    "game server init",
+    false,
+    `${(e as Error).message} (the init binds UDP 27015 and 27016, which must be free)`,
+  );
+}
+
+if (server) {
+  const sv = server;
+  try {
+    sv.gameServer.setServerName("steamworks-deno verify");
+    const stats = sv.gameServerStats;
+    record(
+      "server interfaces",
+      typeof stats.setUserStatInt32 === "function",
+      "ISteamGameServer and ISteamGameServerStats answer",
+    );
+  } catch (e) {
+    record("server interfaces", false, (e as Error).message);
+  }
+
+  try {
+    const drained = sv.runCallbacks();
+    record("server callbacks", drained >= 0, `${drained} callbacks drained on the server pipe`);
+  } catch (e) {
+    record("server callbacks", false, (e as Error).message);
+  }
+
+  try {
+    const id = sv.steamId();
+    const secure = sv.isSecure();
+    record(
+      "server identity",
+      typeof id === "bigint" && typeof secure === "boolean",
+      `${id}, ${secure ? "secure" : "not secure"}`,
+    );
+  } catch (e) {
+    record("server identity", false, (e as Error).message);
+  }
+
+  // The seven interfaces a server shares with a client answer null on a development machine —
+  // the documented behaviour, see the README — so that is what this check asserts: every one
+  // refuses, and each refusal names its SteamAPI_SteamGameServer* accessor.
+  try {
+    const shared: Array<[name: string, accessor: string, reach: () => unknown]> = [
+      ["ISteamHTTP", "SteamAPI_SteamGameServerHTTP_v003", () => sv.http],
+      ["ISteamInventory", "SteamAPI_SteamGameServerInventory_v003", () => sv.inventory],
+      ["ISteamNetworking", "SteamAPI_SteamGameServerNetworking_v006", () => sv.networking],
+      [
+        "ISteamNetworkingMessages",
+        "SteamAPI_SteamGameServerNetworkingMessages_SteamAPI_v002",
+        () => sv.networkingMessages,
+      ],
+      [
+        "ISteamNetworkingSockets",
+        "SteamAPI_SteamGameServerNetworkingSockets_SteamAPI_v013",
+        () => sv.networkingSockets,
+      ],
+      ["ISteamUGC", "SteamAPI_SteamGameServerUGC_v021", () => sv.ugc],
+      ["ISteamUtils", "SteamAPI_SteamGameServerUtils_v011", () => sv.utils],
+    ];
+    const answered: string[] = [];
+    const misnamed: string[] = [];
+    let refused = 0;
+    for (const [name, accessor, reach] of shared) {
+      try {
+        reach();
+        answered.push(name);
+      } catch (e) {
+        if ((e as Error).message.includes(accessor)) refused++;
+        else misnamed.push(`${name} refused without naming its accessor ${accessor}`);
+      }
+    }
+    record(
+      "shared server interfaces on a dev machine",
+      answered.length === 0 && misnamed.length === 0,
+      misnamed[0] ??
+        (answered.length > 0
+          ? `${answered.join(", ")} answered; the documented answer on a dev machine is null`
+          : `${refused} of ${shared.length} refused, each naming its accessor — the documented behaviour`),
+    );
+  } catch (e) {
+    record("shared server interfaces on a dev machine", false, (e as Error).message);
+  }
+
+  try {
+    sv.shutdown();
+    let refusal = "";
+    try {
+      sv.steamId();
+    } catch (e) {
+      refusal = (e as Error).message;
+    }
+    record(
+      "server shutdown",
+      refusal.includes("shut down"),
+      refusal.includes("shut down")
+        ? "a call after shutdown was refused"
+        : `${refusal || "no refusal"} after shutdown`,
+    );
+  } catch (e) {
+    record("server shutdown", false, (e as Error).message);
+  }
 }
 
 const failed = checks.filter((c) => !c.ok);
