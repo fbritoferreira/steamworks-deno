@@ -7,7 +7,7 @@ only describes one.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Content is derived from
 the release tags, their commits and the pull requests that carried them.
 
-## [Unreleased]
+## [0.6.0] - 2026-09-29
 
 ### Added
 
