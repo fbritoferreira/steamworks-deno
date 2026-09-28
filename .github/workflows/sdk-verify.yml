@@ -132,10 +132,15 @@ jobs:
           mkdir "$RUNNER_TEMP/steamcmd"
           tar -xzf "$RUNNER_TEMP/steamcmd.tar.gz" -C "$RUNNER_TEMP/steamcmd"
           "$RUNNER_TEMP/steamcmd/steamcmd.sh" +login anonymous +download_depot 1007 1006 +quit
-          depot="$RUNNER_TEMP/steamcmd/steamapps/content/app_1007/depot_1006"
-          test -f "$depot/linux64/steamclient.so"
+          depot="$(find "$RUNNER_TEMP/steamcmd" -type d -name "*depot_1006" -print -quit)"
+          steamclient="$(find "$depot" -type f -name steamclient.so -path "*linux64*" -print -quit)"
+          if [ -z "$steamclient" ]; then
+            echo "The depot landed somewhere unexpected; its tree:"
+            find "$depot" -type f
+            exit 1
+          fi
           mkdir -p ~/.steam/sdk64
-          cp "$depot/linux64/steamclient.so" "$depot/linux64/libsteamwebrtc.so" ~/.steam/sdk64/
+          cp "$steamclient" "$(dirname "$steamclient")/libsteamwebrtc.so" ~/.steam/sdk64/
 
       - name: Verify the dedicated-server path
         if: env.STEAMWORKS_SDK_PATH != ''
