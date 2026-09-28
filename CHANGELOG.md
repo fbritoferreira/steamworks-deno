@@ -7,6 +7,20 @@ only describes one.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Content is derived from
 the release tags, their commits and the pull requests that carried them.
 
+## [Unreleased]
+
+### Added
+
+- `deno task verify --offline`: the half of verification that needs no Steam client — the
+  struct-layout check against the machine's own C++ compiler, and a library check that resolves
+  every generated symbol in the redistributable library and confirms a call into it answers
+  gracefully with no client running.
+- CI that downloads the Steamworks SDK from Valve on every push and verifies the bindings on Linux
+  and Windows: the two checks above, plus `deno task gen:check` against the downloaded SDK's schema,
+  which turns red on a new Steamworks release until the bindings are regenerated. The download is
+  authenticated by the `STEAMWORKS_PARTNER_COOKIE` repository secret; without it the checks skip
+  with a notice, so fork pull requests stay green.
+
 ## [0.5.0] - 2026-09-28
 
 Encrypted app tickets, decrypted and checked (#6), with the status section made truthful and a
