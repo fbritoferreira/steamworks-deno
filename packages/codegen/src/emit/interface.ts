@@ -335,11 +335,12 @@ export function emitInterface(
     }
   }
 
+  // Every accessor goes into the table, not just the client one: a game server reaches
+  // ISteamHTTP through SteamAPI_SteamGameServerHTTP_v003, a different export than the
+  // client's SteamAPI_SteamHTTP_v003, and only the symbol table tells them apart.
   const symbols = emitted.map((e) => symbolLine(e.cm, ctx, resolver));
-  if (accessor) {
-    symbols.push(
-      `  ${accessor.name_flat}: { parameters: [], result: "pointer", optional: true },`,
-    );
+  for (const a of iface.accessors ?? []) {
+    symbols.push(`  ${a.name_flat}: { parameters: [], result: "pointer", optional: true },`);
   }
 
   const structNames = [...uses].filter((u) =>
@@ -360,7 +361,7 @@ export function emitInterface(
 
   out += "\n" + jsdoc(
     `Deno FFI symbol table for \`${iface.classname}\`: every flat method, plus the versioned\n` +
-      `accessor Steam uses to hand out the interface.`,
+      `accessors Steam uses to hand out the interface, client and game server both.`,
   );
   out += `export const ${iface.classname}_symbols = {\n${symbols.join("\n")}\n` +
     `} as const satisfies Deno.ForeignLibraryInterface;\n\n`;

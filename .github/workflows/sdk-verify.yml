@@ -12,16 +12,16 @@ permissions:
 jobs:
   # What a runner can prove without a Steam client: the struct layouts against its own
   # compiler, every generated symbol resolving in the redistributable library, and the
-  # committed bindings matching the SDK's schema. The live checks need a logged-in Steam
-  # client, which no runner has; `deno task verify` remains the human half.
+  # committed bindings matching the SDK's schema. The live client checks need a logged-in
+  # Steam client, which no runner has; `deno task verify` remains the human half.
   verify:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: denoland/setup-deno@v2
         with:
@@ -78,3 +78,71 @@ jobs:
         if: env.STEAMWORKS_SDK_PATH != ''
         shell: bash
         run: deno task verify --offline
+
+  # The dedicated-server path, which needs no Steam client at all: a standalone steamclient
+  # gives the server everything a logged-in client otherwise would, so the runner proves
+  # the whole story — init, anonymous logon to Steam's servers, all nine interfaces, a
+  # callback decoded through the server pipe, shutdown. The same cookie gate as above: a
+  # stale session skips the job with a notice, red means the server path is broken.
+  dedicated:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Download the Steamworks SDK
+        shell: bash
+        env:
+          PARTNER_COOKIE: ${{ secrets.STEAMWORKS_PARTNER_COOKIE }}
+        run: |
+          if [ -z "$PARTNER_COOKIE" ]; then
+            echo "::notice title=SDK checks skipped::STEAMWORKS_PARTNER_COOKIE is not set on this run (a fork pull request never sees repository secrets). Add it under Settings → Secrets and variables → Actions to run the SDK checks."
+            exit 0
+          fi
+          if ! curl -fsSL --cookie "$PARTNER_COOKIE" \
+              -o "$RUNNER_TEMP/steamworks_sdk.zip" \
+              https://partner.steamgames.com/downloads/steamworks_sdk.zip; then
+            echo "::notice title=SDK checks skipped::The SDK download failed. If this persists, check the STEAMWORKS_PARTNER_COOKIE secret."
+            exit 0
+          fi
+          if [ "$(head -c 2 "$RUNNER_TEMP/steamworks_sdk.zip")" != "PK" ]; then
+            echo "::notice title=SDK checks skipped::The partner site served something other than a zip, most likely its login page: the session cookie has expired. Refresh the STEAMWORKS_PARTNER_COOKIE secret with a new Cookie header to resume the SDK checks."
+            exit 0
+          fi
+          unzip -q "$RUNNER_TEMP/steamworks_sdk.zip" -d "$RUNNER_TEMP"
+          echo "STEAMWORKS_SDK_PATH=$RUNNER_TEMP/sdk" >> "$GITHUB_ENV"
+
+      # A dedicated server's steamclient comes from Valve's own redist, app 1007
+      # "Steamworks SDK Redist", fetched anonymously: its Linux depot is 1006. The
+      # steamcmd bootstrap is a 32-bit binary, so the runner needs the i386 runtime
+      # libraries to run it once. libsteam_api looks for a standalone steamclient at
+      # ~/.steam/sdk64 when no desktop client runs — the same place a server operator
+      # puts it, and what the verify run on this machine expects.
+      - name: Fetch the standalone steamclient
+        if: env.STEAMWORKS_SDK_PATH != ''
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libc6-i386 lib32gcc-s1 lib32stdc++6
+          curl -fsSL https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz \
+            -o "$RUNNER_TEMP/steamcmd.tar.gz"
+          mkdir "$RUNNER_TEMP/steamcmd"
+          tar -xzf "$RUNNER_TEMP/steamcmd.tar.gz" -C "$RUNNER_TEMP/steamcmd"
+          "$RUNNER_TEMP/steamcmd/steamcmd.sh" +login anonymous +download_depot 1007 1006 +quit
+          depot="$(find "$RUNNER_TEMP/steamcmd" -type d -name "*depot_1006" -print -quit)"
+          steamclient="$(find "$depot" -type f -name steamclient.so -path "*linux64*" -print -quit)"
+          if [ -z "$steamclient" ]; then
+            echo "The depot landed somewhere unexpected; its tree:"
+            find "$depot" -type f
+            exit 1
+          fi
+          mkdir -p ~/.steam/sdk64
+          cp "$steamclient" "$(dirname "$steamclient")/libsteamwebrtc.so" ~/.steam/sdk64/
+
+      - name: Verify the dedicated-server path
+        if: env.STEAMWORKS_SDK_PATH != ''
+        shell: bash
+        run: deno task verify --dedicated

@@ -12,7 +12,7 @@ import type { ETimelineEventClipPriority, ETimelineGameMode } from "../enums.ts"
 
 /**
  * Deno FFI symbol table for `ISteamTimeline`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamTimeline_symbols = {
   SteamAPI_ISteamTimeline_SetTimelineTooltip: {

@@ -176,6 +176,18 @@ shares with a client, among them HTTP, UGC and the networking interfaces, are re
 dedicated server's own steamclient library. On a development machine running the Steam client they
 return null, and the accessor error names which one failed.
 
+A dedicated server needs no desktop client: its libsteam_api loads a standalone `steamclient`
+library, which steamcmd ships. `deno task verify --dedicated` — with UDP 27015 and 27016 free —
+starts such a server for AppID 480, logs it on anonymously, and asserts the whole story: init, a
+`SteamServersConnected_t` callback decoded through the server pipe, all nine interfaces answering,
+the server's anonymous SteamID, and a refused call after shutdown. Put the steamclient files where
+libsteam_api looks for them — the working directory on macOS, where steamcmd_osx.tar.gz unpacks
+`steamclient.dylib` and its companions; `~/.steam/sdk64` on Linux, which
+`steamcmd +login anonymous +download_depot 1007 1006` fills from Valve's own "Steamworks SDK Redist"
+— and the same check runs in CI on a Linux runner that fetches the steamclient itself. So the
+dedicated path is verified end to end on every push while the partner cookie behind the SDK download
+is fresh, and the development-machine null behaviour remains what the full local run asserts.
+
 ## Encrypted app tickets
 
 `ISteamUser` can hand you a ticket encrypted with your app's secret key, and a second library in the
@@ -243,14 +255,22 @@ requested, arrives as a call result, comes back out as bytes, and the decrypt re
 
 Continuous integration runs the offline half on every push. It downloads the SDK from Valve — the
 download is authenticated by the `STEAMWORKS_PARTNER_COOKIE` repository secret, the `Cookie` header
-a logged-in browser sends to partner.steamgames.com — and runs `deno task verify --offline` on Linux
-and Windows: every struct size and field offset against the runner's own C++ compiler, and every
-generated symbol resolved in the redistributable library, with a call into the library that must
-answer rather than crash. It also diffs the committed bindings against the downloaded SDK's schema,
-which turns red on a new Steamworks release until `deno task gen` regenerates them. The SDK is never
-cached or stored anywhere beyond the ephemeral runner disk. A fork pull request, which cannot see
-repository secrets, skips these checks with a notice instead of failing — and so does an expired
-cookie, since the session token inside lives about a day and no runner can refresh it.
+a logged-in browser sends to partner.steamgames.com — and runs `deno task verify --offline` on
+Linux, macOS and Windows: every struct size and field offset against the runner's own C++ compiler,
+and every generated symbol resolved in the redistributable library, with a call into the library
+that must answer rather than crash. It also diffs the committed bindings against the downloaded
+SDK's schema, which turns red on a new Steamworks release until `deno task gen` regenerates them.
+The SDK is never cached or stored anywhere beyond the ephemeral runner disk. A fork pull request,
+which cannot see repository secrets, skips these checks with a notice instead of failing — and so
+does an expired cookie, since the session token inside lives about a day and no runner can refresh
+it.
+
+A second CI job proves the dedicated-server path on a Linux runner, with no Steam client anywhere:
+it fetches Valve's standalone steamclient anonymously through steamcmd and runs
+`deno task verify --dedicated`, which initialises a real game server, logs it on anonymously to
+Steam's server network, decodes the logon callback through the server pipe, and requires all nine
+server interfaces to answer. It rides the same cookie-gated SDK download and skips the same way when
+the cookie is stale.
 
 The other half — the part a runner can never do, because no Steam client runs there — is one
 command, with Steam running and logged in:
@@ -279,12 +299,16 @@ two interfaces, a callback pump, its identity, the documented null answer the se
 interfaces give on a development machine, and the refusal to call after shutdown. It prints one line
 per check and exits non-zero on any failure.
 
-**Verified so far:** macOS on arm64. Struct layouts and library symbols are compiler- and
-library-checked by CI on Linux and Windows with every push.
+**Verified so far:** the client path on macOS arm64, the dedicated-server path on macOS arm64 and
+Linux x86_64 — including in CI, while the cookie is fresh. Struct layouts and library symbols are
+compiler- and library-checked by CI on Linux, macOS and Windows with every push.
 
-**Not yet verified:** the live half on Linux and Windows — no Steam client has read a callback there
-yet. If you run the command above on either, open an issue with the lines it printed: a pass
-verifies the platform, and a fail is a bug worth seeing.
+**Not yet verified:** the live client half on Linux and Windows — no logged-in Steam client has read
+a callback there yet. If you run the command above on either, open an issue with the lines it
+printed: a pass verifies the platform, and a fail is a bug worth seeing. A Windows dedicated server
+is the one gap the dedicated checks have not closed; the steamclient it would need
+(`steamclient64.dll`, from steamcmd's Windows depot) goes where the desktop client's would, and the
+runner setup for it is future work.
 
 ## Repository layout
 

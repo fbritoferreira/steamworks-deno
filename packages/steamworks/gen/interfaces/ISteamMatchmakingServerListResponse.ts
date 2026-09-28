@@ -5,7 +5,7 @@ import type { EMatchMakingServerResponse } from "../enums.ts";
 
 /**
  * Deno FFI symbol table for `ISteamMatchmakingServerListResponse`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamMatchmakingServerListResponse_symbols = {
   SteamAPI_ISteamMatchmakingServerListResponse_ServerResponded: {

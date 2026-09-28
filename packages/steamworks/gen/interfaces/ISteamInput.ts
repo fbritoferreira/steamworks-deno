@@ -22,7 +22,7 @@ import type {
 
 /**
  * Deno FFI symbol table for `ISteamInput`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamInput_symbols = {
   SteamAPI_ISteamInput_Init: { parameters: ["pointer", "bool"], result: "bool" },

@@ -42,7 +42,7 @@ import type {
 
 /**
  * Deno FFI symbol table for `ISteamFriends`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamFriends_symbols = {
   SteamAPI_ISteamFriends_GetPersonaName: { parameters: ["pointer"], result: "pointer" },

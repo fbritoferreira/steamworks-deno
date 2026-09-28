@@ -6,7 +6,7 @@ import type { EHTTPMethod } from "../enums.ts";
 
 /**
  * Deno FFI symbol table for `ISteamHTTP`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamHTTP_symbols = {
   SteamAPI_ISteamHTTP_CreateHTTPRequest: {
@@ -92,6 +92,7 @@ export const ISteamHTTP_symbols = {
     result: "bool",
   },
   SteamAPI_SteamHTTP_v003: { parameters: [], result: "pointer", optional: true },
+  SteamAPI_SteamGameServerHTTP_v003: { parameters: [], result: "pointer", optional: true },
 } as const satisfies Deno.ForeignLibraryInterface;
 
 /**

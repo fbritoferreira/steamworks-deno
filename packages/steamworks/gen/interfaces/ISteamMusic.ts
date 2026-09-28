@@ -5,7 +5,7 @@ import type { AudioPlayback_Status } from "../enums.ts";
 
 /**
  * Deno FFI symbol table for `ISteamMusic`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamMusic_symbols = {
   SteamAPI_ISteamMusic_BIsEnabled: { parameters: ["pointer"], result: "bool" },

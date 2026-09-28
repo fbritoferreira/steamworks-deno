@@ -18,7 +18,7 @@ import type { EBeginAuthSessionResult, EUserHasLicenseForAppResult } from "../en
 
 /**
  * Deno FFI symbol table for `ISteamGameServer`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamGameServer_symbols = {
   SteamAPI_ISteamGameServer_SetProduct: { parameters: ["pointer", "buffer"], result: "void" },

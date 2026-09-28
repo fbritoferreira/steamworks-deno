@@ -15,7 +15,7 @@ import type { EResult } from "../enums.ts";
 
 /**
  * Deno FFI symbol table for `ISteamNetworkingMessages`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamNetworkingMessages_symbols = {
   SteamAPI_ISteamNetworkingMessages_SendMessageToUser: {
@@ -43,6 +43,11 @@ export const ISteamNetworkingMessages_symbols = {
     result: "i32",
   },
   SteamAPI_SteamNetworkingMessages_SteamAPI_v002: {
+    parameters: [],
+    result: "pointer",
+    optional: true,
+  },
+  SteamAPI_SteamGameServerNetworkingMessages_SteamAPI_v002: {
     parameters: [],
     result: "pointer",
     optional: true,

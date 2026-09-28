@@ -11,7 +11,16 @@
  * library check that resolves every generated symbol and calls into the library once.
  * That is the half CI runs on every push, after downloading the SDK from Valve.
  *
- * Without it, the full run needs the Steam client running and logged in, and a C++
+ * With `--dedicated` it then starts a real dedicated server, which needs no desktop
+ * Steam client either — only the standalone `steamclient` library steamcmd ships, placed
+ * where libsteam_api looks for it: the working directory on macOS, `~/.steam/sdk64` on
+ * Linux. The server initialises on UDP 27015 and 27016, logs on anonymously to Steam's
+ * server network, and every one of its nine interfaces must answer, with the logon
+ * callback decoded through the server pipe on this machine's struct layout. CI runs this
+ * on a Linux runner that fetches the steamclient through steamcmd; a red verdict means the
+ * bindings, the machine, or Steam's servers are broken — never that a client was missing.
+ *
+ * Without a flag, the full run needs the Steam client running and logged in, and a C++
  * compiler for the layout check. Any clang- or g++-compatible driver will do: CXX is used
  * verbatim when set, otherwise clang++, c++ and g++ are tried in that order. MSVC is not —
  * its flags differ — so on Windows install LLVM's clang or point CXX at a clang-compatible
@@ -29,6 +38,7 @@ import { ServerMode, SteamGameServerClient } from "./src/game_server.ts";
 
 const sdk = Deno.env.get("STEAMWORKS_SDK_PATH");
 const offline = Deno.args.includes("--offline");
+const dedicated = Deno.args.includes("--dedicated");
 const here = fromFileUrl(new URL(".", import.meta.url));
 
 interface Check {
@@ -42,6 +52,33 @@ function record(name: string, ok: boolean, detail: string) {
   checks.push({ name, ok, detail });
   console.log(`${ok ? "pass" : "FAIL"}  ${name.padEnd(34)} ${detail}`);
 }
+
+/**
+ * The seven interfaces a game server shares with a client, each reached through its
+ * `SteamAPI_SteamGameServer*` accessor — a different export than the client one, handing
+ * out a different pointer. A dedicated server must answer all seven; a development machine
+ * routing the server through its desktop Steam client refuses them, each refusal naming
+ * the accessor.
+ */
+const SHARED_SERVER_INTERFACES: Array<
+  [name: string, accessor: string, reach: (sv: SteamGameServerClient) => unknown]
+> = [
+  ["ISteamHTTP", "SteamAPI_SteamGameServerHTTP_v003", (sv) => sv.http],
+  ["ISteamInventory", "SteamAPI_SteamGameServerInventory_v003", (sv) => sv.inventory],
+  ["ISteamNetworking", "SteamAPI_SteamGameServerNetworking_v006", (sv) => sv.networking],
+  [
+    "ISteamNetworkingMessages",
+    "SteamAPI_SteamGameServerNetworkingMessages_SteamAPI_v002",
+    (sv) => sv.networkingMessages,
+  ],
+  [
+    "ISteamNetworkingSockets",
+    "SteamAPI_SteamGameServerNetworkingSockets_SteamAPI_v013",
+    (sv) => sv.networkingSockets,
+  ],
+  ["ISteamUGC", "SteamAPI_SteamGameServerUGC_v021", (sv) => sv.ugc],
+  ["ISteamUtils", "SteamAPI_SteamGameServerUtils_v011", (sv) => sv.utils],
+];
 
 /**
  * Compile the layout harness, and report which compiler did it.
@@ -131,10 +168,10 @@ try {
   record("struct layouts vs C compiler", false, (e as Error).message);
 }
 
-// 2. Offline: the library itself. Every generated symbol must resolve in the platform's
-// redistributable library, and calling into it must answer rather than crash, Steam client
-// or not. CI runs exactly this on every push.
-if (offline) {
+// 2. Offline and dedicated: the library itself. Every generated symbol must resolve in the
+// platform's redistributable library, and calling into it must answer rather than crash,
+// Steam client or not. CI runs exactly this on every push.
+if (offline || dedicated) {
   try {
     const symbols = { ...CORE_SYMBOLS, ...ALL_INTERFACE_SYMBOLS } as const;
     const handle = new LibraryHandle(resolveLibraryPath({ sdkPath: sdk }));
@@ -154,12 +191,140 @@ if (offline) {
   } catch (e) {
     record("library opens, symbols resolve", false, (e as Error).message);
   }
+}
+
+if (offline) finish();
+
+// 3. Dedicated: a real game server, with no desktop Steam client to lean on. The standalone
+// steamclient library provides everything a logged-in client otherwise would, and every
+// check below names exactly which part of that story the machine fails to tell.
+if (dedicated) {
+  let server: SteamGameServerClient | undefined;
+  try {
+    server = SteamGameServerClient.init({
+      appId: 480,
+      gamePort: 27015,
+      queryPort: 27016,
+      serverMode: ServerMode.NoAuthentication,
+      versionString: "1.0.0.0",
+      sdkPath: sdk,
+    });
+    record("dedicated server init", true, "SteamInternal_GameServer_Init_V2 connected");
+  } catch (e) {
+    record(
+      "dedicated server init",
+      false,
+      `${(e as Error).message} (this mode needs a standalone steamclient where ` +
+        `libsteam_api looks for it — the working directory on macOS, ~/.steam/sdk64 on ` +
+        `Linux, both shipped by steamcmd — and UDP 27015 and 27016 free)`,
+    );
+  }
+
+  if (server) {
+    const sv = server;
+
+    // The logon is the point of the mode: a real callback, decoded through the server pipe
+    // on this machine's struct layout, after a real connection to Steam's server network.
+    try {
+      let logon = "";
+      sv.onCallback("SteamServersConnected", () => {
+        logon = "connected";
+      });
+      sv.onCallback("SteamServerConnectFailure", (data) => {
+        logon = `the server refused it: result ${data.m_eResult}`;
+      });
+      const started = Date.now();
+      sv.gameServer.logOnAnonymous();
+      const deadline = started + 30_000;
+      while (!logon && Date.now() < deadline) {
+        sv.runCallbacks();
+        if (!logon) await new Promise((r) => setTimeout(r, 50));
+      }
+      record(
+        "anonymous logon",
+        logon === "connected",
+        logon === "connected"
+          ? `SteamServersConnected_t decoded on the server pipe after ${Date.now() - started}ms`
+          : logon || "no logon callback arrived within 30 seconds",
+      );
+    } catch (e) {
+      record("anonymous logon", false, (e as Error).message);
+    }
+
+    // The seven interfaces a server shares with a client answer here — the opposite of the
+    // development-machine story the full run asserts — each through its SteamGameServer
+    // accessor rather than the client one.
+    try {
+      const answered: string[] = [];
+      const refused: string[] = [];
+      for (const [name, , reach] of SHARED_SERVER_INTERFACES) {
+        try {
+          reach(sv);
+          answered.push(name);
+        } catch (e) {
+          refused.push(`${name}: ${(e as Error).message.split("\n")[0]}`);
+        }
+      }
+      record(
+        "shared server interfaces",
+        refused.length === 0,
+        refused.length === 0
+          ? `all ${answered.length} answered: ${answered.join(", ")}`
+          : refused[0],
+      );
+    } catch (e) {
+      record("shared server interfaces", false, (e as Error).message);
+    }
+
+    try {
+      sv.gameServer.setServerName("steamworks-deno verify");
+      const stats = sv.gameServerStats;
+      record(
+        "server interfaces",
+        typeof stats.setUserStatInt32 === "function",
+        "ISteamGameServer and ISteamGameServerStats answer",
+      );
+    } catch (e) {
+      record("server interfaces", false, (e as Error).message);
+    }
+
+    try {
+      const id = sv.steamId();
+      const secure = sv.isSecure();
+      record(
+        "server identity",
+        typeof id === "bigint" && id > 0n && typeof secure === "boolean",
+        `${id}, ${secure ? "secure" : "not secure"}`,
+      );
+    } catch (e) {
+      record("server identity", false, (e as Error).message);
+    }
+
+    try {
+      sv.shutdown();
+      let refusal = "";
+      try {
+        sv.steamId();
+      } catch (e) {
+        refusal = (e as Error).message;
+      }
+      record(
+        "server shutdown",
+        refusal.includes("shut down"),
+        refusal.includes("shut down")
+          ? "a call after shutdown was refused"
+          : `${refusal || "no refusal"} after shutdown`,
+      );
+    } catch (e) {
+      record("server shutdown", false, (e as Error).message);
+    }
+  }
 
   finish();
 }
 
-// 3 onwards need a live Steam client.
-if (!offline) {
+// 4 onwards need a live Steam client.
+if (!offline && !dedicated) {
   let steam: SteamClient | undefined;
   try {
     steam = SteamClient.init({ appId: 480, sdkPath: sdk });
@@ -233,8 +398,9 @@ if (!offline) {
   }
 }
 
-// 4. The dedicated-server path, which the client checks above never exercise.
-if (!offline) {
+// 5. The dedicated-server path as a development machine sees it, which the client checks
+// above never exercise.
+if (!offline && !dedicated) {
   let server: SteamGameServerClient | undefined;
   try {
     server = SteamGameServerClient.init({
@@ -291,29 +457,13 @@ if (!offline) {
     // the documented behaviour, see the README — so that is what this check asserts: every one
     // refuses, and each refusal names its SteamAPI_SteamGameServer* accessor.
     try {
-      const shared: Array<[name: string, accessor: string, reach: () => unknown]> = [
-        ["ISteamHTTP", "SteamAPI_SteamGameServerHTTP_v003", () => sv.http],
-        ["ISteamInventory", "SteamAPI_SteamGameServerInventory_v003", () => sv.inventory],
-        ["ISteamNetworking", "SteamAPI_SteamGameServerNetworking_v006", () => sv.networking],
-        [
-          "ISteamNetworkingMessages",
-          "SteamAPI_SteamGameServerNetworkingMessages_SteamAPI_v002",
-          () => sv.networkingMessages,
-        ],
-        [
-          "ISteamNetworkingSockets",
-          "SteamAPI_SteamGameServerNetworkingSockets_SteamAPI_v013",
-          () => sv.networkingSockets,
-        ],
-        ["ISteamUGC", "SteamAPI_SteamGameServerUGC_v021", () => sv.ugc],
-        ["ISteamUtils", "SteamAPI_SteamGameServerUtils_v011", () => sv.utils],
-      ];
+      const shared = SHARED_SERVER_INTERFACES;
       const answered: string[] = [];
       const misnamed: string[] = [];
       let refused = 0;
       for (const [name, accessor, reach] of shared) {
         try {
-          reach();
+          reach(sv);
           answered.push(name);
         } catch (e) {
           if ((e as Error).message.includes(accessor)) refused++;

@@ -5,7 +5,7 @@ import { cstrArg } from "../../src/marshal.ts";
 
 /**
  * Deno FFI symbol table for `ISteamMatchmakingRulesResponse`: every flat method, plus the versioned
- * accessor Steam uses to hand out the interface.
+ * accessors Steam uses to hand out the interface, client and game server both.
  */
 export const ISteamMatchmakingRulesResponse_symbols = {
   SteamAPI_ISteamMatchmakingRulesResponse_RulesResponded: {
