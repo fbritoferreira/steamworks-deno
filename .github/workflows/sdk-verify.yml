@@ -213,7 +213,11 @@ jobs:
               -o "$RUNNER_TEMP/steamcmd.zip"
             mkdir "$RUNNER_TEMP/steamcmd"
             /c/Windows/System32/tar.exe -xf "$RUNNER_TEMP/steamcmd.zip" -C "$RUNNER_TEMP/steamcmd"
-            "$RUNNER_TEMP/steamcmd/steamcmd.exe" +login anonymous +download_depot 1007 1004 +quit
+            # The download below can finish and still exit 7: steamcmd's bootstrapper
+            # relaunches itself after +quit and the relaunch is what bash sees exit.
+            # The depot-existence check below is the real gate, so the exit code is
+            # ignored on purpose.
+            "$RUNNER_TEMP/steamcmd/steamcmd.exe" +login anonymous +download_depot 1007 1004 +quit || true
             depot="$(find "$RUNNER_TEMP/steamcmd" -type d -name "depot_1004" -print -quit)"
             if [ -z "$depot" ]; then
               echo "The depot landed somewhere unexpected; the steamcmd tree:"
