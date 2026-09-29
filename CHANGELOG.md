@@ -11,6 +11,10 @@ the release tags, their commits and the pull requests that carried them.
 
 ### Changed
 
+- The dedicated-server check runs on a Windows runner too: CI fetches depot 1004 anonymously, drops
+  `steamclient64.dll` and its companions in the repo root and `~/.steam/sdk64`, and runs
+  `deno task verify --dedicated` — the same end-to-end proof the Linux job already had.
+
 - The layout check's comparison — the C++ harness's output against the generated layout table —
   moved out of `verify.ts` into `compareHarnessOutput`, exported and unit-tested. The Windows CRLF
   bug shipped precisely because that parsing lived where no test could reach it; the tests now pin
