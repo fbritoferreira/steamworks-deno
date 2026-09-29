@@ -11,6 +11,10 @@ the release tags, their commits and the pull requests that carried them.
 
 ### Added
 
+- The README now carries the runbook for a new Steamworks SDK release: what turning red means, the
+  regeneration procedure, and how the drift issue closes itself when the regeneration PR's CI run
+  passes.
+
 - A dedicated-server example: `examples/server` logs on anonymously to AppID 480 through the
   standalone steamclient and pumps callbacks until Ctrl-C, the missing third example after the demo
   and the raylib game.
