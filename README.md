@@ -321,11 +321,17 @@ sdk/                   your local copy of the Steamworks SDK (gitignored)
 ## Development
 
 ```sh
-deno task check   # type-check
-deno task lint    # deno lint + fmt --check
-deno task test    # unit tests; set STEAMWORKS_SDK_PATH to also run the live integration test
+deno task check    # type-check
+deno task lint     # deno lint + fmt --check
+deno task test     # unit tests; set STEAMWORKS_SDK_PATH to also run the live integration test
+STEAMWORKS_SDK_PATH=$PWD/sdk deno task verify # the full run: the Steam client running and logged in
+STEAMWORKS_SDK_PATH=$PWD/sdk deno task verify --offline # the SDK and a C++ compiler; no Steam client
+STEAMWORKS_SDK_PATH=$PWD/sdk deno task verify --dedicated # the SDK, a standalone steamclient, and UDP 27015-27016 free
 STEAMWORKS_SDK_PATH=$PWD/sdk deno task demo [--keep]
 ```
+
+CI runs the offline and dedicated checks on every push, downloading the SDK from Valve; the full run
+is the half only a machine with a logged-in Steam client can do.
 
 `deno compile` users: pass `--include` with the platform library and resolve its path from
 `import.meta.url`; see the Deno FFI docs. Deno issue #31218 tracks a Windows path bug there.

@@ -7,6 +7,16 @@ only describes one.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Content is derived from
 the release tags, their commits and the pull requests that carried them.
 
+## [Unreleased]
+
+### Changed
+
+- The layout check's comparison — the C++ harness's output against the generated layout table —
+  moved out of `verify.ts` into `compareHarnessOutput`, exported and unit-tested. The Windows CRLF
+  bug shipped precisely because that parsing lived where no test could reach it; the tests now pin
+  LF and CRLF output, the exact mismatch wording the check prints, and the minimum-count guard that
+  turns a run comparing almost nothing into a failure.
+
 ## [0.6.0] - 2026-09-29
 
 ### Added
