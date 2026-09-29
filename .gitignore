@@ -6,5 +6,8 @@ examples/game/*.dll
 examples/game/*.so
 examples/game/libraylib.dylib
 examples/game/libsteam_api.dylib
+# the standalone steamclient steamcmd ships, copied in at run time for examples/server
+examples/server/*.dylib
+examples/server/Frameworks/
 packages/steamworks/harness/.build/
 steam_appid.txt
