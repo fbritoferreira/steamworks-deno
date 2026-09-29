@@ -5,9 +5,10 @@
  *
  * Uses AppID 480, Valve's public Spacewar test app. Reads identity and app data, lists the
  * achievement schema, unlocks one achievement and waits for the two callbacks that confirm
- * it, resolves a call result, then clears the achievement again unless --keep is passed.
+ * it, resolves call results, asks for an encrypted app ticket and watches the decrypt refuse
+ * a key that is not ours, then clears the achievement again unless --keep is passed.
  */
-import { SteamClient } from "@steamworks/deno";
+import { SteamClient, SteamEncryptedAppTicket } from "@steamworks/deno";
 
 const keep = Deno.args.includes("--keep");
 const ACH = "ACH_WIN_ONE_GAME";
@@ -75,6 +76,45 @@ try {
   for (const apiName of names) {
     const pct = steam.userStats.getAchievementAchievedPercent(apiName);
     console.log(`  ${apiName.padEnd(22)} ${pct.ok ? pct.pflPercent.toFixed(1) + "%" : "n/a"}`);
+  }
+
+  // A ticket failure must not kill the demo before it clears the achievement again, so this
+  // one segment prints its failure and carries on; everything above still throws to die.
+  try {
+    console.log("\n-> RequestEncryptedAppTicket(), a call result");
+    const ready = await withTimeout(
+      steam.user.requestEncryptedAppTicket(new Uint8Array([1, 2, 3]), 3),
+      5000,
+      "EncryptedAppTicketResponse_t",
+    );
+    console.log(`<- EncryptedAppTicketResponse_t result=${ready.m_eResult}`);
+
+    let buf = new Uint8Array(1024);
+    let pulled = steam.user.getEncryptedAppTicket(buf, buf.length);
+    if (!pulled.ok && pulled.pcbTicket > 0) {
+      buf = new Uint8Array(pulled.pcbTicket);
+      pulled = steam.user.getEncryptedAppTicket(buf, buf.length);
+    }
+    if (!pulled.ok || pulled.pcbTicket === 0) throw new Error("no ticket bytes came back out");
+    const encrypted = buf.subarray(0, pulled.pcbTicket);
+
+    const ticket = SteamEncryptedAppTicket.open();
+    try {
+      const decrypted = ticket.decryptTicket(encrypted, new Uint8Array(32));
+      if (decrypted === null) {
+        console.log(
+          `ticket      : ${encrypted.length} encrypted bytes arrived, and the decrypt refused ` +
+            "the zero key — Spacewar's real key belongs to Valve, and only an app you own can " +
+            "be truly decrypted",
+        );
+      } else {
+        console.log(`ticket      : ${encrypted.length} bytes; a zero key decrypted them?!`);
+      }
+    } finally {
+      ticket.close();
+    }
+  } catch (err) {
+    console.log("ticket      : failed —", err instanceof Error ? err.message : err);
   }
 
   if (!keep) {
