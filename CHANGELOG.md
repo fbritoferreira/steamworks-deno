@@ -7,12 +7,15 @@ only describes one.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Content is derived from
 the release tags, their commits and the pull requests that carried them.
 
-## [Unreleased]
+## [0.6.1] - 2026-09-30
 
 ### Added
 
 - The demo now walks the encrypted app ticket flow: request a ticket, pull its bytes, and watch the
   decrypt refuse a zero key — the honest result for an app whose secret key is not ours.
+
+- AGENTS.md: the task commands, the three verify modes, the SDK's licence rule, what each workflow
+  checks, and the repo's conventions, for agents and contributors alike.
 
 ### Changed
 
@@ -20,18 +23,26 @@ the release tags, their commits and the pull requests that carried them.
   `steamclient64.dll` and its companions in the repo root and `~/.steam/sdk64`, and runs
   `deno task verify --dedicated` — the same end-to-end proof the Linux job already had.
 
+- The SDK verification runs daily on a schedule, not only on push, so a quiet repository still
+  notices when Valve ships a new Steamworks SDK. A schema-check failure opens a `[sdk-drift]` issue
+  quoting the drift, and the first green schema check after it closes the issue itself — usually the
+  regeneration PR's own run. The alarm has been fired for real once, on a deliberate sabotage run,
+  and opened exactly the issue it should have. Ubuntu runners are pinned to ubuntu-24.04 ahead of
+  GitHub's October migration.
+
 - The layout check's comparison — the C++ harness's output against the generated layout table —
   moved out of `verify.ts` into `compareHarnessOutput`, exported and unit-tested. The Windows CRLF
   bug shipped precisely because that parsing lived where no test could reach it; the tests now pin
   LF and CRLF output, the exact mismatch wording the check prints, and the minimum-count guard that
   turns a run comparing almost nothing into a failure.
 
-### Changed
-
 - `packages/steamworks/README.md` — the README JSR serves — had drifted from the repository's by 200
   lines and still told the pre-0.4.0 story. It is now a copy of the repository README, and CI fails
   when the two differ, so the package page cannot go stale again. The README also carries the
   sdk-verify badge alongside the ci one.
+
+- Both packages declare their Deno floor in `deno.json` (`"deno": ">=2.3"`), which the README has
+  always claimed.
 
 ## [0.6.0] - 2026-09-29
 
