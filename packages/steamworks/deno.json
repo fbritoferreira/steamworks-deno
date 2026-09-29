@@ -3,6 +3,7 @@
   "version": "0.6.0",
   "license": "MIT",
   "exports": "./mod.ts",
+  "engines": { "deno": ">=2.3" },
   "publish": {
     "include": [
       "mod.ts",
