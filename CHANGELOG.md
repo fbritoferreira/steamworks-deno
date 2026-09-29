@@ -9,6 +9,12 @@ the release tags, their commits and the pull requests that carried them.
 
 ## [Unreleased]
 
+### Fixed
+
+- The live tests now skip when the Steam client is not running, the way their doc comments always
+  claimed they did. They were gated on the SDK being present, but an SDK without a running Steam
+  client turned six honest skips into six failures on any machine with the SDK and Steam down.
+
 ### Added
 
 - The README now carries the runbook for a new Steamworks SDK release: what turning red means, the

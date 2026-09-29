@@ -5,13 +5,16 @@
  */
 import { assert, assertEquals } from "@std/assert";
 import { SteamClient } from "./client.ts";
+import { steamClientRunning } from "./steam_running.ts";
 import { CallbackId } from "../gen/callback_ids.ts";
 
 const sdk = Deno.env.get("STEAMWORKS_SDK_PATH");
+// The SDK alone is not enough: these tests also need the Steam client up.
+const live = !!sdk && steamClientRunning();
 
 Deno.test({
   name: "the generated interfaces talk to Spacewar (AppID 480)",
-  ignore: !sdk,
+  ignore: !live,
   fn() {
     const steam = SteamClient.init({ appId: 480, sdkPath: sdk });
     try {

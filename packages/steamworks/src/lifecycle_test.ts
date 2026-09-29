@@ -6,13 +6,16 @@
  */
 import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { SteamClient } from "./client.ts";
+import { steamClientRunning } from "./steam_running.ts";
 import { Dispatcher } from "./dispatch.ts";
 
 const sdk = Deno.env.get("STEAMWORKS_SDK_PATH");
+// The SDK alone is not enough: these tests also need the Steam client up.
+const live = !!sdk && steamClientRunning();
 
 Deno.test({
   name: "touching an interface after shutdown throws instead of crashing",
-  ignore: !sdk,
+  ignore: !live,
   fn() {
     const steam = SteamClient.init({ appId: 480, sdkPath: sdk });
     steam.shutdown();
@@ -23,7 +26,7 @@ Deno.test({
 
 Deno.test({
   name: "shutdown is idempotent and reports the client as closed",
-  ignore: !sdk,
+  ignore: !live,
   fn() {
     const steam = SteamClient.init({ appId: 480, sdkPath: sdk });
     assertEquals(steam.isRunning, true);
@@ -35,7 +38,7 @@ Deno.test({
 
 Deno.test({
   name: "an interface obtained before shutdown is cleared with it",
-  ignore: !sdk,
+  ignore: !live,
   fn() {
     const steam = SteamClient.init({ appId: 480, sdkPath: sdk });
     steam.friends.getPersonaName();
