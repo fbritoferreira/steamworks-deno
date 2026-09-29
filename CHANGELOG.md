@@ -9,6 +9,11 @@ the release tags, their commits and the pull requests that carried them.
 
 ## [Unreleased]
 
+### Added
+
+- The demo now walks the encrypted app ticket flow: request a ticket, pull its bytes, and watch the
+  decrypt refuse a zero key — the honest result for an app whose secret key is not ours.
+
 ### Changed
 
 - The dedicated-server check runs on a Windows runner too: CI fetches depot 1004 anonymously, drops
