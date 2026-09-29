@@ -1,9 +1,11 @@
 {
   "name": "@steamworks/codegen",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "license": "MIT",
   "exports": "./mod.ts",
-  "engines": { "deno": ">=2.3" },
+  "engines": {
+    "deno": ">=2.3"
+  },
   "imports": {
     "@std/assert": "jsr:@std/assert@1",
     "@std/path": "jsr:@std/path@1"
