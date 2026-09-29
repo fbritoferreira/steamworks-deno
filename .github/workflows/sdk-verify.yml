@@ -135,7 +135,11 @@ jobs:
   # callback decoded through the server pipe, shutdown. The same cookie gate as above: a
   # stale session skips the job with a notice, red means the server path is broken.
   dedicated:
-    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
 
@@ -162,35 +166,70 @@ jobs:
             echo "::notice title=SDK checks skipped::The partner site served something other than a zip, most likely its login page: the session cookie has expired. Refresh the STEAMWORKS_PARTNER_COOKIE secret with a new Cookie header to resume the SDK checks."
             exit 0
           fi
-          unzip -q "$RUNNER_TEMP/steamworks_sdk.zip" -d "$RUNNER_TEMP"
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            /c/Windows/System32/tar.exe -xf "$RUNNER_TEMP/steamworks_sdk.zip" -C "$RUNNER_TEMP"
+          else
+            unzip -q "$RUNNER_TEMP/steamworks_sdk.zip" -d "$RUNNER_TEMP"
+          fi
           echo "STEAMWORKS_SDK_PATH=$RUNNER_TEMP/sdk" >> "$GITHUB_ENV"
 
       # A dedicated server's steamclient comes from Valve's own redist, app 1007
-      # "Steamworks SDK Redist", fetched anonymously: its Linux depot is 1006. The
-      # steamcmd bootstrap is a 32-bit binary, so the runner needs the i386 runtime
-      # libraries to run it once. libsteam_api looks for a standalone steamclient at
-      # ~/.steam/sdk64 when no desktop client runs — the same place a server operator
-      # puts it, and what the verify run on this machine expects.
+      # "Steamworks SDK Redist", fetched anonymously. `download_depot` without a
+      # manifest gid takes the depot's current public one, so nothing goes stale
+      # when Valve re-ships it. The rest is per OS:
+      # - Linux: depot 1006, via the steamcmd tarball. The bootstrap is a 32-bit
+      #   binary, so the runner needs the i386 runtime libraries to run it once.
+      #   libsteam_api looks for the standalone steamclient at ~/.steam/sdk64 when
+      #   no desktop client runs — the same place a server operator puts it.
+      # - Windows: depot 1004, via the steamcmd zip, run natively. Windows resolves
+      #   a DLL's dependencies by its own search order — the loaded library's
+      #   directory is not in it — so the depot's DLLs land in two places at once:
+      #   the repo root, which is where verify runs and where LoadLibrary finds
+      #   bare-name steamclient64.dll and its tier0/vstdlib companions, and
+      #   ~/.steam/sdk64, the loader's fallback, in case it looks there too.
       - name: Fetch the standalone steamclient
         if: env.STEAMWORKS_SDK_PATH != ''
         shell: bash
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq libc6-i386 lib32gcc-s1 lib32stdc++6
-          curl -fsSL https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz \
-            -o "$RUNNER_TEMP/steamcmd.tar.gz"
-          mkdir "$RUNNER_TEMP/steamcmd"
-          tar -xzf "$RUNNER_TEMP/steamcmd.tar.gz" -C "$RUNNER_TEMP/steamcmd"
-          "$RUNNER_TEMP/steamcmd/steamcmd.sh" +login anonymous +download_depot 1007 1006 +quit
-          depot="$(find "$RUNNER_TEMP/steamcmd" -type d -name "*depot_1006" -print -quit)"
-          steamclient="$(find "$depot" -type f -name steamclient.so -path "*linux64*" -print -quit)"
-          if [ -z "$steamclient" ]; then
-            echo "The depot landed somewhere unexpected; its tree:"
-            find "$depot" -type f
-            exit 1
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq libc6-i386 lib32gcc-s1 lib32stdc++6
+            curl -fsSL https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz \
+              -o "$RUNNER_TEMP/steamcmd.tar.gz"
+            mkdir "$RUNNER_TEMP/steamcmd"
+            tar -xzf "$RUNNER_TEMP/steamcmd.tar.gz" -C "$RUNNER_TEMP/steamcmd"
+            "$RUNNER_TEMP/steamcmd/steamcmd.sh" +login anonymous +download_depot 1007 1006 +quit
+            depot="$(find "$RUNNER_TEMP/steamcmd" -type d -name "*depot_1006" -print -quit)"
+            steamclient="$(find "$depot" -type f -name steamclient.so -path "*linux64*" -print -quit)"
+            if [ -z "$steamclient" ]; then
+              echo "The depot landed somewhere unexpected; its tree:"
+              find "$depot" -type f
+              exit 1
+            fi
+            mkdir -p ~/.steam/sdk64
+            cp "$steamclient" "$(dirname "$steamclient")/libsteamwebrtc.so" ~/.steam/sdk64/
+          else
+            curl -fsSL https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip \
+              -o "$RUNNER_TEMP/steamcmd.zip"
+            mkdir "$RUNNER_TEMP/steamcmd"
+            /c/Windows/System32/tar.exe -xf "$RUNNER_TEMP/steamcmd.zip" -C "$RUNNER_TEMP/steamcmd"
+            # The download below can finish and still exit 7: steamcmd's bootstrapper
+            # relaunches itself after +quit and the relaunch is what bash sees exit.
+            # The depot-existence check below is the real gate, so the exit code is
+            # ignored on purpose.
+            "$RUNNER_TEMP/steamcmd/steamcmd.exe" +login anonymous +download_depot 1007 1004 +quit || true
+            depot="$(find "$RUNNER_TEMP/steamcmd" -type d -name "depot_1004" -print -quit)"
+            if [ -z "$depot" ]; then
+              echo "The depot landed somewhere unexpected; the steamcmd tree:"
+              find "$RUNNER_TEMP/steamcmd" -type f
+              exit 1
+            fi
+            echo "The depot contents:"
+            ls "$depot"
+            mkdir -p ~/.steam/sdk64
+            cp "$depot"/*.dll ~/.steam/sdk64/
+            cp "$depot"/*.dll ./
           fi
-          mkdir -p ~/.steam/sdk64
-          cp "$steamclient" "$(dirname "$steamclient")/libsteamwebrtc.so" ~/.steam/sdk64/
 
       - name: Verify the dedicated-server path
         if: env.STEAMWORKS_SDK_PATH != ''

@@ -183,10 +183,13 @@ starts such a server for AppID 480, logs it on anonymously, and asserts the whol
 the server's anonymous SteamID, and a refused call after shutdown. Put the steamclient files where
 libsteam_api looks for them — the working directory on macOS, where steamcmd_osx.tar.gz unpacks
 `steamclient.dylib` and its companions; `~/.steam/sdk64` on Linux, which
-`steamcmd +login anonymous +download_depot 1007 1006` fills from Valve's own "Steamworks SDK Redist"
-— and the same check runs in CI on a Linux runner that fetches the steamclient itself. So the
-dedicated path is verified end to end on every push while the partner cookie behind the SDK download
-is fresh, and the development-machine null behaviour remains what the full local run asserts.
+`steamcmd +login anonymous +download_depot 1007 1006` fills from Valve's own "Steamworks SDK
+Redist"; the working directory on Windows too, since `LoadLibrary` searches it and it is where
+`download_depot 1007 1004` drops `steamclient64.dll` beside the `tier0_s64.dll` and
+`vstdlib_s64.dll` it depends on — and the same check runs in CI on Linux and Windows runners that
+fetch the steamclient themselves. So the dedicated path is verified end to end on every push while
+the partner cookie behind the SDK download is fresh, and the development-machine null behaviour
+remains what the full local run asserts.
 
 ## Encrypted app tickets
 
