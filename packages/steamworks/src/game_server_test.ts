@@ -7,8 +7,12 @@
 import { assertEquals, assertStringIncludes, assertThrows } from "@std/assert";
 import { interfaceVersionList, ServerMode, SteamGameServerClient } from "./game_server.ts";
 import { GAME_SERVER_INTERFACE_VERSIONS } from "../gen/game_server_base.ts";
+import { steamClientRunning } from "./steam_running.ts";
 
 const sdk = Deno.env.get("STEAMWORKS_SDK_PATH");
+// On a development machine the server reaches Steam through the desktop client, which
+// must be up; a standalone steamclient is the dedicated run in verify --dedicated.
+const live = !!sdk && steamClientRunning();
 
 Deno.test("the version list is NUL separated and ends with a second NUL", () => {
   const bytes = interfaceVersionList(["A", "B"]);
@@ -31,7 +35,7 @@ Deno.test("server modes match the SDK's EServerMode", () => {
 
 Deno.test({
   name: "a game server starts, reaches its interfaces, and shuts down",
-  ignore: !sdk,
+  ignore: !live,
   fn() {
     const server = SteamGameServerClient.init({
       appId: 480,

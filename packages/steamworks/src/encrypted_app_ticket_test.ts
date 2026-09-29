@@ -15,10 +15,13 @@ import {
   ticketLibraryFileName,
   ticketLibraryPath,
 } from "./encrypted_app_ticket.ts";
+import { steamClientRunning } from "./steam_running.ts";
 import { SteamClient } from "./client.ts";
 import { EResult } from "../gen/enums.ts";
 
 const sdk = Deno.env.get("STEAMWORKS_SDK_PATH");
+// The SDK alone is not enough: this test also needs the Steam client up.
+const live = !!sdk && steamClientRunning();
 const mac = { os: "darwin", arch: "aarch64" };
 const noEnv = () => undefined;
 
@@ -227,7 +230,7 @@ Deno.test("every accessor refuses after close", () => {
  */
 Deno.test({
   name: "a requested ticket arrives, and a wrong key cannot decrypt it",
-  ignore: !sdk,
+  ignore: !live,
   async fn() {
     const steam = SteamClient.init({ appId: 480, sdkPath: sdk });
     const stop = steam.startPump();
