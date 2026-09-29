@@ -33,6 +33,11 @@ jobs:
       - name: Test
         run: deno task test
 
+      # The README JSR serves is a copy of the repository's; this keeps the copy honest.
+      # One README is edited, the other never is — regenerate the copy, do not fix the check.
+      - name: Package README matches the repository README
+        run: diff README.md packages/steamworks/README.md
+
       - name: Publish dry run
         run: deno publish --dry-run
         working-directory: packages/steamworks
