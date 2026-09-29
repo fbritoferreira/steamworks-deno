@@ -7,6 +7,14 @@ only describes one.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Content is derived from
 the release tags, their commits and the pull requests that carried them.
 
+## [Unreleased]
+
+### Added
+
+- A dedicated-server example: `examples/server` logs on anonymously to AppID 480 through the
+  standalone steamclient and pumps callbacks until Ctrl-C, the missing third example after the demo
+  and the raylib game.
+
 ## [0.6.1] - 2026-09-30
 
 ### Added

@@ -3,17 +3,19 @@
     "./packages/steamworks",
     "./packages/codegen",
     "./examples/demo",
-    "./examples/game"
+    "./examples/game",
+    "./examples/server"
   ],
   "tasks": {
     "demo": "deno run --allow-ffi --allow-env --allow-read examples/demo/main.ts",
     "test": "deno test --allow-ffi --allow-env --allow-read --allow-run --allow-write",
-    "check": "deno check packages/steamworks/mod.ts packages/codegen/mod.ts examples/demo/main.ts",
+    "check": "deno check packages/steamworks/mod.ts packages/codegen/mod.ts examples/demo/main.ts examples/server/main.ts",
     "lint": "deno lint && deno fmt --check",
     "gen": "deno run --allow-env --allow-read --allow-write --allow-run packages/codegen/cli.ts",
     "gen:check": "deno task gen && git diff --exit-code -- packages/steamworks/gen",
     "verify": "deno run --allow-ffi --allow-env --allow-read --allow-write --allow-run packages/steamworks/verify.ts",
-    "game": "deno run --allow-ffi --allow-env --allow-read examples/game/main.ts"
+    "game": "deno run --allow-ffi --allow-env --allow-read examples/game/main.ts",
+    "server": "deno run --allow-ffi --allow-env --allow-read examples/server/main.ts"
   },
   "fmt": {
     "lineWidth": 100

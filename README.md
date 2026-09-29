@@ -319,6 +319,7 @@ runner setup for it is future work.
 ```
 packages/steamworks/   the package published to JSR as @steamworks/deno
 examples/demo/         CLI proof of concept against AppID 480
+examples/server/       a dedicated game server, run standalone with no Steam client
 sdk/                   your local copy of the Steamworks SDK (gitignored)
 ```
 
