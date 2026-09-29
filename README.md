@@ -10,6 +10,7 @@ identity, overlay, and the rest of the flat C API.
 
 [![JSR](https://jsr.io/badges/@steamworks/deno)](https://jsr.io/@steamworks/deno)
 [![ci](https://github.com/fbritoferreira/steamworks-deno/actions/workflows/ci.yml/badge.svg)](https://github.com/fbritoferreira/steamworks-deno/actions/workflows/ci.yml)
+[![sdk-verify](https://github.com/fbritoferreira/steamworks-deno/actions/workflows/sdk-verify.yml/badge.svg)](https://github.com/fbritoferreira/steamworks-deno/actions/workflows/sdk-verify.yml)
 
 ## Status
 

@@ -21,6 +21,13 @@ the release tags, their commits and the pull requests that carried them.
   LF and CRLF output, the exact mismatch wording the check prints, and the minimum-count guard that
   turns a run comparing almost nothing into a failure.
 
+### Changed
+
+- `packages/steamworks/README.md` — the README JSR serves — had drifted from the repository's by 200
+  lines and still told the pre-0.4.0 story. It is now a copy of the repository README, and CI fails
+  when the two differ, so the package page cannot go stale again. The README also carries the
+  sdk-verify badge alongside the ci one.
+
 ## [0.6.0] - 2026-09-29
 
 ### Added
