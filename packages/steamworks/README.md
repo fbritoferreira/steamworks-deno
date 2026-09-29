@@ -341,6 +341,25 @@ is the half only a machine with a logged-in Steam client can do.
 `deno compile` users: pass `--include` with the platform library and resolve its path from
 `import.meta.url`; see the Deno FFI docs. Deno issue #31218 tracks a Windows path bug there.
 
+## When Valve ships a new Steamworks SDK
+
+A new SDK release turns CI's schema check red and opens a `[sdk-drift]` issue; regenerating the
+bindings against the new SDK is what turns both green again. The procedure:
+
+1. Download the new `steamworks_sdk.zip` from
+   <https://partner.steamgames.com/downloads/steamworks_sdk.zip> and replace your local `sdk/`.
+2. `STEAMWORKS_SDK_PATH=$PWD/sdk deno task gen` — regenerates `packages/steamworks/gen/` from the
+   new SDK's `steam_api.json`. Generated files are never hand-edited: if something looks wrong in
+   them, the fix belongs in the generator under `packages/codegen/src/`, then regenerate again.
+3. Review the diff. A new SDK usually means new accessors (`SteamAPI_SteamUser_v024` replacing
+   `_v023`, and the like), sometimes new interfaces or callbacks — the diff shows exactly what
+   moved. Watch for anything that changes struct packing, which the harness check will catch.
+4. `deno task check && deno task lint && deno task test`, then `deno task verify --offline` with the
+   SDK in place; `--dedicated` and the full live run if you can.
+5. Open a PR titled like `feat: SDK 1.66`; its own CI run passing is what closes the drift issue,
+   automatically.
+6. The SDK is never committed — only the regenerated bindings and any generator changes are.
+
 ## Licence
 
 MIT for this repository. The Steamworks SDK is licensed separately by Valve under the
