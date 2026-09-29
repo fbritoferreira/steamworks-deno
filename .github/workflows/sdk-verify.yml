@@ -89,8 +89,8 @@ jobs:
       # gen_check step itself failed — a skipped gen_check (stale cookie, fork PR) has
       # outcome "skipped" and files nothing. Only the Linux leg reports, so the three-OS
       # matrix cannot open three issues for one drift; the check is schema-only and
-      # platform-independent, so one voice is enough. The issue is closed by hand in the
-      # regeneration PR, never here.
+      # platform-independent, so one voice is enough. The issue closes itself below, the
+      # first time the schema check passes again — usually the regeneration PR's own run.
       - name: Open a tracking issue for the schema drift
         if: failure() && steps.gen_check.outcome == 'failure' && runner.os == 'Linux'
         shell: bash
@@ -122,6 +122,23 @@ jobs:
             gh issue comment "$existing" --body-file "$RUNNER_TEMP/drift.md"
           else
             gh issue create --title "$title" --body-file "$RUNNER_TEMP/drift.md"
+          fi
+
+      # The alarm's other half: the first green schema check after a drift closes the
+      # tracking issue with a pointer to the run that proved the bindings match again —
+      # usually the regeneration PR's own run, so the alarm cleans up after itself. Gated
+      # as tightly as its counterpart: only when gen_check genuinely ran and passed, only
+      # on the Linux leg, and only when an open drift issue exists.
+      - name: Close the drift issue when the schema matches again
+        if: steps.gen_check.outcome == 'success' && runner.os == 'Linux'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          existing=$(gh issue list --state open --json number,title \
+            --jq '.[] | select(.title | startswith("[sdk-drift]")) | .number' | head -n1)
+          if [ -n "$existing" ]; then
+            gh issue close "$existing" --comment "The schema check passed again on $GITHUB_EVENT_NAME run $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID — the committed bindings match the SDK Valve is distributing."
           fi
 
       - name: Verify the bindings against the SDK on this platform
