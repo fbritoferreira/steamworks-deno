@@ -4,10 +4,18 @@ on:
   push:
     branches: [main]
   pull_request:
+  # A daily look, so a new SDK release from Valve is noticed even when the repo is quiet.
+  # The cookie is usually expired by 03:17 UTC — those runs skip the checks with a notice,
+  # exactly as a stale push run does, and the fresh days still catch the drift.
+  schedule:
+    - cron: "17 3 * * *"
   workflow_dispatch:
 
 permissions:
   contents: read
+  # Lets the schema-drift step below open or comment on a tracking issue with the
+  # workflow's own token; no other workflow needs it.
+  issues: write
 
 jobs:
   # What a runner can prove without a Steam client: the struct layouts against its own
@@ -18,7 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-24.04, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
@@ -70,9 +78,51 @@ jobs:
       # SDK Valve is distributing — regenerate them with `deno task gen` against the new
       # SDK.
       - name: Bindings match the SDK schema
+        id: gen_check
         if: env.STEAMWORKS_SDK_PATH != ''
         shell: bash
         run: deno task gen:check
+
+      # A drift that nobody notices is as bad as no check at all, so a failed schema check
+      # opens or updates a single "[sdk-drift]" issue. The gate is exact: `failure()` alone
+      # would also catch a verify failure or a flaky job, so the step also demands that the
+      # gen_check step itself failed — a skipped gen_check (stale cookie, fork PR) has
+      # outcome "skipped" and files nothing. Only the Linux leg reports, so the three-OS
+      # matrix cannot open three issues for one drift; the check is schema-only and
+      # platform-independent, so one voice is enough. The issue is closed by hand in the
+      # regeneration PR, never here.
+      - name: Open a tracking issue for the schema drift
+        if: failure() && steps.gen_check.outcome == 'failure' && runner.os == 'Linux'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # The generator reads the version from the SDK's Readme.txt (the first "vN.N");
+          # read the same value so the issue names the release Valve shipped.
+          version=$(grep -oE 'v[0-9]+\.[0-9]+' "$STEAMWORKS_SDK_PATH/Readme.txt" | head -n1 | tr -d v)
+          if [ -n "$version" ]; then
+            title="[sdk-drift] Steamworks SDK $version released; bindings need regeneration"
+          else
+            title="[sdk-drift] New Steamworks SDK released; bindings need regeneration"
+          fi
+          # gen:check left the regenerated files in the tree, so the diff is still there
+          # to quote: the first lines say which interfaces moved.
+          {
+            echo "The schema check failed on the $GITHUB_EVENT_NAME run $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID — the committed bindings no longer match the SDK Valve is distributing."
+            echo
+            echo '```diff'
+            git diff -- packages/steamworks/gen | head -n 40
+            echo '```'
+            echo
+            echo "Regenerate with \`deno task gen\` against the new SDK, and close this issue in that PR."
+          } > "$RUNNER_TEMP/drift.md"
+          existing=$(gh issue list --state open --json number,title \
+            --jq '.[] | select(.title | startswith("[sdk-drift]")) | .number' | head -n1)
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file "$RUNNER_TEMP/drift.md"
+          else
+            gh issue create --title "$title" --body-file "$RUNNER_TEMP/drift.md"
+          fi
 
       - name: Verify the bindings against the SDK on this platform
         if: env.STEAMWORKS_SDK_PATH != ''
@@ -85,7 +135,7 @@ jobs:
   # callback decoded through the server pipe, shutdown. The same cookie gate as above: a
   # stale session skips the job with a notice, red means the server path is broken.
   dedicated:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
 
