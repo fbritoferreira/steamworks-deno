@@ -29,6 +29,7 @@
  */
 import { fromFileUrl, join } from "@std/path";
 import { PACK } from "./src/layout.ts";
+import { compareHarnessOutput, type ExpectedLayout } from "./src/layout_harness.ts";
 import { CORE_SYMBOLS, LibraryHandle, resolveLibraryPath } from "./src/lib.ts";
 import { SteamInitResult } from "./src/errors.ts";
 import { readFixedString } from "./src/cstring.ts";
@@ -127,39 +128,14 @@ try {
 
   const run = await new Deno.Command(exe, { stdout: "piped" }).output();
   if (!run.success) throw new Error(`the layout harness exited ${run.code}`);
-  // The Windows C runtime writes \r\n; without stripping it every line ends in \r and
-  // no regex matches, which once read as "0 sizes and offsets agree".
-  const text = new TextDecoder().decode(run.stdout).replaceAll("\r", "");
+  const text = new TextDecoder().decode(run.stdout);
   const table = JSON.parse(await Deno.readTextFile(join(here, "gen", "layout.json")));
-  const expected = table.pack[String(PACK)] as Record<
-    string,
-    { size: number; fields: Record<string, number> }
-  >;
+  const expected = table.pack[String(PACK)] as Record<string, ExpectedLayout>;
 
-  let compared = 0;
-  const bad: string[] = [];
-  for (const line of text.split("\n")) {
-    const size = /^(\w+) size=(\d+)$/.exec(line);
-    if (size) {
-      compared++;
-      if (expected[size[1]]?.size !== Number(size[2])) {
-        bad.push(`${size[1]} size ${expected[size[1]]?.size} computed, ${size[2]} real`);
-      }
-      continue;
-    }
-    const off = /^\s+(\w+)\.(\w+) off=(\d+)$/.exec(line);
-    if (off) {
-      compared++;
-      if (expected[off[1]]?.fields[off[2]] !== Number(off[3])) {
-        bad.push(
-          `${off[1]}.${off[2]} offset ${expected[off[1]]?.fields[off[2]]} computed, ${off[3]} real`,
-        );
-      }
-    }
-  }
+  const { compared, bad, ok } = compareHarnessOutput(text, expected);
   record(
     "struct layouts vs C compiler",
-    bad.length === 0 && compared > 500,
+    ok,
     bad.length === 0
       ? `${compared} sizes and offsets agree (${compiler})`
       : bad.slice(0, 3).join("; "),
